@@ -7,7 +7,8 @@ type BookingPayload = {
   phone?: string;
   sport?: string;
   eventDate?: string;
-  timeSlot?: string;
+  startTime?: string;
+  endTime?: string;
   players?: string;
   notes?: string;
 };
@@ -21,7 +22,8 @@ export async function POST(request: Request) {
     !payload.phone ||
     !payload.sport ||
     !payload.eventDate ||
-    !payload.timeSlot ||
+    !payload.startTime ||
+    !payload.endTime ||
     !payload.players
   ) {
     return NextResponse.json(
@@ -43,6 +45,17 @@ export async function POST(request: Request) {
     );
   }
 
+  if (payload.startTime === payload.endTime) {
+    return NextResponse.json(
+      {
+        message: "Start time and end time must be different."
+      },
+      { status: 400 }
+    );
+  }
+
+  const timeSlot = `${payload.startTime} - ${payload.endTime}`;
+
   try {
     const supabase = createSupabaseAdminClient();
 
@@ -52,7 +65,7 @@ export async function POST(request: Request) {
       phone: payload.phone,
       sport: payload.sport,
       event_date: payload.eventDate,
-      time_slot: payload.timeSlot,
+      time_slot: timeSlot,
       players: playerCount,
       notes: payload.notes?.trim() || null
     });
@@ -79,6 +92,6 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    message: `Thanks ${payload.fullName}, your ${payload.sport} booking request for ${payload.eventDate} at ${payload.timeSlot} has been saved.`
+    message: `Thanks ${payload.fullName}, your ${payload.sport} booking request for ${payload.eventDate} from ${payload.startTime} to ${payload.endTime} has been saved.`
   });
 }

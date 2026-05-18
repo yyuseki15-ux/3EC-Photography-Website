@@ -8,7 +8,8 @@ type BookingState = {
   phone: string;
   sport: string;
   eventDate: string;
-  timeSlot: string;
+  startTime: string;
+  endTime: string;
   players: string;
   notes: string;
 };
@@ -35,7 +36,8 @@ const initialState: BookingState = {
   phone: "",
   sport: "Football",
   eventDate: "",
-  timeSlot: "08:00 AM",
+  startTime: "08:00 AM",
+  endTime: "10:00 AM",
   players: "10",
   notes: ""
 };
@@ -216,22 +218,42 @@ export default function Home() {
             </label>
 
             <label>
-              Time slot
-              <select
-                value={formData.timeSlot}
-                onChange={(event) =>
-                  setFormData((current) => ({
-                    ...current,
-                    timeSlot: event.target.value
-                  }))
-                }
-              >
-                {timeSlots.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </select>
+              Start time
+              <div className="time-range-fields">
+                <select
+                  value={formData.startTime}
+                  onChange={(event) =>
+                    setFormData((current) => ({
+                      ...current,
+                      startTime: event.target.value
+                    }))
+                  }
+                >
+                  {timeSlots.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+                </select>
+
+                <span className="time-range-separator">to</span>
+
+                <select
+                  value={formData.endTime}
+                  onChange={(event) =>
+                    setFormData((current) => ({
+                      ...current,
+                      endTime: event.target.value
+                    }))
+                  }
+                >
+                  {timeSlots.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </label>
           </div>
 
