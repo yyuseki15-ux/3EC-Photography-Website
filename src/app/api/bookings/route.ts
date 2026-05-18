@@ -13,6 +13,14 @@ type BookingPayload = {
   notes?: string;
 };
 
+const timeSlots = [
+  "08:00 AM",
+  "10:00 AM",
+  "01:00 PM",
+  "04:00 PM",
+  "07:00 PM"
+];
+
 export async function POST(request: Request) {
   const payload = (await request.json()) as BookingPayload;
 
@@ -49,6 +57,18 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: "Start time and end time must be different."
+      },
+      { status: 400 }
+    );
+  }
+
+  const startTimeIndex = timeSlots.indexOf(payload.startTime);
+  const endTimeIndex = timeSlots.indexOf(payload.endTime);
+
+  if (startTimeIndex === -1 || endTimeIndex === -1 || endTimeIndex <= startTimeIndex) {
+    return NextResponse.json(
+      {
+        message: "End time must be later than start time."
       },
       { status: 400 }
     );

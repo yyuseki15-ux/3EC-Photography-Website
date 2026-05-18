@@ -52,6 +52,24 @@ export default function Home() {
     return today.toISOString().split("T")[0];
   }, []);
 
+  const startTimeIndex = timeSlots.indexOf(formData.startTime);
+  const availableEndTimes = timeSlots.filter(
+    (_, index) => index > startTimeIndex
+  );
+
+  function updateStartTime(startTime: string) {
+    const nextStartIndex = timeSlots.indexOf(startTime);
+    const nextEndTimes = timeSlots.filter((_, index) => index > nextStartIndex);
+
+    setFormData((current) => ({
+      ...current,
+      startTime,
+      endTime: nextEndTimes.includes(current.endTime)
+        ? current.endTime
+        : nextEndTimes[0] ?? current.endTime
+    }));
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
@@ -222,12 +240,7 @@ export default function Home() {
               <div className="time-range-fields">
                 <select
                   value={formData.startTime}
-                  onChange={(event) =>
-                    setFormData((current) => ({
-                      ...current,
-                      startTime: event.target.value
-                    }))
-                  }
+                  onChange={(event) => updateStartTime(event.target.value)}
                 >
                   {timeSlots.map((slot) => (
                     <option key={slot} value={slot}>
@@ -247,7 +260,7 @@ export default function Home() {
                     }))
                   }
                 >
-                  {timeSlots.map((slot) => (
+                  {availableEndTimes.map((slot) => (
                     <option key={slot} value={slot}>
                       {slot}
                     </option>
