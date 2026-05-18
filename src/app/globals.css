@@ -160,17 +160,10 @@ textarea {
   gap: 1rem;
 }
 
-.time-range-fields {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.time-range-separator {
-  color: var(--muted);
-  font-size: 0.92rem;
-  text-align: center;
+.time-select {
+  min-width: 0;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
 .booking-card button {
@@ -243,14 +236,6 @@ textarea {
   .grid-two,
   .hero-stats {
     grid-template-columns: 1fr;
-  }
-
-  .time-range-fields {
-    grid-template-columns: 1fr;
-  }
-
-  .time-range-separator {
-    display: none;
   }
 
   .hero-copy h1 {

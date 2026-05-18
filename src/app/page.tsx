@@ -17,6 +17,7 @@ type BookingState = {
 const sports = [
   "Football",
   "Basketball",
+  "Pickleball",
   "Tennis",
   "Badminton",
   "Volleyball"
@@ -51,24 +52,6 @@ export default function Home() {
     const today = new Date();
     return today.toISOString().split("T")[0];
   }, []);
-
-  const startTimeIndex = timeSlots.indexOf(formData.startTime);
-  const availableEndTimes = timeSlots.filter(
-    (_, index) => index > startTimeIndex
-  );
-
-  function updateStartTime(startTime: string) {
-    const nextStartIndex = timeSlots.indexOf(startTime);
-    const nextEndTimes = timeSlots.filter((_, index) => index > nextStartIndex);
-
-    setFormData((current) => ({
-      ...current,
-      startTime,
-      endTime: nextEndTimes.includes(current.endTime)
-        ? current.endTime
-        : nextEndTimes[0] ?? current.endTime
-    }));
-  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -237,36 +220,42 @@ export default function Home() {
 
             <label>
               Start time
-              <div className="time-range-fields">
-                <select
-                  value={formData.startTime}
-                  onChange={(event) => updateStartTime(event.target.value)}
-                >
-                  {timeSlots.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
-                </select>
+              <select
+                className="time-select"
+                value={formData.startTime}
+                onChange={(event) =>
+                  setFormData((current) => ({
+                    ...current,
+                    startTime: event.target.value
+                  }))
+                }
+              >
+                {timeSlots.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-                <span className="time-range-separator">to</span>
-
-                <select
-                  value={formData.endTime}
-                  onChange={(event) =>
-                    setFormData((current) => ({
-                      ...current,
-                      endTime: event.target.value
-                    }))
-                  }
-                >
-                  {availableEndTimes.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <label>
+              End time
+              <select
+                className="time-select"
+                value={formData.endTime}
+                onChange={(event) =>
+                  setFormData((current) => ({
+                    ...current,
+                    endTime: event.target.value
+                  }))
+                }
+              >
+                {timeSlots.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
 
