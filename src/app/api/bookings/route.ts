@@ -61,12 +61,18 @@ export async function POST(request: Request) {
       throw error;
     }
   } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : typeof error === "object" && error !== null
+          ? JSON.stringify(error)
+          : "Could not save your booking right now.";
+
+    console.error("Booking save failed:", error);
+
     return NextResponse.json(
       {
-        message:
-          error instanceof Error
-            ? error.message
-            : "Could not save your booking right now."
+        message: errorMessage
       },
       { status: 500 }
     );
