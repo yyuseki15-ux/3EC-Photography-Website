@@ -23,22 +23,14 @@ const sports = [
   "Volleyball"
 ];
 
-const timeSlots = [
-  "08:00 AM",
-  "10:00 AM",
-  "01:00 PM",
-  "04:00 PM",
-  "07:00 PM"
-];
-
 const initialState: BookingState = {
   fullName: "",
   email: "",
   phone: "",
   sport: "Football",
   eventDate: "",
-  startTime: "08:00 AM",
-  endTime: "10:00 AM",
+  startTime: "",
+  endTime: "",
   players: "10",
   notes: ""
 };
@@ -201,27 +193,31 @@ export default function Home() {
             </label>
           </div>
 
+          <label>
+            Event date
+            <input
+              required
+              min={minDate}
+              type="date"
+              value={formData.eventDate}
+              onChange={(event) =>
+                setFormData((current) => ({
+                  ...current,
+                  eventDate: event.target.value
+                }))
+              }
+            />
+          </label>
+
           <div className="grid-two">
             <label>
-              Event date
+              Start time
               <input
                 required
-                min={minDate}
-                type="date"
-                value={formData.eventDate}
-                onChange={(event) =>
-                  setFormData((current) => ({
-                    ...current,
-                    eventDate: event.target.value
-                  }))
-                }
-              />
-            </label>
-
-            <label>
-              Start time
-              <select
-                className="time-select"
+                className="time-input"
+                type="text"
+                inputMode="text"
+                placeholder="08:00 AM"
                 value={formData.startTime}
                 onChange={(event) =>
                   setFormData((current) => ({
@@ -229,19 +225,18 @@ export default function Home() {
                     startTime: event.target.value
                   }))
                 }
-              >
-                {timeSlots.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </select>
+              />
+              <span className="field-hint">Enter time like 08:00 AM or 01:30 PM</span>
             </label>
 
             <label>
               End time
-              <select
-                className="time-select"
+              <input
+                required
+                className="time-input"
+                type="text"
+                inputMode="text"
+                placeholder="10:00 AM"
                 value={formData.endTime}
                 onChange={(event) =>
                   setFormData((current) => ({
@@ -249,13 +244,8 @@ export default function Home() {
                     endTime: event.target.value
                   }))
                 }
-              >
-                {timeSlots.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </select>
+              />
+              <span className="field-hint">Enter time like 10:00 AM or 03:45 PM</span>
             </label>
           </div>
 
