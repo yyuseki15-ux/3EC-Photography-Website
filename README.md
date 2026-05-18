@@ -5,7 +5,7 @@ This project uses a simple live-ready stack:
 - `Next.js`
 - `TypeScript`
 - `Vercel` for hosting
-- `Supabase` for database and future booking storage
+- `Supabase` for database-backed booking storage
 
 ## Why this stack
 
@@ -20,8 +20,9 @@ It is a strong fit for a sports booking website because it is:
 - responsive landing page
 - sports event booking form
 - date selection for customers
-- simple booking request API route
-- environment template for future Supabase setup
+- booking request API route
+- Supabase server integration for saving bookings
+- SQL setup file for the bookings table
 
 ## Run locally
 
@@ -38,9 +39,24 @@ Then open `http://localhost:3000`.
 3. Add environment variables from `.env.example`.
 4. Deploy.
 
+## Supabase setup
+
+1. Create a Supabase project.
+2. In the SQL Editor, run [supabase/bookings.sql](/E:/3EC%20Photograhhy%20Website/supabase/bookings.sql).
+3. In the project Connect dialog or Settings > API Keys, copy:
+   - `Project URL`
+   - `Publishable key`
+   - `Secret key`
+4. Add them to `.env.local` and in Vercel project environment variables:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+SUPABASE_SECRET_KEY=your-secret-key
+```
+
 ## Recommended next upgrades
 
-- connect bookings to Supabase database
 - add admin dashboard for viewing bookings
 - block unavailable dates automatically
 - add online payments
