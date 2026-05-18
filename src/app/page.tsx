@@ -23,8 +23,8 @@ const sports = [
   "Volleyball"
 ];
 
-const suggestedTimes = Array.from({ length: 32 }, (_, index) => {
-  const totalMinutes = 6 * 60 + index * 30;
+const suggestedTimes = Array.from({ length: 48 }, (_, index) => {
+  const totalMinutes = index * 30;
   const hours24 = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   const period = hours24 >= 12 ? "PM" : "AM";
@@ -93,7 +93,7 @@ export default function Home() {
     <main className="page-shell">
       <section className="hero-card">
         <div className="hero-copy">
-          <p className="eyebrow">3EC Sports Events</p>
+          <p className="eyebrow">3EC Sports Photography</p>
           <h1>Book your next sports event in minutes.</h1>
           <p className="hero-text">
             Let customers choose a date, pick a sport, and send a booking request
@@ -238,7 +238,7 @@ export default function Home() {
                   }))
                 }
               />
-              <span className="field-hint">Enter time like 08:00 AM or 01:30 PM</span>
+              <span className="field-hint">Choose or enter any time like 08:00 AM or 01:30 PM</span>
             </label>
 
             <label>
@@ -258,7 +258,7 @@ export default function Home() {
                   }))
                 }
               />
-              <span className="field-hint">Enter time like 10:00 AM or 03:45 PM</span>
+              <span className="field-hint">Choose or enter any time like 10:00 AM or 03:45 PM</span>
             </label>
           </div>
 
