@@ -65,6 +65,7 @@ export default function Home() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
+  const [scheduleIndex, setScheduleIndex] = useState(0);
   const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
   const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
@@ -111,6 +112,17 @@ export default function Home() {
   const selectedDateUnavailableTimes = useMemo(
     () => [...selectedDateBlockedTimes, ...selectedDateBookedTimes],
     [selectedDateBlockedTimes, selectedDateBookedTimes]
+  );
+  const safeScheduleIndex = useMemo(() => {
+    if (upcomingUnavailableSchedules.length === 0) {
+      return 0;
+    }
+
+    return Math.min(scheduleIndex, upcomingUnavailableSchedules.length - 1);
+  }, [scheduleIndex, upcomingUnavailableSchedules]);
+  const activeUnavailableSchedule = useMemo(
+    () => upcomingUnavailableSchedules[safeScheduleIndex] ?? null,
+    [safeScheduleIndex, upcomingUnavailableSchedules]
   );
   const hasBookedTimeConflict = useMemo(() => {
     if (formData.startTime.trim().length === 0 || formData.endTime.trim().length === 0) {
@@ -414,22 +426,50 @@ export default function Home() {
                 <div className="booked-schedule-header-text">
                   <strong>Future Unavailable Schedule</strong>
                   <span className="field-hint">
-                    Check the future dates and hours below, then choose any open time that does not overlap.
+                    See blocked dates and booked hours before you choose a time.
                   </span>
                 </div>
               </div>
 
-              <div className="booked-schedule-list">
-                {upcomingUnavailableSchedules.map((entry) => (
-                  <div className="booked-schedule-item static" key={entry.blocked_date}>
-                    <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
-                    <span>{getUnavailableScheduleSummary(entry)}</span>
-                    {entry.reason ? (
-                      <span className="booked-schedule-reason">{entry.reason}</span>
-                    ) : null}
+              {activeUnavailableSchedule ? (
+                <>
+                  <div className="booked-schedule-controls" aria-label="Unavailable date slider">
+                    <button
+                      className="booked-schedule-nav"
+                      type="button"
+                      disabled={safeScheduleIndex === 0}
+                      onClick={() => setScheduleIndex((current) => Math.max(current - 1, 0))}
+                    >
+                      ←
+                    </button>
+                    <span className="booked-schedule-count">
+                      {safeScheduleIndex + 1} of {upcomingUnavailableSchedules.length}
+                    </span>
+                    <button
+                      className="booked-schedule-nav"
+                      type="button"
+                      disabled={safeScheduleIndex === upcomingUnavailableSchedules.length - 1}
+                      onClick={() =>
+                        setScheduleIndex((current) =>
+                          Math.min(current + 1, upcomingUnavailableSchedules.length - 1)
+                        )
+                      }
+                    >
+                      →
+                    </button>
                   </div>
-                ))}
-              </div>
+
+                  <div className="booked-schedule-list">
+                    <div className="booked-schedule-item static" key={activeUnavailableSchedule.blocked_date}>
+                      <strong>{formatUnavailableDate(activeUnavailableSchedule.blocked_date)}</strong>
+                      <span>{getUnavailableScheduleSummary(activeUnavailableSchedule)}</span>
+                      {activeUnavailableSchedule.reason ? (
+                        <span className="booked-schedule-reason">{activeUnavailableSchedule.reason}</span>
+                      ) : null}
+                    </div>
+                  </div>
+                </>
+              ) : null}
 
               <Link className="booked-schedule-link" href="/unavailable-dates">
                 View all unavailable dates
