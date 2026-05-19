@@ -1,8 +1,8 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { getPublicUnavailableDates } from "@/lib/public-unavailable-dates";
 import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
+
+export const dynamic = "force-dynamic";
 
 function getUnavailableScheduleSummary(entry: PublicUnavailableDate) {
   if (entry.fully_blocked) {
@@ -22,57 +22,14 @@ function getUnavailableScheduleSummary(entry: PublicUnavailableDate) {
   return details.join(" | ");
 }
 
-export default function UnavailableDatesPage() {
-  const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
-  const [hasError, setHasError] = useState(false);
-
-  const futureUnavailableDates = useMemo(
-    () =>
-      unavailableDates.filter(
-        (entry) =>
-          entry.fully_blocked ||
-          entry.booked_time_slots.length > 0 ||
-          entry.blocked_time_slots.length > 0
-      ),
-    [unavailableDates]
+export default async function UnavailableDatesPage() {
+  const unavailableDates = await getPublicUnavailableDates();
+  const futureUnavailableDates = unavailableDates.filter(
+    (entry) =>
+      entry.fully_blocked ||
+      entry.booked_time_slots.length > 0 ||
+      entry.blocked_time_slots.length > 0
   );
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadUnavailableDates() {
-      try {
-        const response = await fetch("/api/unavailable-dates", {
-          method: "GET"
-        });
-
-        if (!response.ok) {
-          throw new Error("Could not load unavailable dates.");
-        }
-
-        const payload = (await response.json()) as {
-          dates?: PublicUnavailableDate[];
-        };
-
-        if (isMounted) {
-          setUnavailableDates(payload.dates ?? []);
-          setHasError(false);
-        }
-      } catch (error) {
-        console.error("Unavailable dates load failed:", error);
-
-        if (isMounted) {
-          setHasError(true);
-        }
-      }
-    }
-
-    loadUnavailableDates();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   return (
     <main className="public-page-shell">
@@ -90,12 +47,6 @@ export default function UnavailableDatesPage() {
             Back to booking form
           </Link>
         </div>
-
-        {hasError ? (
-          <p className="status-message error">
-            We could not load the unavailable schedule right now. Please try again in a moment.
-          </p>
-        ) : null}
 
         {futureUnavailableDates.length > 0 ? (
           <div className="booked-schedule-list booked-schedule-list-full">
