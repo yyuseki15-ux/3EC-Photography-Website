@@ -136,7 +136,6 @@ export async function POST(request: Request) {
         address: payload.address.trim(),
         event_date: payload.eventDate,
         time_slot: timeSlot,
-        players: 1,
         notes: payload.notes?.trim() || null,
         status: "new"
       })

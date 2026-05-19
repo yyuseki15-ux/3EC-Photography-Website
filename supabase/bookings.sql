@@ -4,10 +4,9 @@ create table if not exists public.bookings (
   email text not null,
   phone text not null,
   sport text not null,
-  address text,
+  address text not null,
   event_date date not null,
   time_slot text not null,
-  players integer not null check (players >= 1),
   notes text,
   status text not null default 'new' check (status in ('new', 'confirmed', 'completed', 'cancelled')),
   created_at timestamptz not null default now()
@@ -29,6 +28,16 @@ check (status in ('new', 'confirmed', 'completed', 'cancelled'));
 
 alter table public.bookings
 add column if not exists address text;
+
+update public.bookings
+set address = 'Address not provided'
+where address is null or btrim(address) = '';
+
+alter table public.bookings
+alter column address set not null;
+
+alter table public.bookings
+drop column if exists players;
 
 alter table public.bookings enable row level security;
 
