@@ -68,6 +68,36 @@ export async function sendNewBookingNotification(booking: BookingRecord) {
   }
 }
 
+export async function sendBookingConfirmationNotification(booking: BookingRecord) {
+  const config = getResendConfig();
+
+  if (!config) {
+    console.warn("Skipping booking confirmation email because Resend is not fully configured.");
+    return;
+  }
+
+  const { resend, fromEmail } = config;
+  const subject = `We received your ${booking.sport} booking request`;
+
+  const { error } = await resend.emails.send({
+    from: fromEmail,
+    to: [booking.email],
+    subject,
+    html: `
+      <h1>Booking Request Received</h1>
+      <p>Hello ${booking.full_name},</p>
+      <p>Thanks for booking with 3EC Sports Photography. We have received your request and marked it as <strong>${formatBookingStatus(booking.status)}</strong>.</p>
+      <p>We will review the details and follow up if anything else is needed.</p>
+      ${bookingSummaryHtml(booking)}
+    `,
+    text: `Booking Request Received\n\nHello ${booking.full_name},\n\nThanks for booking with 3EC Sports Photography. We have received your request and marked it as ${formatBookingStatus(booking.status)}.\n\nWe will review the details and follow up if anything else is needed.\n\n${bookingSummaryText(booking)}`
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
 export async function sendBookingStatusChangedNotification(
   booking: BookingRecord,
   previousStatus: BookingStatus

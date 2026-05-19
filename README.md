@@ -65,6 +65,7 @@ ADMIN_NOTIFICATION_EMAIL=your-admin-email@example.com
 This project can send email notifications with `Resend` for:
 
 - new booking requests to the admin email
+- booking confirmations to the customer email
 - booking status changes to the customer email
 
 To enable this:
@@ -77,4 +78,3 @@ To enable this:
 
 - block unavailable dates automatically
 - add online payments
-- send email confirmation after booking

@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { sendNewBookingNotification } from "@/lib/booking-notifications";
+import {
+  sendBookingConfirmationNotification,
+  sendNewBookingNotification
+} from "@/lib/booking-notifications";
 import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
 import { type BookingRecord } from "@/lib/bookings";
 import { normalizeBookingTimes } from "@/lib/booking-time";
@@ -103,6 +106,12 @@ export async function POST(request: Request) {
       await sendNewBookingNotification(data as BookingRecord);
     } catch (notificationError) {
       console.error("New booking notification failed:", notificationError);
+    }
+
+    try {
+      await sendBookingConfirmationNotification(data as BookingRecord);
+    } catch (notificationError) {
+      console.error("Booking confirmation notification failed:", notificationError);
     }
   } catch (error) {
     const errorMessage =
