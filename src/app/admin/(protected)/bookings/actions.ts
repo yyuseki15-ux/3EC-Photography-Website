@@ -231,6 +231,48 @@ export async function addUnavailableDate(formData: FormData) {
   revalidatePath("/admin/bookings");
 }
 
+export async function updateUnavailableDate(formData: FormData) {
+  const unavailableDateId = getTrimmedString(formData, "unavailableDateId");
+  const blockedDate = getTrimmedString(formData, "blockedDate");
+  const startTime = getTrimmedString(formData, "startTime");
+  const endTime = getTrimmedString(formData, "endTime");
+  const reason = getTrimmedString(formData, "reason");
+
+  if (!unavailableDateId || !blockedDate) {
+    throw new Error("Please choose a blocked date to update.");
+  }
+
+  let normalizedStartTime: string | null = null;
+  let normalizedEndTime: string | null = null;
+
+  if ((startTime && !endTime) || (!startTime && endTime)) {
+    throw new Error("Enter both start and end time, or leave both blank for a full-day block.");
+  }
+
+  if (startTime && endTime) {
+    const normalizedTimes = normalizeBookingTimes(startTime, endTime);
+    normalizedStartTime = normalizedTimes.normalizedStartTime;
+    normalizedEndTime = normalizedTimes.normalizedEndTime;
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { error } = await supabase
+    .from("unavailable_dates")
+    .update({
+      blocked_date: blockedDate,
+      start_time: normalizedStartTime,
+      end_time: normalizedEndTime,
+      reason: reason || null
+    })
+    .eq("id", Number.parseInt(unavailableDateId, 10));
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/admin/bookings");
+}
+
 export async function removeUnavailableDate(formData: FormData) {
   const unavailableDateId = getTrimmedString(formData, "unavailableDateId");
 

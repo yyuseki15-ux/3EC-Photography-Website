@@ -597,10 +597,7 @@ textarea {
 }
 
 .admin-unavailable-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
+  display: block;
   padding: 0.95rem 1rem;
   border: 1px solid var(--line);
   border-radius: 20px;
@@ -614,6 +611,46 @@ textarea {
 .admin-unavailable-item span,
 .admin-empty-inline {
   color: var(--muted);
+}
+
+.admin-unavailable-edit-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-unavailable-summary {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.admin-unavailable-edit-grid {
+  display: grid;
+  grid-template-columns: minmax(160px, 200px) repeat(2, minmax(140px, 180px)) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: end;
+}
+
+.admin-unavailable-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.admin-unavailable-actions button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1.15rem;
+  color: #fff7f0;
+  background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.admin-unavailable-actions .secondary-button {
+  color: var(--text);
+  background: #fffaf2;
+  border: 1px solid rgba(31, 42, 31, 0.12);
 }
 
 .admin-empty-inline {
@@ -855,6 +892,10 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .admin-unavailable-edit-grid {
+    grid-template-columns: 1fr;
+  }
+
   .admin-filter-actions {
     justify-content: stretch;
   }
@@ -906,7 +947,8 @@ textarea {
   }
 
   .admin-row-actions,
-  .admin-edit-actions {
+  .admin-edit-actions,
+  .admin-unavailable-actions {
     flex-direction: column;
     align-items: stretch;
   }

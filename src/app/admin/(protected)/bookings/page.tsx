@@ -4,8 +4,9 @@ import { bookingStatuses, formatBookingStatus, type BookingStatus } from "@/lib/
 import { type BookingRecord } from "@/lib/bookings";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { suggestedTimes } from "@/lib/time-options";
 import { formatTimeRange, formatUnavailableDate, type UnavailableDateRecord } from "@/lib/unavailable-dates";
-import { addUnavailableDate, deleteBooking, removeUnavailableDate } from "./actions";
+import { addUnavailableDate, deleteBooking, removeUnavailableDate, updateUnavailableDate } from "./actions";
 import { DeleteButton } from "./delete-button";
 import { StatusForm } from "./status-form";
 
@@ -232,12 +233,26 @@ export default async function AdminBookingsPage({
 
           <label className="admin-filter-field">
             Start time
-            <input name="startTime" placeholder="08:00 AM" type="text" />
+            <select defaultValue="" name="startTime">
+              <option value="">Full day</option>
+              {suggestedTimes.map((time) => (
+                <option key={`new-start-${time}`} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="admin-filter-field">
             End time
-            <input name="endTime" placeholder="10:00 AM" type="text" />
+            <select defaultValue="" name="endTime">
+              <option value="">Full day</option>
+              {suggestedTimes.map((time) => (
+                <option key={`new-end-${time}`} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="admin-filter-field admin-filter-search">
@@ -254,16 +269,65 @@ export default async function AdminBookingsPage({
           <div className="admin-unavailable-list">
             {unavailableDates.map((entry) => (
               <div className="admin-unavailable-item" key={entry.id}>
-                <div>
-                  <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
-                  <span>{formatTimeRange(entry.start_time, entry.end_time)}</span>
-                  <span>{entry.reason || "No reason added"}</span>
-                </div>
-                <form action={removeUnavailableDate}>
+                <form className="admin-unavailable-edit-form" action={updateUnavailableDate}>
                   <input type="hidden" name="unavailableDateId" value={entry.id} />
-                  <button className="secondary-button admin-action-link" type="submit">
-                    Remove
-                  </button>
+
+                  <div className="admin-unavailable-summary">
+                    <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
+                    <span>{formatTimeRange(entry.start_time, entry.end_time)}</span>
+                  </div>
+
+                  <div className="admin-unavailable-edit-grid">
+                    <label className="admin-filter-field">
+                      Blocked date
+                      <input defaultValue={entry.blocked_date} name="blockedDate" required type="date" />
+                    </label>
+
+                    <label className="admin-filter-field">
+                      Start time
+                      <select defaultValue={entry.start_time ?? ""} name="startTime">
+                        <option value="">Full day</option>
+                        {suggestedTimes.map((time) => (
+                          <option key={`${entry.id}-start-${time}`} value={time}>
+                            {time}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="admin-filter-field">
+                      End time
+                      <select defaultValue={entry.end_time ?? ""} name="endTime">
+                        <option value="">Full day</option>
+                        {suggestedTimes.map((time) => (
+                          <option key={`${entry.id}-end-${time}`} value={time}>
+                            {time}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="admin-filter-field admin-filter-search">
+                      Reason
+                      <input
+                        defaultValue={entry.reason ?? ""}
+                        name="reason"
+                        placeholder="Optional note like fully booked or private event"
+                        type="text"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="admin-unavailable-actions">
+                    <button type="submit">Save changes</button>
+                    <button
+                      className="secondary-button admin-action-link"
+                      formAction={removeUnavailableDate}
+                      type="submit"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </form>
               </div>
             ))}
