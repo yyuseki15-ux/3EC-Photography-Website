@@ -220,27 +220,6 @@ export default function Home() {
       <div className="customer-backdrop" aria-hidden="true" />
       <section className="customer-hero-shell">
         <div className="hero-card sports-hero-card">
-          <div className="hero-copy sports-hero-copy">
-            <p className="eyebrow">3EC Sports Photography</p>
-            <span className="sports-badge">Booking Only</span>
-            <h1 className="sports-hero-title">Book your sports photography slot.</h1>
-            <p className="hero-text sports-hero-text">
-              Choose your sport, event date, and open time window. The form below already
-              checks unavailable dates and blocked hours before you submit.
-            </p>
-
-            <div className="sports-highlight-bar">
-              <div>
-                <strong>Live availability</strong>
-                <span>Blocked dates and booked hours are shown before you send a request.</span>
-              </div>
-              <div>
-                <strong>Simple booking flow</strong>
-                <span>Fill out the event details once and send the request directly to admin.</span>
-              </div>
-            </div>
-          </div>
-
           <form className="booking-card sports-booking-card" id="booking-form" onSubmit={handleSubmit}>
             <div className="form-heading sports-form-heading">
               <span className="sports-form-tag">Reserve coverage</span>

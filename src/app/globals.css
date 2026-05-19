@@ -158,6 +158,9 @@ textarea {
 }
 
 .sports-hero-card {
+  grid-template-columns: 1fr;
+  max-width: 780px;
+  margin: 0 auto;
   gap: 2.25rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
