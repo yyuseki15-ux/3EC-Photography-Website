@@ -229,24 +229,11 @@ textarea {
   border-radius: 16px;
   background: rgba(255, 250, 242, 0.85);
   text-align: left;
-  cursor: pointer;
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.booked-schedule-item:hover {
-  transform: translateY(-1px);
-  border-color: rgba(198, 93, 46, 0.28);
-}
-
-.booked-schedule-item:focus-visible {
-  outline: none;
-  border-color: rgba(198, 93, 46, 0.7);
-  box-shadow: 0 0 0 4px rgba(198, 93, 46, 0.12);
-}
-
-.booked-schedule-item.selected {
-  border-color: rgba(198, 93, 46, 0.5);
-  box-shadow: 0 10px 24px rgba(198, 93, 46, 0.12);
+.booked-schedule-item.static {
+  cursor: default;
 }
 
 .booked-schedule-item span {

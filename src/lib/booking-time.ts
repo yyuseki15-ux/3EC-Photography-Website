@@ -1,5 +1,4 @@
 const timePattern = /^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i;
-export const BOOKING_GAP_MINUTES = 120;
 
 function normalizeTimeInput(value: string) {
   return value.toUpperCase().replace(/\s+/g, " ").trim();
@@ -49,21 +48,20 @@ export function getTimeSlotRange(timeSlot: string) {
   };
 }
 
-export function hasBookingGapConflict(
+export function hasBookingTimeConflict(
   requestedStartTime: string,
   requestedEndTime: string,
-  existingTimeSlots: string[],
-  gapMinutes = BOOKING_GAP_MINUTES
+  existingTimeSlots: string[]
 ) {
   const requestedStartMinutes = parseTimeToMinutes(requestedStartTime);
   const requestedEndMinutes = parseTimeToMinutes(requestedEndTime);
 
   return existingTimeSlots.some((timeSlot) => {
     const { startMinutes, endMinutes } = getTimeSlotRange(timeSlot);
-    const requestedEndsBeforeBufferedStart = requestedEndMinutes + gapMinutes <= startMinutes;
-    const requestedStartsAfterBufferedEnd = requestedStartMinutes >= endMinutes + gapMinutes;
+    const requestedEndsBeforeExisting = requestedEndMinutes <= startMinutes;
+    const requestedStartsAfterExisting = requestedStartMinutes >= endMinutes;
 
-    return !requestedEndsBeforeBufferedStart && !requestedStartsAfterBufferedEnd;
+    return !requestedEndsBeforeExisting && !requestedStartsAfterExisting;
   });
 }
 

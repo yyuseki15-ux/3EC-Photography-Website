@@ -5,7 +5,7 @@ import {
 } from "@/lib/booking-notifications";
 import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
 import { type BookingRecord } from "@/lib/bookings";
-import { BOOKING_GAP_MINUTES, hasBookingGapConflict, normalizeBookingTimes } from "@/lib/booking-time";
+import { hasBookingTimeConflict, normalizeBookingTimes } from "@/lib/booking-time";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type BookingPayload = {
@@ -112,17 +112,10 @@ export async function POST(request: Request) {
 
     const existingTimeSlots = (existingBookingsOnDate ?? []).map((booking) => booking.time_slot);
 
-    if (
-      hasBookingGapConflict(
-        normalizedStartTime,
-        normalizedEndTime,
-        existingTimeSlots,
-        BOOKING_GAP_MINUTES
-      )
-    ) {
+    if (hasBookingTimeConflict(normalizedStartTime, normalizedEndTime, existingTimeSlots)) {
       return NextResponse.json(
         {
-          message: "That time is too close to an existing booking. Please leave at least a 2-hour gap."
+          message: "That time is already booked on this date. Please choose a different time."
         },
         { status: 400 }
       );

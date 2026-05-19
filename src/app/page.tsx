@@ -1,9 +1,9 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
-import { BOOKING_GAP_MINUTES } from "@/lib/booking-time";
+import { hasBookingTimeConflict, normalizeBookingTimes } from "@/lib/booking-time";
 import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
 
 type BookingState = {
@@ -46,7 +46,6 @@ export default function Home() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
-  const eventDateInputRef = useRef<HTMLInputElement | null>(null);
   const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
   const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
@@ -81,6 +80,22 @@ export default function Home() {
     () => selectedDateDetails?.time_slots ?? [],
     [selectedDateDetails]
   );
+  const hasBookedTimeConflict = useMemo(() => {
+    if (formData.startTime.trim().length === 0 || formData.endTime.trim().length === 0) {
+      return false;
+    }
+
+    try {
+      const normalizedTimes = normalizeBookingTimes(formData.startTime, formData.endTime);
+      return hasBookingTimeConflict(
+        normalizedTimes.normalizedStartTime,
+        normalizedTimes.normalizedEndTime,
+        selectedDateBookedTimes
+      );
+    } catch {
+      return false;
+    }
+  }, [formData.endTime, formData.startTime, selectedDateBookedTimes]);
 
   useEffect(() => {
     let isMounted = true;
@@ -114,17 +129,6 @@ export default function Home() {
     };
   }, []);
 
-  function handleBookedScheduleClick(date: string) {
-    setFormData((current) => ({
-      ...current,
-      eventDate: date
-    }));
-    setStatus("idle");
-    setMessage("");
-    eventDateInputRef.current?.focus();
-    eventDateInputRef.current?.showPicker?.();
-  }
-
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -137,6 +141,12 @@ export default function Home() {
     if (hasTooManyNoteWords) {
       setStatus("error");
       setMessage(`Notes must be ${BOOKING_NOTES_WORD_LIMIT} words or fewer.`);
+      return;
+    }
+
+    if (hasBookedTimeConflict) {
+      setStatus("error");
+      setMessage("That time is already booked on this date. Please choose a different time.");
       return;
     }
 
@@ -289,7 +299,6 @@ export default function Home() {
           <label>
             Event date
             <input
-              ref={eventDateInputRef}
               required
               min={minDate}
               type="date"
@@ -330,7 +339,7 @@ export default function Home() {
               />
               <span className="field-hint">
                 {selectedDateBookedTimes.length > 0
-                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}. Please leave at least a ${BOOKING_GAP_MINUTES / 60}-hour gap.`
+                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}`
                   : "Choose or enter any time like 08:00 AM or 01:30 PM"}
               </span>
             </label>
@@ -352,9 +361,11 @@ export default function Home() {
                   }))
                 }
               />
-              <span className="field-hint">
+              <span className={`field-hint ${hasBookedTimeConflict ? "field-hint-error" : ""}`}>
                 {selectedDateBookedTimes.length > 0
-                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}. Please leave at least a ${BOOKING_GAP_MINUTES / 60}-hour gap.`
+                  ? hasBookedTimeConflict
+                    ? "That time overlaps an existing booking on this date."
+                    : `Booked times on this date: ${selectedDateBookedTimes.join(", ")}`
                   : "Choose or enter any time like 10:00 AM or 03:45 PM"}
               </span>
             </label>
@@ -371,22 +382,16 @@ export default function Home() {
                 <div>
                   <strong>Future Booked Schedule</strong>
                   <span className="field-hint">
-                    Customers can still book the same date if they leave at least a 2-hour gap.
+                    Customers can still book the same date, but not the same time.
                   </span>
                 </div>
               </div>
 
               <div className="booked-schedule-list">
                 {upcomingBookedSchedules.map((entry) => (
-                  <button
-                    className={`booked-schedule-item ${formData.eventDate === entry.blocked_date ? "selected" : ""}`}
-                    key={entry.blocked_date}
-                    type="button"
-                    onClick={() => handleBookedScheduleClick(entry.blocked_date)}
-                  >
+                  <div className="booked-schedule-item static" key={entry.blocked_date}>
                     <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
-                    <span>{entry.time_slots.join(", ")}</span>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -424,7 +429,7 @@ export default function Home() {
 
           <button
             type="submit"
-            disabled={status === "submitting" || hasTooManyNoteWords || isUnavailableDate}
+            disabled={status === "submitting" || hasTooManyNoteWords || isUnavailableDate || hasBookedTimeConflict}
           >
             {status === "submitting" ? "Sending booking..." : "Book Event"}
           </button>
