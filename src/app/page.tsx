@@ -41,6 +41,24 @@ const initialState: BookingState = {
   notes: ""
 };
 
+function getUnavailableScheduleSummary(entry: PublicUnavailableDate) {
+  if (entry.fully_blocked) {
+    return "Full day unavailable";
+  }
+
+  const details: string[] = [];
+
+  if (entry.blocked_time_slots.length > 0) {
+    details.push(`Blocked: ${entry.blocked_time_slots.join(", ")}`);
+  }
+
+  if (entry.booked_time_slots.length > 0) {
+    details.push(`Booked: ${entry.booked_time_slots.join(", ")}`);
+  }
+
+  return details.join(" | ");
+}
+
 export default function Home() {
   const [formData, setFormData] = useState<BookingState>(initialState);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -69,11 +87,16 @@ export default function Home() {
         .map((entry) => formatUnavailableDate(entry.blocked_date)),
     [unavailableDates]
   );
-  const upcomingBookedSchedules = useMemo(
+  const upcomingUnavailableSchedules = useMemo(
     () =>
       unavailableDates
-        .filter((entry) => entry.booked_time_slots.length > 0 || entry.blocked_time_slots.length > 0)
-        .slice(0, 6),
+        .filter(
+          (entry) =>
+            entry.fully_blocked ||
+            entry.booked_time_slots.length > 0 ||
+            entry.blocked_time_slots.length > 0
+        )
+        .slice(0, 8),
     [unavailableDates]
   );
   const selectedDateBlockedTimes = useMemo(
@@ -346,7 +369,7 @@ export default function Home() {
                 }
               />
               <span className="field-hint">
-                {selectedDateBookedTimes.length > 0
+                {selectedDateUnavailableTimes.length > 0
                   ? `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
                   : "Choose or enter any time like 08:00 AM or 01:30 PM"}
               </span>
@@ -370,7 +393,7 @@ export default function Home() {
                 }
               />
               <span className={`field-hint ${hasBookedTimeConflict ? "field-hint-error" : ""}`}>
-                {selectedDateBookedTimes.length > 0
+                {selectedDateUnavailableTimes.length > 0
                   ? hasBookedTimeConflict
                     ? "That time is unavailable on this date."
                     : `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
@@ -379,7 +402,7 @@ export default function Home() {
             </label>
           </div>
 
-          {upcomingBookedSchedules.length > 0 ? (
+          {upcomingUnavailableSchedules.length > 0 ? (
             <div className="booked-schedule-card">
               <div className="booked-schedule-header">
                 <span className="calendar-icon" aria-hidden="true">
@@ -388,18 +411,21 @@ export default function Home() {
                   </svg>
                 </span>
                 <div>
-                  <strong>Future Booked Schedule</strong>
+                  <strong>Future Unavailable Schedule</strong>
                   <span className="field-hint">
-                    Customers can still book the same date, but not the unavailable hours shown below.
+                    Check the future dates and hours below, then choose any open time that does not overlap.
                   </span>
                 </div>
               </div>
 
               <div className="booked-schedule-list">
-                {upcomingBookedSchedules.map((entry) => (
+                {upcomingUnavailableSchedules.map((entry) => (
                   <div className="booked-schedule-item static" key={entry.blocked_date}>
                     <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
-                    <span>{[...entry.blocked_time_slots, ...entry.booked_time_slots].join(", ")}</span>
+                    <span>{getUnavailableScheduleSummary(entry)}</span>
+                    {entry.reason ? (
+                      <span className="booked-schedule-reason">{entry.reason}</span>
+                    ) : null}
                   </div>
                 ))}
               </div>
