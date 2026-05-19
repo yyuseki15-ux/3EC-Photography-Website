@@ -81,6 +81,24 @@ export async function POST(request: Request) {
 
   try {
     const supabase = createSupabaseAdminClient();
+    const { data: blockedDate, error: blockedDateError } = await supabase
+      .from("unavailable_dates")
+      .select("id")
+      .eq("blocked_date", payload.eventDate)
+      .maybeSingle();
+
+    if (blockedDateError) {
+      throw blockedDateError;
+    }
+
+    if (blockedDate) {
+      return NextResponse.json(
+        {
+          message: "That date is unavailable. Please choose another date."
+        },
+        { status: 400 }
+      );
+    }
 
     const { data, error } = await supabase
       .from("bookings")

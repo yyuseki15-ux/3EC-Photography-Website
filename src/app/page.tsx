@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
+import { formatUnavailableDate } from "@/lib/unavailable-dates";
 
 type BookingState = {
   fullName: string;
@@ -43,6 +44,7 @@ export default function Home() {
   const [formData, setFormData] = useState<BookingState>(initialState);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
   const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
   const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
@@ -50,9 +52,57 @@ export default function Home() {
     const today = new Date();
     return today.toISOString().split("T")[0];
   }, []);
+  const isUnavailableDate = useMemo(
+    () => unavailableDates.includes(formData.eventDate),
+    [formData.eventDate, unavailableDates]
+  );
+  const upcomingUnavailableDates = useMemo(
+    () => unavailableDates.slice(0, 8).map((date) => formatUnavailableDate(date)),
+    [unavailableDates]
+  );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadUnavailableDates() {
+      try {
+        const response = await fetch("/api/unavailable-dates", {
+          method: "GET"
+        });
+
+        if (!response.ok) {
+          throw new Error("Could not load unavailable dates.");
+        }
+
+        const payload = (await response.json()) as {
+          dates?: Array<{
+            blocked_date: string;
+          }>;
+        };
+
+        if (isMounted) {
+          setUnavailableDates((payload.dates ?? []).map((entry) => entry.blocked_date));
+        }
+      } catch (error) {
+        console.error("Unavailable dates load failed:", error);
+      }
+    }
+
+    loadUnavailableDates();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (isUnavailableDate) {
+      setStatus("error");
+      setMessage("That date is unavailable. Please choose another date.");
+      return;
+    }
 
     if (hasTooManyNoteWords) {
       setStatus("error");
@@ -220,6 +270,13 @@ export default function Home() {
                 }))
               }
             />
+            <span className={`field-hint ${isUnavailableDate ? "field-hint-error" : ""}`}>
+              {isUnavailableDate
+                ? "That date is unavailable. Please choose another one."
+                : upcomingUnavailableDates.length > 0
+                  ? `Unavailable dates: ${upcomingUnavailableDates.join(", ")}`
+                  : "All upcoming dates are currently open."}
+            </span>
           </label>
 
           <div className="grid-two">
@@ -294,7 +351,10 @@ export default function Home() {
             </span>
           </label>
 
-          <button type="submit" disabled={status === "submitting" || hasTooManyNoteWords}>
+          <button
+            type="submit"
+            disabled={status === "submitting" || hasTooManyNoteWords || isUnavailableDate}
+          >
             {status === "submitting" ? "Sending booking..." : "Book Event"}
           </button>
 

@@ -316,6 +316,7 @@ textarea {
 }
 
 .admin-header-card h1,
+.admin-card-heading h2,
 .admin-empty-state h2,
 .admin-login-card h1 {
   margin: 0;
@@ -326,6 +327,10 @@ textarea {
   margin: 0.7rem 0 0;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.admin-card-heading {
+  margin-bottom: 1rem;
 }
 
 .admin-header-actions {
@@ -420,6 +425,43 @@ textarea {
 .admin-clear-button {
   border-radius: 999px;
   padding: 1rem 1.25rem;
+}
+
+.admin-unavailable-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.admin-unavailable-list {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.admin-unavailable-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.admin-unavailable-item strong {
+  display: block;
+}
+
+.admin-unavailable-item span,
+.admin-empty-inline {
+  color: var(--muted);
+}
+
+.admin-empty-inline {
+  margin: 1rem 0 0;
 }
 
 .admin-filter-actions button {
@@ -649,6 +691,10 @@ textarea {
   }
 
   .admin-filters-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-unavailable-form {
     grid-template-columns: 1fr;
   }
 

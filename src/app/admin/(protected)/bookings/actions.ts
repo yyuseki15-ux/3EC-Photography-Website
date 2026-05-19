@@ -190,3 +190,48 @@ export async function deleteBooking(formData: FormData) {
 
   revalidatePath("/admin/bookings");
 }
+
+export async function addUnavailableDate(formData: FormData) {
+  const blockedDate = getTrimmedString(formData, "blockedDate");
+  const reason = getTrimmedString(formData, "reason");
+
+  if (!blockedDate) {
+    throw new Error("Please choose a date to block.");
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { error } = await supabase.from("unavailable_dates").insert({
+    blocked_date: blockedDate,
+    reason: reason || null
+  });
+
+  if (error) {
+    throw new Error(
+      error.code === "23505"
+        ? "That date is already blocked."
+        : error.message
+    );
+  }
+
+  revalidatePath("/admin/bookings");
+}
+
+export async function removeUnavailableDate(formData: FormData) {
+  const unavailableDateId = getTrimmedString(formData, "unavailableDateId");
+
+  if (!unavailableDateId) {
+    throw new Error("Missing unavailable date id.");
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const { error } = await supabase
+    .from("unavailable_dates")
+    .delete()
+    .eq("id", Number.parseInt(unavailableDateId, 10));
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/admin/bookings");
+}

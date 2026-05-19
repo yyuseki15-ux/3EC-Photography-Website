@@ -29,3 +29,14 @@ check (status in ('new', 'confirmed', 'completed', 'cancelled'));
 alter table public.bookings enable row level security;
 
 revoke all on public.bookings from anon, authenticated;
+
+create table if not exists public.unavailable_dates (
+  id bigint generated always as identity primary key,
+  blocked_date date not null unique,
+  reason text,
+  created_at timestamptz not null default now()
+);
+
+alter table public.unavailable_dates enable row level security;
+
+revoke all on public.unavailable_dates from anon, authenticated;

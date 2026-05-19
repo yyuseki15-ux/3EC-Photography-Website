@@ -4,7 +4,8 @@ import { bookingStatuses, formatBookingStatus, type BookingStatus } from "@/lib/
 import { type BookingRecord } from "@/lib/bookings";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { deleteBooking } from "./actions";
+import { formatUnavailableDate, type UnavailableDateRecord } from "@/lib/unavailable-dates";
+import { addUnavailableDate, deleteBooking, removeUnavailableDate } from "./actions";
 import { DeleteButton } from "./delete-button";
 import { StatusForm } from "./status-form";
 
@@ -112,7 +113,17 @@ export default async function AdminBookingsPage({
     throw new Error(error.message);
   }
 
+  const { data: unavailableDatesData, error: unavailableDatesError } = await supabase
+    .from("unavailable_dates")
+    .select("*")
+    .order("blocked_date", { ascending: true });
+
+  if (unavailableDatesError) {
+    throw new Error(unavailableDatesError.message);
+  }
+
   const bookings = (data ?? []) as BookingRecord[];
+  const unavailableDates = (unavailableDatesData ?? []) as UnavailableDateRecord[];
   const filteredBookings = filterBookings(bookings, {
     query,
     sport: selectedSport,
@@ -200,6 +211,55 @@ export default async function AdminBookingsPage({
             ) : null}
           </div>
         </form>
+      </section>
+
+      <section className="admin-filters-card">
+        <div className="admin-card-heading">
+          <div>
+            <p className="admin-eyebrow">Availability Control</p>
+            <h2>Block Unavailable Dates</h2>
+            <p className="admin-subtitle">
+              Customers will not be able to submit bookings for blocked dates.
+            </p>
+          </div>
+        </div>
+
+        <form className="admin-unavailable-form" action={addUnavailableDate}>
+          <label className="admin-filter-field">
+            Date to block
+            <input name="blockedDate" required type="date" />
+          </label>
+
+          <label className="admin-filter-field admin-filter-search">
+            Reason
+            <input name="reason" placeholder="Optional note like fully booked or private event" type="text" />
+          </label>
+
+          <div className="admin-filter-actions">
+            <button type="submit">Block date</button>
+          </div>
+        </form>
+
+        {unavailableDates.length > 0 ? (
+          <div className="admin-unavailable-list">
+            {unavailableDates.map((entry) => (
+              <div className="admin-unavailable-item" key={entry.id}>
+                <div>
+                  <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
+                  <span>{entry.reason || "No reason added"}</span>
+                </div>
+                <form action={removeUnavailableDate}>
+                  <input type="hidden" name="unavailableDateId" value={entry.id} />
+                  <button className="secondary-button admin-action-link" type="submit">
+                    Remove
+                  </button>
+                </form>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="admin-empty-inline">No unavailable dates are blocked yet.</p>
+        )}
       </section>
 
       <section className="admin-table-card">
