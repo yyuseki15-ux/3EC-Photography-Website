@@ -379,7 +379,11 @@ export default function Home() {
                   value={formData.eventDate}
                   onChange={(event) => handleEventDateChange(event.target.value)}
                 />
-                <span className={`field-hint ${isUnavailableDate ? "field-hint-error" : ""}`}>
+                <span
+                  className={`field-hint ${
+                    isUnavailableDate || upcomingUnavailableDates.length > 0 ? "field-hint-error" : ""
+                  }`}
+                >
                   {isUnavailableDate
                     ? "That date is unavailable. Please choose another one."
                     : upcomingUnavailableDates.length > 0
@@ -408,7 +412,11 @@ export default function Home() {
                     </option>
                   ))}
                 </select>
-                <span className="field-hint">
+                <span
+                  className={`field-hint ${
+                    selectedDateUnavailableTimes.length > 0 ? "field-hint-error" : ""
+                  }`}
+                >
                   {selectedDateUnavailableTimes.length > 0
                     ? `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
                     : "Choose a start time from the dropdown."}
@@ -435,7 +443,13 @@ export default function Home() {
                     </option>
                   ))}
                 </select>
-                <span className={`field-hint ${hasBookedTimeConflict ? "field-hint-error" : ""}`}>
+                <span
+                  className={`field-hint ${
+                    hasBookedTimeConflict || selectedDateUnavailableTimes.length > 0
+                      ? "field-hint-error"
+                      : ""
+                  }`}
+                >
                   {selectedDateUnavailableTimes.length > 0
                     ? hasBookedTimeConflict
                       ? "That time is unavailable on this date."
