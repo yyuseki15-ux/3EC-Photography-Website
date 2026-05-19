@@ -4,11 +4,11 @@ import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { CSSProperties, useEffect, useState } from "react";
 import basketballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (1).png";
-import pickleballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (2).png";
-import badmintonImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (3).png";
-import volleyballImage from "../../../ChatGPT Image May 19, 2026, 06_35_19 PM (4).png";
-import tennisImage from "../../../ChatGPT Image May 19, 2026, 06_35_19 PM (5).png";
-import footballImage from "../../../ChatGPT Image May 19, 2026, 06_35_20 PM (6).png";
+import badmintonImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (2).png";
+import pickleballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (3).png";
+import tennisImage from "../../../ChatGPT Image May 19, 2026, 06_35_19 PM (4).png";
+import footballImage from "../../../ChatGPT Image May 19, 2026, 06_35_19 PM (5).png";
+import volleyballImage from "../../../ChatGPT Image May 19, 2026, 06_35_20 PM (6).png";
 
 type SportsMotionSlide = {
   name: string;
@@ -27,13 +27,6 @@ const motionSlides: SportsMotionSlide[] = [
     description: "Built for posters, dunks, fast breaks, and athlete-first hero shots."
   },
   {
-    name: "Pickleball",
-    image: pickleballImage,
-    accent: "Quick Reach",
-    motion: "Low stance, quick hands, and split-second court reactions.",
-    description: "A clean modern look for fast exchanges and club content."
-  },
-  {
     name: "Badminton",
     image: badmintonImage,
     accent: "Air Control",
@@ -41,11 +34,11 @@ const motionSlides: SportsMotionSlide[] = [
     description: "Sharp indoor action with speed, lift, and match-night intensity."
   },
   {
-    name: "Volleyball",
-    image: volleyballImage,
-    accent: "Net Power",
-    motion: "Hang time above the court with full attacking momentum.",
-    description: "Ideal for spikes, blocks, and dramatic mid-air team moments."
+    name: "Pickleball",
+    image: pickleballImage,
+    accent: "Quick Reach",
+    motion: "Low stance, quick hands, and split-second court reactions.",
+    description: "A clean modern look for fast exchanges and club content."
   },
   {
     name: "Tennis",
@@ -60,6 +53,13 @@ const motionSlides: SportsMotionSlide[] = [
     accent: "Pitch Impact",
     motion: "Explosive leg drive and match-winning power through contact.",
     description: "Perfect for game-winning kicks, pace, and stadium atmosphere."
+  },
+  {
+    name: "Volleyball",
+    image: volleyballImage,
+    accent: "Net Power",
+    motion: "Hang time above the court with full attacking momentum.",
+    description: "Ideal for spikes, blocks, and dramatic mid-air team moments."
   }
 ];
 
