@@ -94,20 +94,18 @@ export default function SportsLandingPage() {
   return (
     <main className="sports-landing-page">
       <div className="customer-backdrop" aria-hidden="true" />
-      <header className="sports-nav-shell">
-        <nav className="sports-nav">
-          <div className="sports-nav-brand">
-            <span className="sports-nav-mark">3EC</span>
-            <span className="sports-nav-name">Sports Photography</span>
-          </div>
-          <div className="sports-nav-links">
-            <Link href="/">Book Now</Link>
-          </div>
-        </nav>
-      </header>
-
       <div className="page-shell sports-landing-shell">
         <section className="sports-motion-carousel-section" id="motion-carousel">
+          <div className="sports-motion-topbar">
+            <div className="sports-nav-brand">
+              <span className="sports-nav-mark">3EC</span>
+              <span className="sports-nav-name">Sports Photography</span>
+            </div>
+            <div className="sports-nav-links">
+              <Link href="/">Book Now</Link>
+            </div>
+          </div>
+
           <div className="sports-motion-carousel">
             {motionSlides.map((slide, index) => {
               const offset = index - activeIndex;

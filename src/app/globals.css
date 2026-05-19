@@ -1218,6 +1218,28 @@ textarea {
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
 }
 
+.sports-motion-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+  padding: 0.2rem 0.1rem 0;
+  position: relative;
+  z-index: 2;
+}
+
+.sports-motion-topbar .sports-nav-brand,
+.sports-motion-topbar .sports-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.sports-motion-topbar .sports-nav-links a {
+  color: rgba(239, 245, 248, 0.9);
+}
+
 .sports-motion-carousel {
   position: relative;
   min-height: 760px;
@@ -2198,7 +2220,8 @@ textarea {
     max-width: 12ch;
   }
 
-  .sports-nav {
+  .sports-nav,
+  .sports-motion-topbar {
     flex-direction: column;
     border-radius: 28px;
   }
@@ -2300,7 +2323,8 @@ textarea {
     min-height: 260px;
   }
 
-  .sports-nav-links {
+  .sports-nav-links,
+  .sports-motion-topbar .sports-nav-links {
     flex-wrap: wrap;
     justify-content: center;
   }
