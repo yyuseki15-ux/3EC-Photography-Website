@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
 import { normalizeBookingTimes } from "@/lib/booking-time";
 import { isBookingStatus } from "@/lib/booking-status";
 import { sports } from "@/lib/sports";
@@ -52,6 +53,10 @@ export async function updateBooking(
 
   if (Number.isNaN(playerCount) || playerCount < 1) {
     return { error: "Players must be a valid number." };
+  }
+
+  if (hasExceededBookingNotesLimit(notes)) {
+    return { error: `Notes must be ${BOOKING_NOTES_WORD_LIMIT} words or fewer.` };
   }
 
   let timeSlot = "";

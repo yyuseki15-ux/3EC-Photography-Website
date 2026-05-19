@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
 import { normalizeBookingTimes } from "@/lib/booking-time";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -41,6 +42,15 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: "Players must be a valid number."
+      },
+      { status: 400 }
+    );
+  }
+
+  if (payload.notes && hasExceededBookingNotesLimit(payload.notes)) {
+    return NextResponse.json(
+      {
+        message: `Notes must be ${BOOKING_NOTES_WORD_LIMIT} words or fewer.`
       },
       { status: 400 }
     );

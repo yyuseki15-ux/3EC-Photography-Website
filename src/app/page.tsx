@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
 
 type BookingState = {
@@ -42,6 +43,8 @@ export default function Home() {
   const [formData, setFormData] = useState<BookingState>(initialState);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
+  const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
   const minDate = useMemo(() => {
     const today = new Date();
@@ -50,6 +53,13 @@ export default function Home() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (hasTooManyNoteWords) {
+      setStatus("error");
+      setMessage(`Notes must be ${BOOKING_NOTES_WORD_LIMIT} words or fewer.`);
+      return;
+    }
+
     setStatus("submitting");
     setMessage("");
 
@@ -279,9 +289,12 @@ export default function Home() {
               }
               placeholder="Tell us about venue needs, coaching, or equipment."
             />
+            <span className={`field-hint ${hasTooManyNoteWords ? "field-hint-error" : ""}`}>
+              {notesWordCount}/{BOOKING_NOTES_WORD_LIMIT} words
+            </span>
           </label>
 
-          <button type="submit" disabled={status === "submitting"}>
+          <button type="submit" disabled={status === "submitting" || hasTooManyNoteWords}>
             {status === "submitting" ? "Sending booking..." : "Book Event"}
           </button>
 

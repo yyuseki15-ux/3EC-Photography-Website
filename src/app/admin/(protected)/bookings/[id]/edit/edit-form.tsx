@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { updateBooking } from "../../actions";
 import { bookingStatuses, formatBookingStatus } from "@/lib/booking-status";
+import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
 
 type EditBookingFormProps = {
@@ -25,6 +26,9 @@ type EditBookingFormProps = {
 
 export function EditBookingForm({ booking, timeValues }: EditBookingFormProps) {
   const [state, formAction, isPending] = useActionState(updateBooking, undefined);
+  const [notes, setNotes] = useState(booking.notes ?? "");
+  const notesWordCount = useMemo(() => countWords(notes), [notes]);
+  const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
   return (
     <form className="admin-edit-form" action={formAction}>
@@ -103,7 +107,15 @@ export function EditBookingForm({ booking, timeValues }: EditBookingFormProps) {
 
       <label className="admin-filter-field">
         Notes
-        <textarea defaultValue={booking.notes ?? ""} name="notes" rows={5} />
+        <textarea
+          name="notes"
+          rows={5}
+          value={notes}
+          onChange={(event) => setNotes(event.target.value)}
+        />
+        <span className={`field-hint ${hasTooManyNoteWords ? "field-hint-error" : ""}`}>
+          {notesWordCount}/{BOOKING_NOTES_WORD_LIMIT} words
+        </span>
       </label>
 
       {state?.error ? <p className="status-message error">{state.error}</p> : null}
@@ -112,7 +124,7 @@ export function EditBookingForm({ booking, timeValues }: EditBookingFormProps) {
         <a className="secondary-button admin-clear-button" href="/admin/bookings">
           Cancel
         </a>
-        <button type="submit" disabled={isPending}>
+        <button type="submit" disabled={isPending || hasTooManyNoteWords}>
           {isPending ? "Saving..." : "Save changes"}
         </button>
       </div>
