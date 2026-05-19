@@ -6,9 +6,9 @@ export type BookingRecord = {
   email: string;
   phone: string;
   sport: string;
+  address: string | null;
   event_date: string;
   time_slot: string;
-  players: number;
   notes: string | null;
   status: BookingStatus;
   created_at: string;

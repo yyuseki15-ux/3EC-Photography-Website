@@ -13,8 +13,8 @@ type EditBookingFormProps = {
     email: string;
     phone: string;
     sport: string;
+    address: string | null;
     event_date: string;
-    players: number;
     notes: string | null;
     status: string;
   };
@@ -62,13 +62,13 @@ export function EditBookingForm({ booking, timeValues }: EditBookingFormProps) {
         </label>
 
         <label className="admin-filter-field">
-          Event date
-          <input defaultValue={booking.event_date} name="eventDate" required type="date" />
+          Address
+          <input defaultValue={booking.address ?? ""} name="address" required type="text" />
         </label>
 
         <label className="admin-filter-field">
-          Players
-          <input defaultValue={booking.players} min="1" name="players" required type="number" />
+          Event date
+          <input defaultValue={booking.event_date} name="eventDate" required type="date" />
         </label>
 
         <label className="admin-filter-field">

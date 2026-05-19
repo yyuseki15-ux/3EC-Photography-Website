@@ -13,10 +13,10 @@ type BookingState = {
   email: string;
   phone: string;
   sport: string;
+  address: string;
   eventDate: string;
   startTime: string;
   endTime: string;
-  players: string;
   notes: string;
 };
 
@@ -25,10 +25,10 @@ const initialState: BookingState = {
   email: "",
   phone: "",
   sport: "Football",
+  address: "",
   eventDate: "",
   startTime: "",
   endTime: "",
-  players: "10",
   notes: ""
 };
 
@@ -325,49 +325,48 @@ export default function Home() {
                   ))}
                 </select>
               </label>
-
-              <label>
-                Players
-                <input
-                  required
-                  min="2"
-                  max="30"
-                  type="number"
-                  value={formData.players}
-                  onChange={(event) =>
-                    setFormData((current) => ({
-                      ...current,
-                      players: event.target.value
-                    }))
-                  }
-                />
-              </label>
             </div>
 
             <label>
-              Event date
+              Address
               <input
                 required
-                min={minDate}
-                type="date"
-                value={formData.eventDate}
+                type="text"
+                value={formData.address}
                 onChange={(event) =>
                   setFormData((current) => ({
                     ...current,
-                    eventDate: event.target.value
+                    address: event.target.value
                   }))
                 }
+                placeholder="Enter venue or event address"
               />
-              <span className={`field-hint ${isUnavailableDate ? "field-hint-error" : ""}`}>
-                {isUnavailableDate
-                  ? "That date is unavailable. Please choose another one."
-                  : upcomingUnavailableDates.length > 0
-                    ? `Blocked dates: ${upcomingUnavailableDates.join(", ")}`
-                    : "No manually blocked dates right now."}
-              </span>
             </label>
 
             <div className="grid-two">
+              <label>
+                Event date
+                <input
+                  required
+                  min={minDate}
+                  type="date"
+                  value={formData.eventDate}
+                  onChange={(event) =>
+                    setFormData((current) => ({
+                      ...current,
+                      eventDate: event.target.value
+                    }))
+                  }
+                />
+                <span className={`field-hint ${isUnavailableDate ? "field-hint-error" : ""}`}>
+                  {isUnavailableDate
+                    ? "That date is unavailable. Please choose another one."
+                    : upcomingUnavailableDates.length > 0
+                      ? `Blocked dates: ${upcomingUnavailableDates.join(", ")}`
+                      : "No manually blocked dates right now."}
+                </span>
+              </label>
+
               <label>
                 Start time
                 <select

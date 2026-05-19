@@ -71,6 +71,7 @@ function filterBookings(
         booking.full_name,
         booking.email,
         booking.phone,
+        booking.address ?? "",
         booking.notes ?? "",
         booking.sport,
         booking.time_slot
@@ -414,9 +415,9 @@ export default async function AdminBookingsPage({
                 <tr>
                   <th>Customer</th>
                   <th>Sport</th>
+                  <th>Address</th>
                   <th>Event date</th>
                   <th>Time</th>
-                  <th>Players</th>
                   <th>Status</th>
                   <th>Notes</th>
                   <th>Submitted</th>
@@ -434,9 +435,9 @@ export default async function AdminBookingsPage({
                       </div>
                     </td>
                     <td>{booking.sport}</td>
+                    <td>{booking.address || "No address"}</td>
                     <td>{formatDate(booking.event_date)}</td>
                     <td>{booking.time_slot}</td>
-                    <td>{booking.players}</td>
                     <td>
                       <StatusForm bookingId={booking.id} status={booking.status} />
                     </td>

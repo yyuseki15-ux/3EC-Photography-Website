@@ -46,14 +46,14 @@ export async function updateBooking(
   const email = getTrimmedString(formData, "email");
   const phone = getTrimmedString(formData, "phone");
   const sport = getTrimmedString(formData, "sport");
+  const address = getTrimmedString(formData, "address");
   const eventDate = getTrimmedString(formData, "eventDate");
   const startTime = getTrimmedString(formData, "startTime");
   const endTime = getTrimmedString(formData, "endTime");
-  const players = getTrimmedString(formData, "players");
   const notes = getTrimmedString(formData, "notes");
   const status = getTrimmedString(formData, "status");
 
-  if (!bookingId || !fullName || !email || !phone || !sport || !eventDate || !startTime || !endTime || !players) {
+  if (!bookingId || !fullName || !email || !phone || !sport || !address || !eventDate || !startTime || !endTime) {
     return { error: "Please complete all required booking details." };
   }
 
@@ -63,12 +63,6 @@ export async function updateBooking(
 
   if (!isBookingStatus(status)) {
     return { error: "Please choose a valid booking status." };
-  }
-
-  const playerCount = Number.parseInt(players, 10);
-
-  if (Number.isNaN(playerCount) || playerCount < 1) {
-    return { error: "Players must be a valid number." };
   }
 
   if (hasExceededBookingNotesLimit(notes)) {
@@ -105,9 +99,9 @@ export async function updateBooking(
       email,
       phone,
       sport,
+      address,
       event_date: eventDate,
       time_slot: timeSlot,
-      players: playerCount,
       notes: notes || null,
       status
     })

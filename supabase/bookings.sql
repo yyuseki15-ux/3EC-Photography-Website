@@ -4,6 +4,7 @@ create table if not exists public.bookings (
   email text not null,
   phone text not null,
   sport text not null,
+  address text,
   event_date date not null,
   time_slot text not null,
   players integer not null check (players >= 1),
@@ -25,6 +26,9 @@ drop constraint if exists bookings_status_check;
 alter table public.bookings
 add constraint bookings_status_check
 check (status in ('new', 'confirmed', 'completed', 'cancelled'));
+
+alter table public.bookings
+add column if not exists address text;
 
 alter table public.bookings enable row level security;
 

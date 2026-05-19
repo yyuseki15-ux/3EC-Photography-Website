@@ -13,10 +13,10 @@ type BookingPayload = {
   email?: string;
   phone?: string;
   sport?: string;
+  address?: string;
   eventDate?: string;
   startTime?: string;
   endTime?: string;
-  players?: string;
   notes?: string;
 };
 
@@ -28,25 +28,14 @@ export async function POST(request: Request) {
     !payload.email ||
     !payload.phone ||
     !payload.sport ||
+    !payload.address ||
     !payload.eventDate ||
     !payload.startTime ||
-    !payload.endTime ||
-    !payload.players
+    !payload.endTime
   ) {
     return NextResponse.json(
       {
         message: "Please complete all required booking details."
-      },
-      { status: 400 }
-    );
-  }
-
-  const playerCount = Number.parseInt(payload.players, 10);
-
-  if (Number.isNaN(playerCount) || playerCount < 1) {
-    return NextResponse.json(
-      {
-        message: "Players must be a valid number."
       },
       { status: 400 }
     );
@@ -144,9 +133,9 @@ export async function POST(request: Request) {
         email: payload.email,
         phone: payload.phone,
         sport: payload.sport,
+        address: payload.address.trim(),
         event_date: payload.eventDate,
         time_slot: timeSlot,
-        players: playerCount,
         notes: payload.notes?.trim() || null,
         status: "new"
       })

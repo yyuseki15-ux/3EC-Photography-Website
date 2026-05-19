@@ -10,31 +10,31 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "event_date" | "time_slot" | "players" | "notes" | "status">) {
+function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "notes" | "status">) {
   return `
     <ul>
       <li><strong>Name:</strong> ${booking.full_name}</li>
       <li><strong>Email:</strong> ${booking.email}</li>
       <li><strong>Phone:</strong> ${booking.phone}</li>
       <li><strong>Sport:</strong> ${booking.sport}</li>
+      <li><strong>Address:</strong> ${booking.address || "No address"}</li>
       <li><strong>Date:</strong> ${formatDate(booking.event_date)}</li>
       <li><strong>Time:</strong> ${booking.time_slot}</li>
-      <li><strong>Players:</strong> ${booking.players}</li>
       <li><strong>Status:</strong> ${formatBookingStatus(booking.status)}</li>
       <li><strong>Notes:</strong> ${booking.notes || "No notes"}</li>
     </ul>
   `;
 }
 
-function bookingSummaryText(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "event_date" | "time_slot" | "players" | "notes" | "status">) {
+function bookingSummaryText(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "notes" | "status">) {
   return [
     `Name: ${booking.full_name}`,
     `Email: ${booking.email}`,
     `Phone: ${booking.phone}`,
     `Sport: ${booking.sport}`,
+    `Address: ${booking.address || "No address"}`,
     `Date: ${formatDate(booking.event_date)}`,
     `Time: ${booking.time_slot}`,
-    `Players: ${booking.players}`,
     `Status: ${formatBookingStatus(booking.status)}`,
     `Notes: ${booking.notes || "No notes"}`
   ].join("\n");
