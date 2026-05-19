@@ -647,13 +647,13 @@ textarea {
   display: grid;
   justify-items: center;
   gap: 0.1rem;
-  padding: 0.35rem 0 0.6rem;
+  padding: 0.2rem 0 0.35rem;
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.03));
 }
 
 .booking-brand-mark {
-  width: min(180px, 58%);
+  width: min(130px, 42%);
 }
 
 .booking-brand-mark svg {
@@ -681,19 +681,19 @@ textarea {
 }
 
 .booking-brand-script {
-  margin-top: -0.35rem;
+  margin-top: -0.2rem;
   color: rgba(16, 22, 29, 0.94);
   font-family: "Segoe Script", "Brush Script MT", cursive;
-  font-size: clamp(3.4rem, 9vw, 5.2rem);
+  font-size: clamp(2.6rem, 7vw, 4rem);
   line-height: 0.9;
 }
 
 .booking-brand-subtitle {
-  margin-top: 0.15rem;
+  margin-top: 0.05rem;
   color: rgba(37, 49, 61, 0.88);
-  font-size: clamp(1rem, 2.6vw, 1.5rem);
+  font-size: clamp(0.82rem, 2.1vw, 1.15rem);
   font-weight: 300;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
 }
 
 .form-heading h2,
