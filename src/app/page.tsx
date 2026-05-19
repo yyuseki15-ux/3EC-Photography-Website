@@ -306,6 +306,22 @@ export default function Home() {
               />
             </label>
 
+            <label>
+              Address
+              <input
+                required
+                type="text"
+                value={formData.address}
+                onChange={(event) =>
+                  setFormData((current) => ({
+                    ...current,
+                    address: event.target.value
+                  }))
+                }
+                placeholder="Enter venue or event address"
+              />
+            </label>
+
             <div className="grid-two">
               <label>
                 Sport
@@ -326,22 +342,6 @@ export default function Home() {
                 </select>
               </label>
             </div>
-
-            <label>
-              Address
-              <input
-                required
-                type="text"
-                value={formData.address}
-                onChange={(event) =>
-                  setFormData((current) => ({
-                    ...current,
-                    address: event.target.value
-                  }))
-                }
-                placeholder="Enter venue or event address"
-              />
-            </label>
 
             <div className="grid-two">
               <label>
