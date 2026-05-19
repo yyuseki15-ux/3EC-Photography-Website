@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { normalizeBookingTimes } from "@/lib/booking-time";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type BookingPayload = {
@@ -12,8 +13,6 @@ type BookingPayload = {
   players?: string;
   notes?: string;
 };
-
-const timePattern = /^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i;
 
 export async function POST(request: Request) {
   const payload = (await request.json()) as BookingPayload;
@@ -47,27 +46,23 @@ export async function POST(request: Request) {
     );
   }
 
-  if (payload.startTime === payload.endTime) {
+  let normalizedStartTime = "";
+  let normalizedEndTime = "";
+  let timeSlot = "";
+
+  try {
+    const normalizedTimes = normalizeBookingTimes(payload.startTime, payload.endTime);
+    normalizedStartTime = normalizedTimes.normalizedStartTime;
+    normalizedEndTime = normalizedTimes.normalizedEndTime;
+    timeSlot = normalizedTimes.timeSlot;
+  } catch (error) {
     return NextResponse.json(
       {
-        message: "Start time and end time must be different."
+        message: error instanceof Error ? error.message : "Please enter valid booking times."
       },
       { status: 400 }
     );
   }
-
-  if (!timePattern.test(payload.startTime) || !timePattern.test(payload.endTime)) {
-    return NextResponse.json(
-      {
-        message: "Please enter start and end times like 08:00 AM or 01:30 PM."
-      },
-      { status: 400 }
-    );
-  }
-
-  const normalizedStartTime = payload.startTime.toUpperCase().replace(/\s+/g, " ").trim();
-  const normalizedEndTime = payload.endTime.toUpperCase().replace(/\s+/g, " ").trim();
-  const timeSlot = `${normalizedStartTime} - ${normalizedEndTime}`;
 
   try {
     const supabase = createSupabaseAdminClient();

@@ -1,20 +1,10 @@
 import { redirect } from "next/navigation";
 import { clearAdminSession, hasValidAdminSession } from "@/lib/admin-auth";
+import { type BookingRecord } from "@/lib/bookings";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-
-type BookingRecord = {
-  id: number;
-  full_name: string;
-  email: string;
-  phone: string;
-  sport: string;
-  event_date: string;
-  time_slot: string;
-  players: number;
-  notes: string | null;
-  created_at: string;
-};
+import { deleteBooking } from "./actions";
+import { DeleteButton } from "./delete-button";
 
 type AdminBookingsPageProps = {
   searchParams?: Promise<{
@@ -209,6 +199,7 @@ export default async function AdminBookingsPage({
                   <th>Players</th>
                   <th>Notes</th>
                   <th>Submitted</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -227,6 +218,17 @@ export default async function AdminBookingsPage({
                     <td>{booking.players}</td>
                     <td>{booking.notes || "No notes"}</td>
                     <td>{formatDateTime(booking.created_at)}</td>
+                    <td>
+                      <div className="admin-row-actions">
+                        <a className="secondary-button admin-action-link" href={`/admin/bookings/${booking.id}/edit`}>
+                          Edit
+                        </a>
+                        <form action={deleteBooking}>
+                          <input type="hidden" name="bookingId" value={booking.id} />
+                          <DeleteButton />
+                        </form>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
