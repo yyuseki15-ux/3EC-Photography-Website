@@ -474,6 +474,62 @@ textarea {
   color: #8a2222;
 }
 
+.admin-inline-status-form {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 140px;
+}
+
+.booking-status-select {
+  width: 100%;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 999px;
+  padding: 0.6rem 0.9rem;
+  background: #fff;
+  font-weight: 700;
+  outline: none;
+}
+
+.booking-status-select:focus {
+  border-color: rgba(198, 93, 46, 0.7);
+  box-shadow: 0 0 0 4px rgba(198, 93, 46, 0.12);
+}
+
+.booking-status-select.new {
+  background: rgba(198, 93, 46, 0.12);
+  color: #9a451f;
+}
+
+.booking-status-select.confirmed {
+  background: rgba(28, 111, 87, 0.12);
+  color: #155441;
+}
+
+.booking-status-select.completed {
+  background: rgba(51, 86, 166, 0.12);
+  color: #294d9c;
+}
+
+.booking-status-select.cancelled {
+  background: rgba(170, 42, 42, 0.12);
+  color: #8a2222;
+}
+
+.admin-inline-status-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.65rem 0.9rem;
+  color: #fff7f0;
+  background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.admin-inline-status-button:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
 .admin-action-link {
   white-space: nowrap;
 }

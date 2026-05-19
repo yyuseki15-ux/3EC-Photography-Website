@@ -6,6 +6,7 @@ import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { deleteBooking } from "./actions";
 import { DeleteButton } from "./delete-button";
+import { StatusForm } from "./status-form";
 
 type AdminBookingsPageProps = {
   searchParams?: Promise<{
@@ -83,10 +84,6 @@ function filterBookings(
 
     return matchesQuery && matchesSport && matchesEventDate && matchesStatus;
   });
-}
-
-function getStatusClassName(status: BookingStatus) {
-  return `booking-status-pill ${status}`;
 }
 
 export default async function AdminBookingsPage({
@@ -247,9 +244,7 @@ export default async function AdminBookingsPage({
                     <td>{booking.time_slot}</td>
                     <td>{booking.players}</td>
                     <td>
-                      <span className={getStatusClassName(booking.status)}>
-                        {formatBookingStatus(booking.status)}
-                      </span>
+                      <StatusForm bookingId={booking.id} status={booking.status} />
                     </td>
                     <td>{booking.notes || "No notes"}</td>
                     <td>{formatDateTime(booking.created_at)}</td>

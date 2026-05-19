@@ -24,6 +24,19 @@ function isValidSport(value: string) {
   return sports.includes(value as (typeof sports)[number]);
 }
 
+async function notifyStatusChangeIfNeeded(
+  updatedBooking: BookingRecord,
+  previousStatus: BookingStatus
+) {
+  if (previousStatus !== updatedBooking.status) {
+    try {
+      await sendBookingStatusChangedNotification(updatedBooking, previousStatus);
+    } catch (notificationError) {
+      console.error("Booking status notification failed:", notificationError);
+    }
+  }
+}
+
 export async function updateBooking(
   _: BookingActionState | undefined,
   formData: FormData
@@ -106,19 +119,58 @@ export async function updateBooking(
     return { error: error.message };
   }
 
-  if (previousStatus !== status) {
-    try {
-      await sendBookingStatusChangedNotification(
-        updatedBooking as BookingRecord,
-        previousStatus as BookingStatus
-      );
-    } catch (notificationError) {
-      console.error("Booking status notification failed:", notificationError);
-    }
-  }
+  await notifyStatusChangeIfNeeded(
+    updatedBooking as BookingRecord,
+    previousStatus as BookingStatus
+  );
 
   revalidatePath("/admin/bookings");
   redirect("/admin/bookings");
+}
+
+export async function updateBookingStatus(formData: FormData) {
+  const bookingId = getTrimmedString(formData, "bookingId");
+  const status = getTrimmedString(formData, "status");
+
+  if (!bookingId || !isBookingStatus(status)) {
+    throw new Error("Invalid booking status update.");
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const bookingIdNumber = Number.parseInt(bookingId, 10);
+  const { data: existingBooking, error: existingBookingError } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("id", bookingIdNumber)
+    .single();
+
+  if (existingBookingError) {
+    throw new Error(existingBookingError.message);
+  }
+
+  const previousStatus = (existingBooking as BookingRecord).status;
+
+  if (previousStatus === status) {
+    return;
+  }
+
+  const { data: updatedBooking, error } = await supabase
+    .from("bookings")
+    .update({ status })
+    .eq("id", bookingIdNumber)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  await notifyStatusChangeIfNeeded(
+    updatedBooking as BookingRecord,
+    previousStatus as BookingStatus
+  );
+
+  revalidatePath("/admin/bookings");
 }
 
 export async function deleteBooking(formData: FormData) {
