@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
-import { hasBookingTimeConflict, normalizeBookingTimes } from "@/lib/booking-time";
+import { hasTimeSlotConflict, normalizeBookingTimes } from "@/lib/booking-time";
 import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
 
 type BookingState = {
@@ -58,13 +58,13 @@ export default function Home() {
     [formData.eventDate, unavailableDates]
   );
   const isUnavailableDate = useMemo(
-    () => selectedDateDetails?.source === "manual" || selectedDateDetails?.source === "mixed",
+    () => selectedDateDetails?.fully_blocked ?? false,
     [selectedDateDetails]
   );
   const upcomingUnavailableDates = useMemo(
     () =>
       unavailableDates
-        .filter((entry) => entry.source === "manual" || entry.source === "mixed")
+        .filter((entry) => entry.fully_blocked)
         .slice(0, 8)
         .map((entry) => formatUnavailableDate(entry.blocked_date)),
     [unavailableDates]
@@ -72,13 +72,21 @@ export default function Home() {
   const upcomingBookedSchedules = useMemo(
     () =>
       unavailableDates
-        .filter((entry) => entry.time_slots.length > 0)
+        .filter((entry) => entry.booked_time_slots.length > 0 || entry.blocked_time_slots.length > 0)
         .slice(0, 6),
     [unavailableDates]
   );
-  const selectedDateBookedTimes = useMemo(
-    () => selectedDateDetails?.time_slots ?? [],
+  const selectedDateBlockedTimes = useMemo(
+    () => selectedDateDetails?.blocked_time_slots ?? [],
     [selectedDateDetails]
+  );
+  const selectedDateBookedTimes = useMemo(
+    () => selectedDateDetails?.booked_time_slots ?? [],
+    [selectedDateDetails]
+  );
+  const selectedDateUnavailableTimes = useMemo(
+    () => [...selectedDateBlockedTimes, ...selectedDateBookedTimes],
+    [selectedDateBlockedTimes, selectedDateBookedTimes]
   );
   const hasBookedTimeConflict = useMemo(() => {
     if (formData.startTime.trim().length === 0 || formData.endTime.trim().length === 0) {
@@ -87,15 +95,15 @@ export default function Home() {
 
     try {
       const normalizedTimes = normalizeBookingTimes(formData.startTime, formData.endTime);
-      return hasBookingTimeConflict(
+      return hasTimeSlotConflict(
         normalizedTimes.normalizedStartTime,
         normalizedTimes.normalizedEndTime,
-        selectedDateBookedTimes
+        selectedDateUnavailableTimes
       );
     } catch {
       return false;
     }
-  }, [formData.endTime, formData.startTime, selectedDateBookedTimes]);
+  }, [formData.endTime, formData.startTime, selectedDateUnavailableTimes]);
 
   useEffect(() => {
     let isMounted = true;
@@ -339,7 +347,7 @@ export default function Home() {
               />
               <span className="field-hint">
                 {selectedDateBookedTimes.length > 0
-                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}`
+                  ? `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
                   : "Choose or enter any time like 08:00 AM or 01:30 PM"}
               </span>
             </label>
@@ -364,8 +372,8 @@ export default function Home() {
               <span className={`field-hint ${hasBookedTimeConflict ? "field-hint-error" : ""}`}>
                 {selectedDateBookedTimes.length > 0
                   ? hasBookedTimeConflict
-                    ? "That time overlaps an existing booking on this date."
-                    : `Booked times on this date: ${selectedDateBookedTimes.join(", ")}`
+                    ? "That time is unavailable on this date."
+                    : `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
                   : "Choose or enter any time like 10:00 AM or 03:45 PM"}
               </span>
             </label>
@@ -382,7 +390,7 @@ export default function Home() {
                 <div>
                   <strong>Future Booked Schedule</strong>
                   <span className="field-hint">
-                    Customers can still book the same date, but not the same time.
+                    Customers can still book the same date, but not the unavailable hours shown below.
                   </span>
                 </div>
               </div>
@@ -391,7 +399,7 @@ export default function Home() {
                 {upcomingBookedSchedules.map((entry) => (
                   <div className="booked-schedule-item static" key={entry.blocked_date}>
                     <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
-                    <span>{entry.time_slots.join(", ")}</span>
+                    <span>{[...entry.blocked_time_slots, ...entry.booked_time_slots].join(", ")}</span>
                   </div>
                 ))}
               </div>

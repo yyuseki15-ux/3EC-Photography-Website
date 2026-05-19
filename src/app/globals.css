@@ -486,7 +486,7 @@ textarea {
 
 .admin-unavailable-form {
   display: grid;
-  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(160px, 200px) repeat(2, minmax(140px, 180px)) minmax(0, 1fr) auto;
   gap: 1rem;
   align-items: end;
 }

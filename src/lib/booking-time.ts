@@ -48,7 +48,7 @@ export function getTimeSlotRange(timeSlot: string) {
   };
 }
 
-export function hasBookingTimeConflict(
+export function hasTimeSlotConflict(
   requestedStartTime: string,
   requestedEndTime: string,
   existingTimeSlots: string[]

@@ -32,10 +32,21 @@ revoke all on public.bookings from anon, authenticated;
 
 create table if not exists public.unavailable_dates (
   id bigint generated always as identity primary key,
-  blocked_date date not null unique,
+  blocked_date date not null,
+  start_time text,
+  end_time text,
   reason text,
   created_at timestamptz not null default now()
 );
+
+alter table public.unavailable_dates
+add column if not exists start_time text;
+
+alter table public.unavailable_dates
+add column if not exists end_time text;
+
+alter table public.unavailable_dates
+drop constraint if exists unavailable_dates_blocked_date_key;
 
 alter table public.unavailable_dates enable row level security;
 

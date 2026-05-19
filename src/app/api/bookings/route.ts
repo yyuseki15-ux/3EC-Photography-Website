@@ -5,7 +5,7 @@ import {
 } from "@/lib/booking-notifications";
 import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
 import { type BookingRecord } from "@/lib/bookings";
-import { hasBookingTimeConflict, normalizeBookingTimes } from "@/lib/booking-time";
+import { hasTimeSlotConflict, normalizeBookingTimes } from "@/lib/booking-time";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type BookingPayload = {
@@ -83,15 +83,22 @@ export async function POST(request: Request) {
     const supabase = createSupabaseAdminClient();
     const { data: blockedDate, error: blockedDateError } = await supabase
       .from("unavailable_dates")
-      .select("id")
+      .select("start_time, end_time")
       .eq("blocked_date", payload.eventDate)
-      .maybeSingle();
+      .order("created_at", { ascending: true });
 
     if (blockedDateError) {
       throw blockedDateError;
     }
 
-    if (blockedDate) {
+    const manualBlockedSlots = (blockedDate ?? [])
+      .filter((entry) => entry.start_time && entry.end_time)
+      .map((entry) => `${entry.start_time} - ${entry.end_time}`);
+    const hasFullDayBlock = (blockedDate ?? []).some(
+      (entry) => entry.start_time === null || entry.end_time === null
+    );
+
+    if (hasFullDayBlock) {
       return NextResponse.json(
         {
           message: "That date is unavailable. Please choose another date."
@@ -112,7 +119,16 @@ export async function POST(request: Request) {
 
     const existingTimeSlots = (existingBookingsOnDate ?? []).map((booking) => booking.time_slot);
 
-    if (hasBookingTimeConflict(normalizedStartTime, normalizedEndTime, existingTimeSlots)) {
+    if (hasTimeSlotConflict(normalizedStartTime, normalizedEndTime, manualBlockedSlots)) {
+      return NextResponse.json(
+        {
+          message: "That time is unavailable on this date. Please choose a different time."
+        },
+        { status: 400 }
+      );
+    }
+
+    if (hasTimeSlotConflict(normalizedStartTime, normalizedEndTime, existingTimeSlots)) {
       return NextResponse.json(
         {
           message: "That time is already booked on this date. Please choose a different time."

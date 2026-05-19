@@ -2,6 +2,8 @@ export type UnavailableDateRecord = {
   id: number;
   blocked_date: string;
   reason: string | null;
+  start_time: string | null;
+  end_time: string | null;
   created_at: string;
 };
 
@@ -9,7 +11,9 @@ export type PublicUnavailableDate = {
   blocked_date: string;
   reason: string | null;
   source: "manual" | "booking" | "mixed";
-  time_slots: string[];
+  booked_time_slots: string[];
+  blocked_time_slots: string[];
+  fully_blocked: boolean;
 };
 
 export function formatUnavailableDate(value: string) {
@@ -18,4 +22,12 @@ export function formatUnavailableDate(value: string) {
     month: "short",
     year: "numeric"
   }).format(new Date(value));
+}
+
+export function formatTimeRange(startTime: string | null, endTime: string | null) {
+  if (!startTime || !endTime) {
+    return "Full day";
+  }
+
+  return `${startTime} - ${endTime}`;
 }

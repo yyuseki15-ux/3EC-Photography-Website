@@ -7,7 +7,7 @@ export async function GET() {
     const today = new Date().toISOString().split("T")[0];
     const { data: manualDates, error: manualDatesError } = await supabase
       .from("unavailable_dates")
-      .select("blocked_date, reason")
+      .select("blocked_date, reason, start_time, end_time")
       .gte("blocked_date", today)
       .order("blocked_date", { ascending: true });
 
@@ -32,16 +32,36 @@ export async function GET() {
         blocked_date: string;
         reason: string | null;
         source: "manual" | "booking" | "mixed";
-        time_slots: string[];
+        booked_time_slots: string[];
+        blocked_time_slots: string[];
+        fully_blocked: boolean;
       }
     >();
 
     for (const entry of manualDates ?? []) {
+      const existingEntry = dateMap.get(entry.blocked_date);
+      const manualTimeSlot =
+        entry.start_time && entry.end_time ? `${entry.start_time} - ${entry.end_time}` : null;
+
+      if (existingEntry) {
+        existingEntry.source = existingEntry.source === "booking" ? "mixed" : existingEntry.source;
+        existingEntry.reason = existingEntry.reason ?? entry.reason;
+        existingEntry.fully_blocked = existingEntry.fully_blocked || !manualTimeSlot;
+
+        if (manualTimeSlot && !existingEntry.blocked_time_slots.includes(manualTimeSlot)) {
+          existingEntry.blocked_time_slots.push(manualTimeSlot);
+        }
+
+        continue;
+      }
+
       dateMap.set(entry.blocked_date, {
         blocked_date: entry.blocked_date,
         reason: entry.reason,
         source: "manual",
-        time_slots: []
+        booked_time_slots: [],
+        blocked_time_slots: manualTimeSlot ? [manualTimeSlot] : [],
+        fully_blocked: !manualTimeSlot
       });
     }
 
@@ -50,8 +70,8 @@ export async function GET() {
 
       if (existingEntry) {
         existingEntry.source = existingEntry.source === "manual" ? "mixed" : existingEntry.source;
-        if (!existingEntry.time_slots.includes(entry.time_slot)) {
-          existingEntry.time_slots.push(entry.time_slot);
+        if (!existingEntry.booked_time_slots.includes(entry.time_slot)) {
+          existingEntry.booked_time_slots.push(entry.time_slot);
         }
 
         continue;
@@ -61,7 +81,9 @@ export async function GET() {
         blocked_date: entry.event_date,
         reason: "Already booked",
         source: "booking",
-        time_slots: [entry.time_slot]
+        booked_time_slots: [entry.time_slot],
+        blocked_time_slots: [],
+        fully_blocked: false
       });
     }
 

@@ -4,7 +4,7 @@ import { bookingStatuses, formatBookingStatus, type BookingStatus } from "@/lib/
 import { type BookingRecord } from "@/lib/bookings";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { formatUnavailableDate, type UnavailableDateRecord } from "@/lib/unavailable-dates";
+import { formatTimeRange, formatUnavailableDate, type UnavailableDateRecord } from "@/lib/unavailable-dates";
 import { addUnavailableDate, deleteBooking, removeUnavailableDate } from "./actions";
 import { DeleteButton } from "./delete-button";
 import { StatusForm } from "./status-form";
@@ -219,7 +219,7 @@ export default async function AdminBookingsPage({
             <p className="admin-eyebrow">Availability Control</p>
             <h2>Block Unavailable Dates</h2>
             <p className="admin-subtitle">
-              Customers will not be able to submit bookings for blocked dates.
+              Block a whole date or only specific hours on a date.
             </p>
           </div>
         </div>
@@ -228,6 +228,16 @@ export default async function AdminBookingsPage({
           <label className="admin-filter-field">
             Date to block
             <input name="blockedDate" required type="date" />
+          </label>
+
+          <label className="admin-filter-field">
+            Start time
+            <input name="startTime" placeholder="08:00 AM" type="text" />
+          </label>
+
+          <label className="admin-filter-field">
+            End time
+            <input name="endTime" placeholder="10:00 AM" type="text" />
           </label>
 
           <label className="admin-filter-field admin-filter-search">
@@ -246,6 +256,7 @@ export default async function AdminBookingsPage({
               <div className="admin-unavailable-item" key={entry.id}>
                 <div>
                   <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
+                  <span>{formatTimeRange(entry.start_time, entry.end_time)}</span>
                   <span>{entry.reason || "No reason added"}</span>
                 </div>
                 <form action={removeUnavailableDate}>

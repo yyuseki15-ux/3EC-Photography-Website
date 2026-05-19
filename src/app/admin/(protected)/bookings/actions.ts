@@ -193,23 +193,38 @@ export async function deleteBooking(formData: FormData) {
 
 export async function addUnavailableDate(formData: FormData) {
   const blockedDate = getTrimmedString(formData, "blockedDate");
+  const startTime = getTrimmedString(formData, "startTime");
+  const endTime = getTrimmedString(formData, "endTime");
   const reason = getTrimmedString(formData, "reason");
 
   if (!blockedDate) {
     throw new Error("Please choose a date to block.");
   }
 
+  let normalizedStartTime: string | null = null;
+  let normalizedEndTime: string | null = null;
+
+  if ((startTime && !endTime) || (!startTime && endTime)) {
+    throw new Error("Enter both start and end time, or leave both blank for a full-day block.");
+  }
+
+  if (startTime && endTime) {
+    const normalizedTimes = normalizeBookingTimes(startTime, endTime);
+    normalizedStartTime = normalizedTimes.normalizedStartTime;
+    normalizedEndTime = normalizedTimes.normalizedEndTime;
+  }
+
   const supabase = createSupabaseAdminClient();
   const { error } = await supabase.from("unavailable_dates").insert({
     blocked_date: blockedDate,
+    start_time: normalizedStartTime,
+    end_time: normalizedEndTime,
     reason: reason || null
   });
 
   if (error) {
     throw new Error(
-      error.code === "23505"
-        ? "That date is already blocked."
-        : error.message
+      error.message
     );
   }
 
