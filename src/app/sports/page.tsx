@@ -66,7 +66,6 @@ const motionSlides: SportsMotionSlide[] = [
 export default function SportsLandingPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [movingForward, setMovingForward] = useState(true);
-  const activeSlide = motionSlides[activeIndex];
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -110,61 +109,15 @@ export default function SportsLandingPage() {
       </header>
 
       <div className="page-shell sports-landing-shell">
-        <section className="sports-landing-hero sports-motion-hero">
-          <div className="sports-landing-copy">
-            <span className="sports-strip-label">3D Sports Motion Landing Page</span>
-            <h1>Six sports moving left to right in one cinematic showcase.</h1>
-            <p>
-              This page uses your real action images as a 3D-style motion gallery so customers
-              can feel the energy before they book.
-            </p>
-
-            <div className="sports-landing-actions">
-              <Link href="/" className="sports-landing-primary">
-                Go to booking page
-              </Link>
-              <a href="#motion-carousel" className="sports-landing-secondary">
-                Watch the showcase
-              </a>
-            </div>
-
-            <div className="sports-landing-metrics">
-              <div>
-                <strong>6 sports</strong>
-                <span>Real action frames across court, field, and net sports.</span>
-              </div>
-              <div>
-                <strong>3D motion feel</strong>
-                <span>Cards tilt, scale, and slide automatically from left to right.</span>
-              </div>
-              <div>
-                <strong>Sport-first storytelling</strong>
-                <span>Each frame focuses on athlete motion instead of static promo blocks.</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="sports-motion-summary">
-            <span className="sports-strip-label">{activeSlide.accent}</span>
-            <h2>{activeSlide.name} in motion.</h2>
-            <p>{activeSlide.motion}</p>
-            <div className="sports-motion-summary-copy">
-              <strong>Current spotlight</strong>
-              <span>{activeSlide.description}</span>
-            </div>
-            <div className="sports-motion-direction">
-              <span>{movingForward ? "Moving left to right" : "Moving right to left"}</span>
-            </div>
-          </div>
-        </section>
-
         <section className="sports-motion-carousel-section" id="motion-carousel">
           <div className="sports-selector-head">
             <div>
               <span className="sports-strip-label">Auto-moving showcase</span>
-              <strong>3D carousel using your six sports images</strong>
+              <strong>3D sports in motion</strong>
             </div>
-            <span className="sports-selector-note">Auto slides every 2.6 seconds</span>
+            <span className="sports-selector-note">
+              {movingForward ? "Moving left to right" : "Moving right to left"}
+            </span>
           </div>
 
           <div className="sports-motion-carousel">
@@ -224,24 +177,10 @@ export default function SportsLandingPage() {
           </div>
         </section>
 
-        <section className="sports-landing-editorial sports-motion-editorial">
-          {motionSlides.map((slide) => (
-            <article key={slide.name}>
-              <span className="sports-strip-label">{slide.name}</span>
-              <strong>{slide.accent}</strong>
-              <p>{slide.description}</p>
-            </article>
-          ))}
-        </section>
-
         <section className="sports-closing-card" id="sports-closing">
           <div>
             <span className="sports-strip-label">Ready to book</span>
-            <h2>Use the motion showcase, then send them straight to the calendar.</h2>
-            <p>
-              Keep this as the style-first landing page for customers who want to see the
-              action before they reserve a session.
-            </p>
+            <h2>Book the session after the motion showcase.</h2>
           </div>
           <div className="sports-landing-actions">
             <Link href="/" className="sports-landing-primary">

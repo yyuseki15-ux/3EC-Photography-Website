@@ -1205,62 +1205,8 @@ textarea {
   margin-top: 1.5rem;
 }
 
-.sports-motion-hero {
-  align-items: stretch;
-}
-
-.sports-motion-summary {
-  display: grid;
-  align-content: end;
-  padding: 1.6rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 32px;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 58%),
-    rgba(255, 255, 255, 0.05);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-}
-
-.sports-motion-summary h2 {
-  margin: 0.45rem 0 0;
-  color: #f8fbfd;
-  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
-  font-size: clamp(2.8rem, 6vw, 4.8rem);
-  line-height: 0.94;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.sports-motion-summary p {
-  margin: 0.9rem 0 0;
-  color: rgba(239, 245, 248, 0.76);
-  line-height: 1.7;
-}
-
-.sports-motion-summary-copy,
-.sports-motion-direction {
-  margin-top: 1rem;
-  padding: 1rem 1.05rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.sports-motion-summary-copy strong {
-  display: block;
-  color: #f8fbfd;
-}
-
-.sports-motion-summary-copy span,
-.sports-motion-direction span {
-  display: block;
-  margin-top: 0.35rem;
-  color: rgba(239, 245, 248, 0.7);
-  line-height: 1.55;
-}
-
 .sports-motion-carousel-section {
-  margin-top: 1.5rem;
+  margin-top: 0;
   padding: 1.2rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 32px;
@@ -1367,10 +1313,6 @@ textarea {
 
 .sports-motion-dot.active {
   background: var(--sport-gold);
-}
-
-.sports-motion-editorial {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .sports-landing-selector {
