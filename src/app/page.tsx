@@ -4,7 +4,6 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
-import { sportShowcase } from "@/lib/sport-showcase";
 import { hasTimeSlotConflict, normalizeBookingTimes } from "@/lib/booking-time";
 import { suggestedTimes } from "@/lib/time-options";
 import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
@@ -57,7 +56,6 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
   const [scheduleIndex, setScheduleIndex] = useState(0);
-  const [activeSportIndex, setActiveSportIndex] = useState(0);
   const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
   const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
@@ -116,7 +114,6 @@ export default function Home() {
     () => upcomingUnavailableSchedules[safeScheduleIndex] ?? null,
     [safeScheduleIndex, upcomingUnavailableSchedules]
   );
-  const activeSport = sportShowcase[activeSportIndex];
   const hasBookedTimeConflict = useMemo(() => {
     if (formData.startTime.trim().length === 0 || formData.endTime.trim().length === 0) {
       return false;
@@ -164,14 +161,6 @@ export default function Home() {
     return () => {
       isMounted = false;
     };
-  }, []);
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      setActiveSportIndex((current) => (current + 1) % sportShowcase.length);
-    }, 4000);
-
-    return () => window.clearInterval(interval);
   }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -229,142 +218,27 @@ export default function Home() {
   return (
     <main className="customer-page">
       <div className="customer-backdrop" aria-hidden="true" />
-      <header className="sports-nav-shell">
-        <nav className="sports-nav">
-          <div className="sports-nav-brand">
-            <span className="sports-nav-mark">3EC</span>
-            <span className="sports-nav-name">Sports Photography</span>
-          </div>
-          <div className="sports-nav-links">
-            <a href="#sports-selector">Sports</a>
-            <a href="#booking-form">Book</a>
-            <a href="#why-3ec">Why 3EC</a>
-            <a href="#booking-flow">Flow</a>
-          </div>
-        </nav>
-      </header>
       <section className="customer-hero-shell">
         <div className="hero-card sports-hero-card">
           <div className="hero-copy sports-hero-copy">
-            <div className="sports-hero-topline">
-              <p className="eyebrow">3EC Sports Photography</p>
-              <span className="sports-badge">Game Day Coverage</span>
-            </div>
-
-            <p className="sports-kicker">Freeze the sprint. Frame the crowd. Capture the moment.</p>
-            <p className="sports-brush-line">Fast frames. Sharp stories. Championship energy.</p>
-            <h1 className="sports-hero-title">
-              Sports photos that feel like the finals.
-            </h1>
+            <p className="eyebrow">3EC Sports Photography</p>
+            <span className="sports-badge">Booking Only</span>
+            <h1 className="sports-hero-title">Book your sports photography slot.</h1>
             <p className="hero-text sports-hero-text">
-              Book bold sports photography for football, basketball, volleyball, tennis,
-              badminton, and pickleball. Built for schools, leagues, clubs, and private events.
+              Choose your sport, event date, and open time window. The form below already
+              checks unavailable dates and blocked hours before you submit.
             </p>
 
             <div className="sports-highlight-bar">
               <div>
-                <strong>Action-first coverage</strong>
-                <span>Fast play, team energy, and crowd moments captured in one session.</span>
+                <strong>Live availability</strong>
+                <span>Blocked dates and booked hours are shown before you send a request.</span>
               </div>
               <div>
-                <strong>Flexible scheduling</strong>
-                <span>Pick your sport, date, and open slot with live unavailable-time checks.</span>
+                <strong>Simple booking flow</strong>
+                <span>Fill out the event details once and send the request directly to admin.</span>
               </div>
             </div>
-
-            <div className="hero-stats sports-hero-stats">
-              <div>
-                <strong>6 Sports</strong>
-                <span>Football to pickleball</span>
-              </div>
-              <div>
-                <strong>Live Calendar</strong>
-                <span>Unavailable dates shown</span>
-              </div>
-              <div>
-                <strong>Admin Ready</strong>
-                <span>Bookings tracked instantly</span>
-              </div>
-            </div>
-
-            <div className="sports-strip-grid">
-              <article>
-                <span className="sports-strip-label">Best for</span>
-                <strong>Tournaments</strong>
-                <p>Cover opening games, clutch plays, and team portraits without losing pace.</p>
-              </article>
-              <article>
-                <span className="sports-strip-label">Best for</span>
-                <strong>School events</strong>
-                <p>One smooth booking flow for varsity games, intramurals, and athlete features.</p>
-              </article>
-              <article>
-                <span className="sports-strip-label">Best for</span>
-                <strong>Private sessions</strong>
-                <p>Perfect for player spotlights, highlight reels, and branded social content.</p>
-              </article>
-            </div>
-
-            <div className="sports-editorial-grid">
-              <article className="sports-editorial-card tall">
-                <span className="sports-strip-label">Atmosphere</span>
-                <strong>Editorial framing with match-day tension</strong>
-                <p>Designed to feel closer to a sports feature spread than a plain event booking page.</p>
-              </article>
-              <article className="sports-editorial-card">
-                <span className="sports-strip-label">Coverage</span>
-                <strong>Bench, crowd, action</strong>
-                <p>Built for momentum and movement, not static portraits alone.</p>
-              </article>
-              <article className="sports-editorial-card accent">
-                <span className="sports-strip-label">Style</span>
-                <strong>High contrast. Low clutter.</strong>
-                <p>Minimal chrome, stronger imagery language, and faster booking focus.</p>
-              </article>
-            </div>
-
-            <section className="sports-selector-section" id="sports-selector">
-              <div className="sports-selector-head">
-                <div>
-                  <span className="sports-strip-label">Sport selector</span>
-                  <strong>Choose a sport or let it auto-play</strong>
-                </div>
-                <div className="sports-selector-actions">
-                  <span className="sports-selector-note">Rotates every few seconds</span>
-                  <Link href="/sports" className="sports-selector-link">
-                    Open 6-sport landing page
-                  </Link>
-                </div>
-              </div>
-
-              <div className="sports-logo-grid" role="tablist" aria-label="Sports showcase">
-                {sportShowcase.map((sport, index) => (
-                  <button
-                    key={sport.name}
-                    className={`sports-logo-button ${activeSportIndex === index ? "active" : ""}`}
-                    type="button"
-                    onClick={() => {
-                      setActiveSportIndex(index);
-                      setFormData((current) => ({ ...current, sport: sport.name }));
-                    }}
-                  >
-                    <span className="sports-logo-mark">{sport.short}</span>
-                    <span className="sports-logo-name">{sport.name}</span>
-                  </button>
-                ))}
-              </div>
-
-              <div className={`sports-spotlight-card ${activeSport.toneClass}`}>
-                <div className="sports-spotlight-copy">
-                  <span className="sports-strip-label">{activeSport.accent}</span>
-                  <h3>{activeSport.headline}</h3>
-                  <p>{activeSport.copy}</p>
-                </div>
-                <div className="sports-spotlight-badge">
-                  <span>{activeSport.short}</span>
-                </div>
-              </div>
-            </section>
           </div>
 
           <form className="booking-card sports-booking-card" id="booking-form" onSubmit={handleSubmit}>
@@ -631,53 +505,6 @@ export default function Home() {
               <p className={`status-message ${status}`}>{message}</p>
             ) : null}
           </form>
-        </div>
-      </section>
-
-      <section className="sports-proof-section" id="why-3ec">
-        <div className="sports-proof-header">
-          <p className="eyebrow">Why teams book 3EC</p>
-          <h2>Built for fast games and high-pressure moments</h2>
-        </div>
-        <div className="feature-strip sports-feature-strip">
-          <article>
-            <h3>Action-Led Coverage</h3>
-            <p>We prioritize explosive moments, player emotion, bench reactions, and crowd energy.</p>
-          </article>
-          <article>
-            <h3>Cleaner Scheduling</h3>
-            <p>Live unavailable dates and hour blocks help customers avoid clashes before they submit.</p>
-          </article>
-          <article>
-            <h3>Ready for Growth</h3>
-            <p>Perfect foundation for future add-ons like galleries, payments, and email confirmations.</p>
-          </article>
-        </div>
-      </section>
-
-      <section className="sports-process-section" id="booking-flow">
-        <div className="sports-process-card">
-          <div className="sports-process-copy">
-            <p className="eyebrow">Booking Flow</p>
-            <h2>From request to match-day coverage</h2>
-          </div>
-          <div className="sports-process-steps">
-            <div>
-              <span>01</span>
-              <strong>Choose sport and date</strong>
-              <p>Select your sport, roster size, and the exact event date you want covered.</p>
-            </div>
-            <div>
-              <span>02</span>
-              <strong>Pick an open time slot</strong>
-              <p>Use the live schedule to avoid blocked dates and booked hours before you submit.</p>
-            </div>
-            <div>
-              <span>03</span>
-              <strong>Get reviewed fast</strong>
-              <p>Your request lands in the admin dashboard immediately for confirmation and follow-up.</p>
-            </div>
-          </div>
         </div>
       </section>
     </main>
