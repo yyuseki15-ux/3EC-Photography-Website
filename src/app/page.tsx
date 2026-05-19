@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
 import { hasTimeSlotConflict, normalizeBookingTimes } from "@/lib/booking-time";
+import { suggestedTimes } from "@/lib/time-options";
 import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
 
 type BookingState = {
@@ -18,17 +19,6 @@ type BookingState = {
   players: string;
   notes: string;
 };
-
-const suggestedTimes = Array.from({ length: 48 }, (_, index) => {
-  const totalMinutes = index * 30;
-  const hours24 = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  const period = hours24 >= 12 ? "PM" : "AM";
-  const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-
-  return `${hours12.toString().padStart(2, "0")}:${formattedMinutes} ${period}`;
-});
 
 const initialState: BookingState = {
   fullName: "",
@@ -366,13 +356,9 @@ export default function Home() {
           <div className="grid-two">
             <label>
               Start time
-              <input
+              <select
                 required
-                className="time-input"
-                list="start-time-suggestions"
-                type="text"
-                inputMode="text"
-                placeholder="08:00 AM"
+                className="time-select"
                 value={formData.startTime}
                 onChange={(event) =>
                   setFormData((current) => ({
@@ -380,23 +366,26 @@ export default function Home() {
                     startTime: event.target.value
                   }))
                 }
-              />
+              >
+                <option value="">Select start time</option>
+                {suggestedTimes.map((time) => (
+                  <option key={`start-${time}`} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
               <span className="field-hint">
                 {selectedDateUnavailableTimes.length > 0
                   ? `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
-                  : "Choose or enter any time like 08:00 AM or 01:30 PM"}
+                  : "Choose a start time from the dropdown."}
               </span>
             </label>
 
             <label>
               End time
-              <input
+              <select
                 required
-                className="time-input"
-                list="end-time-suggestions"
-                type="text"
-                inputMode="text"
-                placeholder="10:00 AM"
+                className="time-select"
                 value={formData.endTime}
                 onChange={(event) =>
                   setFormData((current) => ({
@@ -404,13 +393,20 @@ export default function Home() {
                     endTime: event.target.value
                   }))
                 }
-              />
+              >
+                <option value="">Select end time</option>
+                {suggestedTimes.map((time) => (
+                  <option key={`end-${time}`} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
               <span className={`field-hint ${hasBookedTimeConflict ? "field-hint-error" : ""}`}>
                 {selectedDateUnavailableTimes.length > 0
                   ? hasBookedTimeConflict
                     ? "That time is unavailable on this date."
                     : `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
-                  : "Choose or enter any time like 10:00 AM or 03:45 PM"}
+                  : "Choose an end time from the dropdown."}
               </span>
             </label>
           </div>
@@ -443,7 +439,7 @@ export default function Home() {
                         )
                       }
                     >
-                      ←
+                      &larr;
                     </button>
                     <span className="booked-schedule-count">
                       {safeScheduleIndex + 1} of {upcomingUnavailableSchedules.length}
@@ -457,7 +453,7 @@ export default function Home() {
                         )
                       }
                     >
-                      →
+                      &rarr;
                     </button>
                   </div>
 
@@ -478,18 +474,6 @@ export default function Home() {
               </Link>
             </div>
           ) : null}
-
-          <datalist id="start-time-suggestions">
-            {suggestedTimes.map((time) => (
-              <option key={`start-${time}`} value={time} />
-            ))}
-          </datalist>
-
-          <datalist id="end-time-suggestions">
-            {suggestedTimes.map((time) => (
-              <option key={`end-${time}`} value={time} />
-            ))}
-          </datalist>
 
           <label>
             Extra notes

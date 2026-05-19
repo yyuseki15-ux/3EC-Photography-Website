@@ -109,7 +109,7 @@ export default async function AdminBookingsPage({
   const selectedStatus = resolvedSearchParams?.status?.trim() ?? "";
   const selectedTab = isValidAdminTab(resolvedSearchParams?.tab?.trim() ?? "")
     ? (resolvedSearchParams?.tab?.trim() as "dashboard" | "availability" | "requests")
-    : "";
+    : "dashboard";
 
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase
@@ -176,15 +176,6 @@ export default async function AdminBookingsPage({
           Booking Requests
         </a>
       </nav>
-
-      {!selectedTab ? (
-        <section className="admin-filters-card">
-          <div className="admin-empty-state">
-            <h2>Select a section</h2>
-            <p>Choose `Bookings Dashboard`, `Availability Control`, or `Booking Requests` to open that part of the admin page.</p>
-          </div>
-        </section>
-      ) : null}
 
       {selectedTab === "dashboard" ? (
         <section className="admin-filters-card" id="dashboard-overview">
