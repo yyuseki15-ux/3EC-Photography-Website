@@ -437,8 +437,11 @@ export default function Home() {
                     <button
                       className="booked-schedule-nav"
                       type="button"
-                      disabled={safeScheduleIndex === 0}
-                      onClick={() => setScheduleIndex((current) => Math.max(current - 1, 0))}
+                      onClick={() =>
+                        setScheduleIndex((current) =>
+                          current <= 0 ? upcomingUnavailableSchedules.length - 1 : current - 1
+                        )
+                      }
                     >
                       ←
                     </button>
@@ -448,10 +451,9 @@ export default function Home() {
                     <button
                       className="booked-schedule-nav"
                       type="button"
-                      disabled={safeScheduleIndex === upcomingUnavailableSchedules.length - 1}
                       onClick={() =>
                         setScheduleIndex((current) =>
-                          Math.min(current + 1, upcomingUnavailableSchedules.length - 1)
+                          current >= upcomingUnavailableSchedules.length - 1 ? 0 : current + 1
                         )
                       }
                     >
