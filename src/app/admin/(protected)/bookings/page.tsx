@@ -251,7 +251,9 @@ export default async function AdminBookingsPage({
                         {formatBookingStatus(booking.status)}
                       </span>
                     </td>
-                    <td>{booking.notes || "No notes"}</td>
+                    <td>
+                      <div className="admin-notes-cell">{booking.notes || "No notes"}</div>
+                    </td>
                     <td>{formatDateTime(booking.created_at)}</td>
                     <td>
                       <div className="admin-row-actions">
