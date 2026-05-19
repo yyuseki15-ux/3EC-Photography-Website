@@ -17,8 +17,9 @@ export async function GET() {
 
     const { data: bookedDates, error: bookedDatesError } = await supabase
       .from("bookings")
-      .select("event_date, time_slot")
+      .select("event_date, time_slot, status")
       .gte("event_date", today)
+      .neq("status", "cancelled")
       .order("event_date", { ascending: true });
 
     if (bookedDatesError) {
@@ -30,7 +31,7 @@ export async function GET() {
       {
         blocked_date: string;
         reason: string | null;
-        source: "manual" | "booking";
+        source: "manual" | "booking" | "mixed";
         time_slots: string[];
       }
     >();
@@ -48,6 +49,7 @@ export async function GET() {
       const existingEntry = dateMap.get(entry.event_date);
 
       if (existingEntry) {
+        existingEntry.source = existingEntry.source === "manual" ? "mixed" : existingEntry.source;
         if (!existingEntry.time_slots.includes(entry.time_slot)) {
           existingEntry.time_slots.push(entry.time_slot);
         }

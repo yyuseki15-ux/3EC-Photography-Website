@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
+import { BOOKING_GAP_MINUTES } from "@/lib/booking-time";
 import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
 
 type BookingState = {
@@ -52,20 +53,27 @@ export default function Home() {
     const today = new Date();
     return today.toISOString().split("T")[0];
   }, []);
-  const unavailableDateValues = useMemo(
-    () => unavailableDates.map((entry) => entry.blocked_date),
-    [unavailableDates]
-  );
   const selectedDateDetails = useMemo(
     () => unavailableDates.find((entry) => entry.blocked_date === formData.eventDate) ?? null,
     [formData.eventDate, unavailableDates]
   );
   const isUnavailableDate = useMemo(
-    () => unavailableDateValues.includes(formData.eventDate),
-    [formData.eventDate, unavailableDateValues]
+    () => selectedDateDetails?.source === "manual" || selectedDateDetails?.source === "mixed",
+    [selectedDateDetails]
   );
   const upcomingUnavailableDates = useMemo(
-    () => unavailableDates.slice(0, 8).map((entry) => formatUnavailableDate(entry.blocked_date)),
+    () =>
+      unavailableDates
+        .filter((entry) => entry.source === "manual" || entry.source === "mixed")
+        .slice(0, 8)
+        .map((entry) => formatUnavailableDate(entry.blocked_date)),
+    [unavailableDates]
+  );
+  const upcomingBookedSchedules = useMemo(
+    () =>
+      unavailableDates
+        .filter((entry) => entry.time_slots.length > 0)
+        .slice(0, 6),
     [unavailableDates]
   );
   const selectedDateBookedTimes = useMemo(
@@ -282,12 +290,10 @@ export default function Home() {
             />
             <span className={`field-hint ${isUnavailableDate ? "field-hint-error" : ""}`}>
               {isUnavailableDate
-                ? selectedDateDetails?.source === "booking"
-                  ? "That date is already booked. Please choose another one."
-                  : "That date is unavailable. Please choose another one."
+                ? "That date is unavailable. Please choose another one."
                 : upcomingUnavailableDates.length > 0
-                  ? `Unavailable dates: ${upcomingUnavailableDates.join(", ")}`
-                  : "All upcoming dates are currently open."}
+                  ? `Blocked dates: ${upcomingUnavailableDates.join(", ")}`
+                  : "No manually blocked dates right now."}
             </span>
           </label>
 
@@ -311,7 +317,7 @@ export default function Home() {
               />
               <span className="field-hint">
                 {selectedDateBookedTimes.length > 0
-                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}`
+                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}. Please leave at least a ${BOOKING_GAP_MINUTES / 60}-hour gap.`
                   : "Choose or enter any time like 08:00 AM or 01:30 PM"}
               </span>
             </label>
@@ -335,11 +341,38 @@ export default function Home() {
               />
               <span className="field-hint">
                 {selectedDateBookedTimes.length > 0
-                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}`
+                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}. Please leave at least a ${BOOKING_GAP_MINUTES / 60}-hour gap.`
                   : "Choose or enter any time like 10:00 AM or 03:45 PM"}
               </span>
             </label>
           </div>
+
+          {upcomingBookedSchedules.length > 0 ? (
+            <div className="booked-schedule-card">
+              <div className="booked-schedule-header">
+                <span className="calendar-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" role="img">
+                    <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM5 6a1 1 0 0 0-1 1v1h16V7a1 1 0 0 0-1-1H5Z" />
+                  </svg>
+                </span>
+                <div>
+                  <strong>Future Booked Schedule</strong>
+                  <span className="field-hint">
+                    Customers can still book the same date if they leave at least a 2-hour gap.
+                  </span>
+                </div>
+              </div>
+
+              <div className="booked-schedule-list">
+                {upcomingBookedSchedules.map((entry) => (
+                  <div className="booked-schedule-item" key={entry.blocked_date}>
+                    <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
+                    <span>{entry.time_slots.join(", ")}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
           <datalist id="start-time-suggestions">
             {suggestedTimes.map((time) => (

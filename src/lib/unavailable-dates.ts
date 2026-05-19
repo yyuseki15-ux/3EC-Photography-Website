@@ -8,7 +8,7 @@ export type UnavailableDateRecord = {
 export type PublicUnavailableDate = {
   blocked_date: string;
   reason: string | null;
-  source: "manual" | "booking";
+  source: "manual" | "booking" | "mixed";
   time_slots: string[];
 };
 

@@ -183,6 +183,55 @@ textarea {
   color: #8a2222;
 }
 
+.booked-schedule-card {
+  padding: 1rem;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.booked-schedule-header {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.calendar-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: rgba(198, 93, 46, 0.12);
+  color: var(--accent-dark);
+}
+
+.calendar-icon svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: currentColor;
+}
+
+.booked-schedule-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.booked-schedule-item {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 16px;
+  background: rgba(255, 250, 242, 0.85);
+}
+
+.booked-schedule-item span {
+  color: var(--muted);
+}
+
 .booking-card button {
   border: 0;
   border-radius: 999px;
