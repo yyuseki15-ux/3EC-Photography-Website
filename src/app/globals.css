@@ -46,6 +46,67 @@ body {
   font-family: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
+.sports-nav-shell {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: 1rem 1rem 0;
+  backdrop-filter: blur(12px);
+}
+
+.sports-nav {
+  width: min(1280px, calc(100% - 2rem));
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(8, 12, 18, 0.72);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.sports-nav-brand,
+.sports-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.sports-nav-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  color: #0b1016;
+  background: var(--sport-gold);
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sports-nav-name {
+  color: #f8fbfd;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sports-nav-links a {
+  color: rgba(239, 245, 248, 0.78);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
 .customer-backdrop {
   position: absolute;
   inset: 0;
@@ -80,6 +141,7 @@ textarea {
 
 .customer-hero-shell {
   position: relative;
+  margin-top: 1rem;
 }
 
 .hero-card {
@@ -156,6 +218,15 @@ textarea {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.sports-brush-line {
+  margin: 0.65rem 0 0;
+  color: rgba(232, 93, 58, 0.9);
+  font-family: "Segoe Script", "Brush Script MT", cursive;
+  font-size: 1.3rem;
+  line-height: 1.1;
+  transform: rotate(-1.5deg);
 }
 
 .hero-copy h1 {
@@ -265,6 +336,45 @@ textarea {
   margin-top: 1.5rem;
 }
 
+.sports-editorial-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.sports-editorial-card {
+  padding: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sports-editorial-card.tall {
+  grid-row: span 2;
+  min-height: 240px;
+}
+
+.sports-editorial-card.accent {
+  background:
+    linear-gradient(160deg, rgba(232, 93, 58, 0.16), transparent 60%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.sports-editorial-card strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: #f8fbfd;
+  font-size: 1.25rem;
+  line-height: 1.05;
+}
+
+.sports-editorial-card p {
+  margin: 0.5rem 0 0;
+  color: rgba(239, 245, 248, 0.72);
+  line-height: 1.55;
+}
+
 .sports-strip-label {
   display: inline-block;
   color: var(--sport-gold);
@@ -297,6 +407,7 @@ textarea {
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 28%),
     rgba(245, 238, 226, 0.96);
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+  animation: sportsFloatIn 600ms ease-out;
 }
 
 .form-heading h2,
@@ -581,6 +692,44 @@ textarea {
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.12em;
+}
+
+.sports-hero-copy,
+.sports-proof-section,
+.sports-process-section {
+  animation: sportsRiseIn 700ms ease-out both;
+}
+
+.sports-proof-section {
+  animation-delay: 120ms;
+}
+
+.sports-process-section {
+  animation-delay: 220ms;
+}
+
+@keyframes sportsRiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sportsFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .public-page-shell {
@@ -1193,12 +1342,18 @@ textarea {
 
   .sports-highlight-bar,
   .sports-strip-grid,
-  .sports-process-steps {
+  .sports-process-steps,
+  .sports-editorial-grid {
     grid-template-columns: 1fr;
   }
 
   .hero-copy h1 {
     max-width: 12ch;
+  }
+
+  .sports-nav {
+    flex-direction: column;
+    border-radius: 28px;
   }
 
   .admin-header-card,
@@ -1249,6 +1404,14 @@ textarea {
     border-radius: 24px;
   }
 
+  .sports-nav-shell {
+    padding-top: 0.75rem;
+  }
+
+  .sports-nav {
+    width: min(100% - 1rem, 100%);
+  }
+
   .grid-two,
   .hero-stats {
     grid-template-columns: 1fr;
@@ -1260,6 +1423,11 @@ textarea {
 
   .sports-hero-title {
     font-size: clamp(3.8rem, 18vw, 5rem);
+  }
+
+  .sports-nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .admin-login-shell,

@@ -218,6 +218,19 @@ export default function Home() {
   return (
     <main className="customer-page">
       <div className="customer-backdrop" aria-hidden="true" />
+      <header className="sports-nav-shell">
+        <nav className="sports-nav">
+          <div className="sports-nav-brand">
+            <span className="sports-nav-mark">3EC</span>
+            <span className="sports-nav-name">Sports Photography</span>
+          </div>
+          <div className="sports-nav-links">
+            <a href="#booking-form">Book</a>
+            <a href="#why-3ec">Why 3EC</a>
+            <a href="#booking-flow">Flow</a>
+          </div>
+        </nav>
+      </header>
       <section className="customer-hero-shell">
         <div className="hero-card sports-hero-card">
           <div className="hero-copy sports-hero-copy">
@@ -227,6 +240,7 @@ export default function Home() {
             </div>
 
             <p className="sports-kicker">Freeze the sprint. Frame the crowd. Capture the moment.</p>
+            <p className="sports-brush-line">Fast frames. Sharp stories. Championship energy.</p>
             <h1 className="sports-hero-title">
               Sports photos that feel like the finals.
             </h1>
@@ -278,9 +292,27 @@ export default function Home() {
                 <p>Perfect for player spotlights, highlight reels, and branded social content.</p>
               </article>
             </div>
+
+            <div className="sports-editorial-grid">
+              <article className="sports-editorial-card tall">
+                <span className="sports-strip-label">Atmosphere</span>
+                <strong>Editorial framing with match-day tension</strong>
+                <p>Designed to feel closer to a sports feature spread than a plain event booking page.</p>
+              </article>
+              <article className="sports-editorial-card">
+                <span className="sports-strip-label">Coverage</span>
+                <strong>Bench, crowd, action</strong>
+                <p>Built for momentum and movement, not static portraits alone.</p>
+              </article>
+              <article className="sports-editorial-card accent">
+                <span className="sports-strip-label">Style</span>
+                <strong>High contrast. Low clutter.</strong>
+                <p>Minimal chrome, stronger imagery language, and faster booking focus.</p>
+              </article>
+            </div>
           </div>
 
-          <form className="booking-card sports-booking-card" onSubmit={handleSubmit}>
+          <form className="booking-card sports-booking-card" id="booking-form" onSubmit={handleSubmit}>
             <div className="form-heading sports-form-heading">
               <span className="sports-form-tag">Reserve coverage</span>
               <h2>Lock your event slot</h2>
@@ -547,7 +579,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="sports-proof-section">
+      <section className="sports-proof-section" id="why-3ec">
         <div className="sports-proof-header">
           <p className="eyebrow">Why teams book 3EC</p>
           <h2>Built for fast games and high-pressure moments</h2>
@@ -568,7 +600,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="sports-process-section">
+      <section className="sports-process-section" id="booking-flow">
         <div className="sports-process-card">
           <div className="sports-process-copy">
             <p className="eyebrow">Booking Flow</p>
