@@ -175,21 +175,6 @@ export default function SportsLandingPage() {
             ))}
           </div>
         </section>
-
-        <section className="sports-closing-card" id="sports-closing">
-          <div>
-            <span className="sports-strip-label">Ready to book</span>
-            <h2>Book the session after the motion showcase.</h2>
-          </div>
-          <div className="sports-landing-actions">
-            <Link href="/" className="sports-landing-primary">
-              Book a sports session
-            </Link>
-            <Link href="/unavailable-dates" className="sports-landing-secondary">
-              View unavailable dates
-            </Link>
-          </div>
-        </section>
       </div>
     </main>
   );
