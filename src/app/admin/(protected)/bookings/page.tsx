@@ -139,7 +139,7 @@ export default async function AdminBookingsPage({
 
   return (
     <main className="admin-shell">
-      <section className="admin-header-card">
+      <section className="admin-header-card" id="dashboard-overview">
         <div>
           <p className="admin-eyebrow">3EC Sports Photography</p>
           <h1>Bookings Dashboard</h1>
@@ -162,7 +162,19 @@ export default async function AdminBookingsPage({
         </div>
       </section>
 
-      <section className="admin-filters-card">
+      <nav className="admin-tabs-card" aria-label="Admin sections">
+        <a className="admin-tab-link" href="#dashboard-overview">
+          Bookings Dashboard
+        </a>
+        <a className="admin-tab-link" href="#availability-control">
+          Availability Control
+        </a>
+        <a className="admin-tab-link" href="#booking-requests">
+          Booking Requests
+        </a>
+      </nav>
+
+      <section className="admin-filters-card" id="booking-requests">
         <form className="admin-filters-form admin-filters-form-wide" action="/admin/bookings" method="get">
           <label className="admin-filter-field admin-filter-search">
             Search bookings
@@ -214,7 +226,7 @@ export default async function AdminBookingsPage({
         </form>
       </section>
 
-      <section className="admin-filters-card">
+      <section className="admin-filters-card" id="availability-control">
         <div className="admin-card-heading">
           <div>
             <p className="admin-eyebrow">Availability Control</p>
@@ -337,7 +349,16 @@ export default async function AdminBookingsPage({
         )}
       </section>
 
-      <section className="admin-table-card">
+      <section className="admin-table-card" id="booking-records">
+        <div className="admin-card-heading">
+          <div>
+            <p className="admin-eyebrow">Booking Requests</p>
+            <h2>Customer, Sport, Event Date, Time, Players, Status, Notes, Submitted, Actions</h2>
+            <p className="admin-subtitle">
+              Review every booking request and manage updates from one table.
+            </p>
+          </div>
+        </div>
         {bookings.length === 0 ? (
           <div className="admin-empty-state">
             <h2>No bookings yet</h2>
