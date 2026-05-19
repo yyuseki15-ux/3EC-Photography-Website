@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { clearAdminSession, hasValidAdminSession } from "@/lib/admin-auth";
+import { bookingStatuses, formatBookingStatus, type BookingStatus } from "@/lib/booking-status";
 import { type BookingRecord } from "@/lib/bookings";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -11,6 +12,7 @@ type AdminBookingsPageProps = {
     q?: string;
     sport?: string;
     eventDate?: string;
+    status?: string;
   }>;
 };
 
@@ -44,16 +46,19 @@ function filterBookings(
   {
     query,
     sport,
-    eventDate
+    eventDate,
+    status
   }: {
     query: string;
     sport: string;
     eventDate: string;
+    status: string;
   }
 ) {
   const normalizedQuery = query.trim().toLowerCase();
   const normalizedSport = sport.trim().toLowerCase();
   const normalizedEventDate = eventDate.trim();
+  const normalizedStatus = status.trim().toLowerCase();
 
   return bookings.filter((booking) => {
     const matchesQuery =
@@ -73,8 +78,15 @@ function filterBookings(
     const matchesEventDate =
       normalizedEventDate.length === 0 || booking.event_date === normalizedEventDate;
 
-    return matchesQuery && matchesSport && matchesEventDate;
+    const matchesStatus =
+      normalizedStatus.length === 0 || booking.status.toLowerCase() === normalizedStatus;
+
+    return matchesQuery && matchesSport && matchesEventDate && matchesStatus;
   });
+}
+
+function getStatusClassName(status: BookingStatus) {
+  return `booking-status-pill ${status}`;
 }
 
 export default async function AdminBookingsPage({
@@ -90,6 +102,7 @@ export default async function AdminBookingsPage({
   const query = resolvedSearchParams?.q?.trim() ?? "";
   const selectedSport = resolvedSearchParams?.sport?.trim() ?? "";
   const selectedEventDate = resolvedSearchParams?.eventDate?.trim() ?? "";
+  const selectedStatus = resolvedSearchParams?.status?.trim() ?? "";
 
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase
@@ -106,10 +119,14 @@ export default async function AdminBookingsPage({
   const filteredBookings = filterBookings(bookings, {
     query,
     sport: selectedSport,
-    eventDate: selectedEventDate
+    eventDate: selectedEventDate,
+    status: selectedStatus
   });
   const hasActiveFilters =
-    query.length > 0 || selectedSport.length > 0 || selectedEventDate.length > 0;
+    query.length > 0 ||
+    selectedSport.length > 0 ||
+    selectedEventDate.length > 0 ||
+    selectedStatus.length > 0;
 
   return (
     <main className="admin-shell">
@@ -137,7 +154,7 @@ export default async function AdminBookingsPage({
       </section>
 
       <section className="admin-filters-card">
-        <form className="admin-filters-form" action="/admin/bookings" method="get">
+        <form className="admin-filters-form admin-filters-form-wide" action="/admin/bookings" method="get">
           <label className="admin-filter-field admin-filter-search">
             Search bookings
             <input
@@ -163,6 +180,18 @@ export default async function AdminBookingsPage({
           <label className="admin-filter-field">
             Event date
             <input defaultValue={selectedEventDate} name="eventDate" type="date" />
+          </label>
+
+          <label className="admin-filter-field">
+            Status
+            <select defaultValue={selectedStatus} name="status">
+              <option value="">All statuses</option>
+              {bookingStatuses.map((status) => (
+                <option key={status} value={status}>
+                  {formatBookingStatus(status)}
+                </option>
+              ))}
+            </select>
           </label>
 
           <div className="admin-filter-actions">
@@ -197,6 +226,7 @@ export default async function AdminBookingsPage({
                   <th>Event date</th>
                   <th>Time</th>
                   <th>Players</th>
+                  <th>Status</th>
                   <th>Notes</th>
                   <th>Submitted</th>
                   <th>Actions</th>
@@ -216,6 +246,11 @@ export default async function AdminBookingsPage({
                     <td>{formatDate(booking.event_date)}</td>
                     <td>{booking.time_slot}</td>
                     <td>{booking.players}</td>
+                    <td>
+                      <span className={getStatusClassName(booking.status)}>
+                        {formatBookingStatus(booking.status)}
+                      </span>
+                    </td>
                     <td>{booking.notes || "No notes"}</td>
                     <td>{formatDateTime(booking.created_at)}</td>
                     <td>

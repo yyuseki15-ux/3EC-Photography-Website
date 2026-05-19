@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { normalizeBookingTimes } from "@/lib/booking-time";
+import { isBookingStatus } from "@/lib/booking-status";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -33,6 +34,7 @@ export async function updateBooking(
   const endTime = getTrimmedString(formData, "endTime");
   const players = getTrimmedString(formData, "players");
   const notes = getTrimmedString(formData, "notes");
+  const status = getTrimmedString(formData, "status");
 
   if (!bookingId || !fullName || !email || !phone || !sport || !eventDate || !startTime || !endTime || !players) {
     return { error: "Please complete all required booking details." };
@@ -40,6 +42,10 @@ export async function updateBooking(
 
   if (!isValidSport(sport)) {
     return { error: "Please choose a valid sport." };
+  }
+
+  if (!isBookingStatus(status)) {
+    return { error: "Please choose a valid booking status." };
   }
 
   const playerCount = Number.parseInt(players, 10);
@@ -69,7 +75,8 @@ export async function updateBooking(
       event_date: eventDate,
       time_slot: timeSlot,
       players: playerCount,
-      notes: notes || null
+      notes: notes || null,
+      status
     })
     .eq("id", Number.parseInt(bookingId, 10));
 

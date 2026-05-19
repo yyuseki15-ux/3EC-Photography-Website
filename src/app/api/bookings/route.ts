@@ -75,7 +75,8 @@ export async function POST(request: Request) {
       event_date: payload.eventDate,
       time_slot: timeSlot,
       players: playerCount,
-      notes: payload.notes?.trim() || null
+      notes: payload.notes?.trim() || null,
+      status: "new"
     });
 
     if (error) {

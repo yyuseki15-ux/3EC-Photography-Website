@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { updateBooking } from "../../actions";
+import { bookingStatuses, formatBookingStatus } from "@/lib/booking-status";
 import { sports } from "@/lib/sports";
 
 type EditBookingFormProps = {
@@ -14,6 +15,7 @@ type EditBookingFormProps = {
     event_date: string;
     players: number;
     notes: string | null;
+    status: string;
   };
   timeValues: {
     startTime: string;
@@ -63,6 +65,17 @@ export function EditBookingForm({ booking, timeValues }: EditBookingFormProps) {
         <label className="admin-filter-field">
           Players
           <input defaultValue={booking.players} min="1" name="players" required type="number" />
+        </label>
+
+        <label className="admin-filter-field">
+          Status
+          <select defaultValue={booking.status} name="status">
+            {bookingStatuses.map((status) => (
+              <option key={status} value={status}>
+                {formatBookingStatus(status)}
+              </option>
+            ))}
+          </select>
         </label>
 
         <label className="admin-filter-field">

@@ -1,3 +1,5 @@
+import { type BookingStatus } from "@/lib/booking-status";
+
 export type BookingRecord = {
   id: number;
   full_name: string;
@@ -8,5 +10,6 @@ export type BookingRecord = {
   time_slot: string;
   players: number;
   notes: string | null;
+  status: BookingStatus;
   created_at: string;
 };

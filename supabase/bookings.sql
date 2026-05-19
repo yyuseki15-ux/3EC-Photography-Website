@@ -8,8 +8,23 @@ create table if not exists public.bookings (
   time_slot text not null,
   players integer not null check (players >= 1),
   notes text,
+  status text not null default 'new' check (status in ('new', 'confirmed', 'completed', 'cancelled')),
   created_at timestamptz not null default now()
 );
+
+alter table public.bookings
+add column if not exists status text not null default 'new';
+
+update public.bookings
+set status = 'new'
+where status is null;
+
+alter table public.bookings
+drop constraint if exists bookings_status_check;
+
+alter table public.bookings
+add constraint bookings_status_check
+check (status in ('new', 'confirmed', 'completed', 'cancelled'));
 
 alter table public.bookings enable row level security;
 
