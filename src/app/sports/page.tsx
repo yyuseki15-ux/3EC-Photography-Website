@@ -1,20 +1,96 @@
 "use client";
 
+import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { sportShowcase } from "@/lib/sport-showcase";
+import { CSSProperties, useEffect, useState } from "react";
+import basketballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (1).png";
+import pickleballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (2).png";
+import badmintonImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (3).png";
+import volleyballImage from "../../../ChatGPT Image May 19, 2026, 06_35_19 PM (4).png";
+import tennisImage from "../../../ChatGPT Image May 19, 2026, 06_35_19 PM (5).png";
+import footballImage from "../../../ChatGPT Image May 19, 2026, 06_35_20 PM (6).png";
+
+type SportsMotionSlide = {
+  name: string;
+  image: StaticImageData;
+  accent: string;
+  motion: string;
+  description: string;
+};
+
+const motionSlides: SportsMotionSlide[] = [
+  {
+    name: "Basketball",
+    image: basketballImage,
+    accent: "Arena Lift",
+    motion: "Explosive elevation under bright arena lights.",
+    description: "Built for posters, dunks, fast breaks, and athlete-first hero shots."
+  },
+  {
+    name: "Pickleball",
+    image: pickleballImage,
+    accent: "Quick Reach",
+    motion: "Low stance, quick hands, and split-second court reactions.",
+    description: "A clean modern look for fast exchanges and club content."
+  },
+  {
+    name: "Badminton",
+    image: badmintonImage,
+    accent: "Air Control",
+    motion: "High jump timing and full-body extension in one frame.",
+    description: "Sharp indoor action with speed, lift, and match-night intensity."
+  },
+  {
+    name: "Volleyball",
+    image: volleyballImage,
+    accent: "Net Power",
+    motion: "Hang time above the court with full attacking momentum.",
+    description: "Ideal for spikes, blocks, and dramatic mid-air team moments."
+  },
+  {
+    name: "Tennis",
+    image: tennisImage,
+    accent: "Baseline Pressure",
+    motion: "Controlled reach and clean strike mechanics under stadium light.",
+    description: "Premium action frames for rallies, serves, and match portraits."
+  },
+  {
+    name: "Football",
+    image: footballImage,
+    accent: "Pitch Impact",
+    motion: "Explosive leg drive and match-winning power through contact.",
+    description: "Perfect for game-winning kicks, pace, and stadium atmosphere."
+  }
+];
 
 export default function SportsLandingPage() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeSport = sportShowcase[activeIndex];
+  const [movingForward, setMovingForward] = useState(true);
+  const activeSlide = motionSlides[activeIndex];
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % sportShowcase.length);
-    }, 4500);
+      setActiveIndex((current) => {
+        if (movingForward) {
+          if (current >= motionSlides.length - 1) {
+            setMovingForward(false);
+            return current - 1;
+          }
+
+          return current + 1;
+        }
+
+        if (current <= 0) {
+          setMovingForward(true);
+          return current + 1;
+        }
+
+        return current - 1;
+      });
+    }, 2600);
 
     return () => window.clearInterval(interval);
-  }, []);
+  }, [movingForward]);
 
   return (
     <main className="sports-landing-page">
@@ -27,138 +103,144 @@ export default function SportsLandingPage() {
           </div>
           <div className="sports-nav-links">
             <Link href="/">Book Now</Link>
-            <a href="#sport-action-grid">6 Sports</a>
+            <a href="#motion-carousel">In Motion</a>
             <a href="#sports-closing">Contact</a>
           </div>
         </nav>
       </header>
 
       <div className="page-shell sports-landing-shell">
-        <section className="sports-landing-hero">
+        <section className="sports-landing-hero sports-motion-hero">
           <div className="sports-landing-copy">
-            <span className="sports-strip-label">Separate Sports Landing Page</span>
-            <h1>Six sports. One action-first camera style.</h1>
+            <span className="sports-strip-label">3D Sports Motion Landing Page</span>
+            <h1>Six sports moving left to right in one cinematic showcase.</h1>
             <p>
-              A dedicated showcase for football, basketball, pickleball, tennis, badminton,
-              and volleyball. Built to feel more like a sports campaign than a plain booking
-              page.
+              This page uses your real action images as a 3D-style motion gallery so customers
+              can feel the energy before they book.
             </p>
 
             <div className="sports-landing-actions">
               <Link href="/" className="sports-landing-primary">
                 Go to booking page
               </Link>
-              <a href="#sport-action-grid" className="sports-landing-secondary">
-                Explore all 6 sports
+              <a href="#motion-carousel" className="sports-landing-secondary">
+                Watch the showcase
               </a>
             </div>
 
             <div className="sports-landing-metrics">
               <div>
-                <strong>6</strong>
-                <span>Sports covered</span>
+                <strong>6 sports</strong>
+                <span>Real action frames across court, field, and net sports.</span>
               </div>
               <div>
-                <strong>Action-first</strong>
-                <span>Built for movement, not static poses</span>
+                <strong>3D motion feel</strong>
+                <span>Cards tilt, scale, and slide automatically from left to right.</span>
               </div>
               <div>
-                <strong>Editorial feel</strong>
-                <span>High-contrast layouts with cinematic energy</span>
+                <strong>Sport-first storytelling</strong>
+                <span>Each frame focuses on athlete motion instead of static promo blocks.</span>
               </div>
             </div>
           </div>
 
-          <div className={`sports-action-stage ${activeSport.toneClass}`}>
-            <div className="sports-action-stage-copy">
-              <span className="sports-strip-label">{activeSport.accent}</span>
-              <h2>{activeSport.actionTitle}</h2>
-              <p>{activeSport.actionLine}</p>
+          <div className="sports-motion-summary">
+            <span className="sports-strip-label">{activeSlide.accent}</span>
+            <h2>{activeSlide.name} in motion.</h2>
+            <p>{activeSlide.motion}</p>
+            <div className="sports-motion-summary-copy">
+              <strong>Current spotlight</strong>
+              <span>{activeSlide.description}</span>
             </div>
-            <div className="sports-action-figure" aria-hidden="true">
-              <span className="sports-action-initials">{activeSport.short}</span>
-              <span className="sports-action-glow" />
-              <span className="sports-action-slice sports-action-slice-one" />
-              <span className="sports-action-slice sports-action-slice-two" />
+            <div className="sports-motion-direction">
+              <span>{movingForward ? "Moving left to right" : "Moving right to left"}</span>
             </div>
           </div>
         </section>
 
-        <section className="sports-landing-selector">
+        <section className="sports-motion-carousel-section" id="motion-carousel">
           <div className="sports-selector-head">
             <div>
-              <span className="sports-strip-label">Auto-rotating spotlight</span>
-              <strong>Select a sport or let the page rotate on its own</strong>
+              <span className="sports-strip-label">Auto-moving showcase</span>
+              <strong>3D carousel using your six sports images</strong>
             </div>
-            <span className="sports-selector-note">Switches every 4.5 seconds</span>
+            <span className="sports-selector-note">Auto slides every 2.6 seconds</span>
           </div>
 
-          <div className="sports-logo-grid sports-landing-logo-grid" role="tablist" aria-label="Six sports showcase">
-            {sportShowcase.map((sport, index) => (
+          <div className="sports-motion-carousel">
+            {motionSlides.map((slide, index) => {
+              const offset = index - activeIndex;
+              const isActive = offset === 0;
+              const distance = Math.abs(offset);
+              const translateX = offset * 290;
+              const rotateY = offset * -18;
+              const scale = Math.max(0.64, 1 - distance * 0.12);
+              const opacity = Math.max(0.2, 1 - distance * 0.16);
+              const zIndex = motionSlides.length - distance;
+
+              return (
+                <button
+                  key={slide.name}
+                  type="button"
+                  className={`sports-motion-card ${isActive ? "active" : ""}`}
+                  style={
+                    {
+                      transform: `translate(-50%, -50%) translateX(${translateX}px) rotateY(${rotateY}deg) scale(${scale})`,
+                      opacity,
+                      zIndex
+                    } as CSSProperties
+                  }
+                  onClick={() => setActiveIndex(index)}
+                >
+                  <div className="sports-motion-card-image-wrap">
+                    <Image
+                      src={slide.image}
+                      alt={`${slide.name} athlete in motion`}
+                      className="sports-motion-card-image"
+                      priority={index < 2}
+                    />
+                    <div className="sports-motion-card-overlay" />
+                  </div>
+                  <div className="sports-motion-card-copy">
+                    <span className="sports-strip-label">{slide.accent}</span>
+                    <strong>{slide.name}</strong>
+                    <p>{slide.motion}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="sports-motion-dots" aria-label="Sports image positions">
+            {motionSlides.map((slide, index) => (
               <button
-                key={sport.name}
-                className={`sports-logo-button ${activeIndex === index ? "active" : ""}`}
+                key={slide.name}
                 type="button"
+                className={`sports-motion-dot ${activeIndex === index ? "active" : ""}`}
                 onClick={() => setActiveIndex(index)}
-              >
-                <span className="sports-logo-mark">{sport.short}</span>
-                <span className="sports-logo-name">{sport.name}</span>
-              </button>
+                aria-label={`Show ${slide.name}`}
+              />
             ))}
           </div>
         </section>
 
-        <section className="sports-action-grid" id="sport-action-grid">
-          {sportShowcase.map((sport, index) => (
-            <article
-              key={sport.name}
-              className={`sports-action-card ${sport.toneClass} ${activeIndex === index ? "active" : ""}`}
-            >
-              <div className="sports-action-card-top">
-                <span className="sports-strip-label">{sport.name}</span>
-                <span className="sports-action-card-index">0{index + 1}</span>
-              </div>
-              <h3>{sport.headline}</h3>
-              <p>{sport.copy}</p>
-              <div className="sports-action-card-photo" aria-hidden="true">
-                <span>{sport.short}</span>
-              </div>
-              <div className="sports-action-card-footer">
-                <strong>{sport.actionTitle}</strong>
-                <span>{sport.bestFor}</span>
-              </div>
+        <section className="sports-landing-editorial sports-motion-editorial">
+          {motionSlides.map((slide) => (
+            <article key={slide.name}>
+              <span className="sports-strip-label">{slide.name}</span>
+              <strong>{slide.accent}</strong>
+              <p>{slide.description}</p>
             </article>
           ))}
-        </section>
-
-        <section className="sports-landing-editorial">
-          <article className="sports-landing-editorial-main">
-            <span className="sports-strip-label">Editorial layout</span>
-            <h2>Designed like a sports feature spread.</h2>
-            <p>
-              This separate landing page gives each sport space to feel distinct while still
-              pointing people back to one simple booking flow.
-            </p>
-          </article>
-          <article>
-            <span className="sports-strip-label">Use it for</span>
-            <strong>Parents, teams, schools, clubs</strong>
-            <p>Send this page when you want customers to feel the style before they book.</p>
-          </article>
-          <article>
-            <span className="sports-strip-label">Best moment types</span>
-            <strong>Motion, reaction, spotlight portraits</strong>
-            <p>It frames each sport around action, pace, and athlete presence.</p>
-          </article>
         </section>
 
         <section className="sports-closing-card" id="sports-closing">
           <div>
             <span className="sports-strip-label">Ready to book</span>
-            <h2>Send customers from the showcase straight into booking.</h2>
+            <h2>Use the motion showcase, then send them straight to the calendar.</h2>
             <p>
-              Keep this page as your style-first entry point, then move them to the live
-              booking calendar when they are ready.
+              Keep this as the style-first landing page for customers who want to see the
+              action before they reserve a session.
             </p>
           </div>
           <div className="sports-landing-actions">
