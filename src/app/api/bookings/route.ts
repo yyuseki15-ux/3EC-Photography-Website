@@ -100,6 +100,25 @@ export async function POST(request: Request) {
       );
     }
 
+    const { data: existingBookingOnDate, error: existingBookingOnDateError } = await supabase
+      .from("bookings")
+      .select("id")
+      .eq("event_date", payload.eventDate)
+      .maybeSingle();
+
+    if (existingBookingOnDateError) {
+      throw existingBookingOnDateError;
+    }
+
+    if (existingBookingOnDate) {
+      return NextResponse.json(
+        {
+          message: "That date is already booked. Please choose another date."
+        },
+        { status: 400 }
+      );
+    }
+
     const { data, error } = await supabase
       .from("bookings")
       .insert({

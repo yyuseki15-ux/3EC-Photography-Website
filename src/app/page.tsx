@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
-import { formatUnavailableDate } from "@/lib/unavailable-dates";
+import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
 
 type BookingState = {
   fullName: string;
@@ -44,7 +44,7 @@ export default function Home() {
   const [formData, setFormData] = useState<BookingState>(initialState);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
-  const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
+  const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
   const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
   const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
@@ -52,13 +52,25 @@ export default function Home() {
     const today = new Date();
     return today.toISOString().split("T")[0];
   }, []);
-  const isUnavailableDate = useMemo(
-    () => unavailableDates.includes(formData.eventDate),
+  const unavailableDateValues = useMemo(
+    () => unavailableDates.map((entry) => entry.blocked_date),
+    [unavailableDates]
+  );
+  const selectedDateDetails = useMemo(
+    () => unavailableDates.find((entry) => entry.blocked_date === formData.eventDate) ?? null,
     [formData.eventDate, unavailableDates]
   );
+  const isUnavailableDate = useMemo(
+    () => unavailableDateValues.includes(formData.eventDate),
+    [formData.eventDate, unavailableDateValues]
+  );
   const upcomingUnavailableDates = useMemo(
-    () => unavailableDates.slice(0, 8).map((date) => formatUnavailableDate(date)),
+    () => unavailableDates.slice(0, 8).map((entry) => formatUnavailableDate(entry.blocked_date)),
     [unavailableDates]
+  );
+  const selectedDateBookedTimes = useMemo(
+    () => selectedDateDetails?.time_slots ?? [],
+    [selectedDateDetails]
   );
 
   useEffect(() => {
@@ -75,13 +87,11 @@ export default function Home() {
         }
 
         const payload = (await response.json()) as {
-          dates?: Array<{
-            blocked_date: string;
-          }>;
+          dates?: PublicUnavailableDate[];
         };
 
         if (isMounted) {
-          setUnavailableDates((payload.dates ?? []).map((entry) => entry.blocked_date));
+          setUnavailableDates(payload.dates ?? []);
         }
       } catch (error) {
         console.error("Unavailable dates load failed:", error);
@@ -272,7 +282,9 @@ export default function Home() {
             />
             <span className={`field-hint ${isUnavailableDate ? "field-hint-error" : ""}`}>
               {isUnavailableDate
-                ? "That date is unavailable. Please choose another one."
+                ? selectedDateDetails?.source === "booking"
+                  ? "That date is already booked. Please choose another one."
+                  : "That date is unavailable. Please choose another one."
                 : upcomingUnavailableDates.length > 0
                   ? `Unavailable dates: ${upcomingUnavailableDates.join(", ")}`
                   : "All upcoming dates are currently open."}
@@ -297,7 +309,11 @@ export default function Home() {
                   }))
                 }
               />
-              <span className="field-hint">Choose or enter any time like 08:00 AM or 01:30 PM</span>
+              <span className="field-hint">
+                {selectedDateBookedTimes.length > 0
+                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}`
+                  : "Choose or enter any time like 08:00 AM or 01:30 PM"}
+              </span>
             </label>
 
             <label>
@@ -317,7 +333,11 @@ export default function Home() {
                   }))
                 }
               />
-              <span className="field-hint">Choose or enter any time like 10:00 AM or 03:45 PM</span>
+              <span className="field-hint">
+                {selectedDateBookedTimes.length > 0
+                  ? `Booked times on this date: ${selectedDateBookedTimes.join(", ")}`
+                  : "Choose or enter any time like 10:00 AM or 03:45 PM"}
+              </span>
             </label>
           </div>
 
