@@ -151,7 +151,7 @@ export async function updateBookingStatus(formData: FormData) {
   const previousStatus = (existingBooking as BookingRecord).status;
 
   if (previousStatus === status) {
-    return;
+    redirect("/admin/bookings");
   }
 
   const { data: updatedBooking, error } = await supabase
@@ -171,6 +171,7 @@ export async function updateBookingStatus(formData: FormData) {
   );
 
   revalidatePath("/admin/bookings");
+  redirect("/admin/bookings");
 }
 
 export async function deleteBooking(formData: FormData) {
