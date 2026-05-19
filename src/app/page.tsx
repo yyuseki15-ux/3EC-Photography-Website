@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { sports } from "@/lib/sports";
 
 type BookingState = {
   fullName: string;
@@ -13,15 +14,6 @@ type BookingState = {
   players: string;
   notes: string;
 };
-
-const sports = [
-  "Football",
-  "Basketball",
-  "Pickleball",
-  "Tennis",
-  "Badminton",
-  "Volleyball"
-];
 
 const suggestedTimes = Array.from({ length: 48 }, (_, index) => {
   const totalMinutes = index * 30;

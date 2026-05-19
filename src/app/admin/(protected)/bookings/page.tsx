@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { clearAdminSession, hasValidAdminSession } from "@/lib/admin-auth";
+import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type BookingRecord = {
@@ -117,9 +118,6 @@ export default async function AdminBookingsPage({
     sport: selectedSport,
     eventDate: selectedEventDate
   });
-  const sports = Array.from(new Set(bookings.map((booking) => booking.sport))).sort((left, right) =>
-    left.localeCompare(right)
-  );
   const hasActiveFilters =
     query.length > 0 || selectedSport.length > 0 || selectedEventDate.length > 0;
 
