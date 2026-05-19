@@ -8,6 +8,12 @@
   --accent-dark: #9a451f;
   --line: rgba(31, 42, 31, 0.12);
   --shadow: 0 30px 70px rgba(59, 42, 18, 0.14);
+  --sport-dark: #11181f;
+  --sport-panel: rgba(17, 24, 31, 0.86);
+  --sport-panel-strong: rgba(10, 15, 21, 0.92);
+  --sport-gold: #f1b14f;
+  --sport-red: #e85d3a;
+  --sport-ice: #eff5f8;
 }
 
 * {
@@ -29,6 +35,28 @@ body {
   font-family: Georgia, "Times New Roman", serif;
 }
 
+.customer-page {
+  position: relative;
+  overflow: hidden;
+  color: var(--sport-ice);
+  background:
+    radial-gradient(circle at top right, rgba(232, 93, 58, 0.2), transparent 24%),
+    radial-gradient(circle at 15% 15%, rgba(241, 177, 79, 0.12), transparent 22%),
+    linear-gradient(145deg, #0b1016 0%, #11181f 44%, #1b222a 100%);
+  font-family: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.customer-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), transparent 88%);
+  pointer-events: none;
+}
+
 button,
 input,
 select,
@@ -40,6 +68,18 @@ textarea {
   width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
   padding: 2rem 0 4rem;
+}
+
+.customer-page .page-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1280px, calc(100% - 2rem));
+  padding-top: 1.5rem;
+  padding-bottom: 5rem;
+}
+
+.customer-hero-shell {
+  position: relative;
 }
 
 .hero-card {
@@ -55,8 +95,28 @@ textarea {
   box-shadow: var(--shadow);
 }
 
+.sports-hero-card {
+  gap: 2.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(130deg, rgba(255, 255, 255, 0.04), transparent 48%),
+    var(--sport-panel);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
 .hero-copy {
   padding: 1rem 0.5rem 1rem 0.5rem;
+}
+
+.sports-hero-copy {
+  padding: 0.5rem 0.5rem 0.5rem 0;
+}
+
+.sports-hero-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
 }
 
 .eyebrow {
@@ -68,11 +128,52 @@ textarea {
   text-transform: none;
 }
 
+.customer-page .eyebrow {
+  color: var(--sport-gold);
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.sports-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid rgba(241, 177, 79, 0.28);
+  border-radius: 999px;
+  color: #fbe6bf;
+  background: rgba(241, 177, 79, 0.12);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sports-kicker {
+  margin: 1.25rem 0 0;
+  color: rgba(239, 245, 248, 0.72);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .hero-copy h1 {
   margin: 0;
   max-width: 10ch;
   font-size: clamp(3rem, 7vw, 5.7rem);
   line-height: 0.96;
+}
+
+.sports-hero-title {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  max-width: 9ch;
+  margin-top: 0.75rem;
+  color: #f8fbfd;
+  font-size: clamp(4.5rem, 8vw, 7.6rem);
+  line-height: 0.92;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .hero-text {
@@ -81,6 +182,44 @@ textarea {
   color: var(--muted);
   font-size: 1.12rem;
   line-height: 1.7;
+}
+
+.sports-hero-text {
+  max-width: 60ch;
+  margin: 1rem 0 1.4rem;
+  color: rgba(239, 245, 248, 0.76);
+}
+
+.sports-highlight-bar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.35rem 0 1.5rem;
+}
+
+.sports-highlight-bar div,
+.sports-strip-grid article,
+.sports-process-steps div {
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sports-highlight-bar strong,
+.sports-strip-grid strong,
+.sports-process-steps strong {
+  display: block;
+  color: #f8fbfd;
+}
+
+.sports-highlight-bar span,
+.sports-strip-grid p,
+.sports-process-steps p {
+  display: block;
+  margin-top: 0.35rem;
+  color: rgba(239, 245, 248, 0.72);
+  line-height: 1.55;
 }
 
 .hero-stats {
@@ -97,11 +236,42 @@ textarea {
   background: rgba(255, 255, 255, 0.38);
 }
 
+.sports-hero-stats div {
+  padding: 1.15rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .hero-stats strong,
 .feature-strip h3 {
   display: block;
   margin-bottom: 0.35rem;
   font-size: 1.1rem;
+}
+
+.sports-hero-stats strong {
+  color: #f8fbfd;
+  font-size: 1.2rem;
+}
+
+.sports-hero-stats span {
+  color: rgba(239, 245, 248, 0.72);
+}
+
+.sports-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.sports-strip-label {
+  display: inline-block;
+  color: var(--sport-gold);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .hero-stats span,
@@ -120,6 +290,15 @@ textarea {
   border: 1px solid rgba(198, 93, 46, 0.16);
 }
 
+.sports-booking-card {
+  align-self: stretch;
+  border: 1px solid rgba(241, 177, 79, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 28%),
+    rgba(245, 238, 226, 0.96);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
 .form-heading h2,
 .feature-strip h3 {
   margin: 0;
@@ -129,10 +308,41 @@ textarea {
   margin: 0.4rem 0 0;
 }
 
+.sports-form-heading {
+  gap: 0.25rem;
+}
+
+.sports-form-heading h2 {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  color: var(--sport-dark);
+  font-size: 3rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sports-form-tag {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  color: var(--accent-dark);
+  background: rgba(232, 93, 58, 0.12);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .booking-card label {
   display: grid;
   gap: 0.45rem;
   font-size: 0.96rem;
+}
+
+.sports-booking-card label {
+  color: #2c332b;
+  font-weight: 700;
 }
 
 .booking-card input,
@@ -188,6 +398,11 @@ textarea {
   border: 1px solid rgba(31, 42, 31, 0.12);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.52);
+}
+
+.sports-schedule-card {
+  border-color: rgba(31, 42, 31, 0.08);
+  background: rgba(255, 250, 242, 0.95);
 }
 
 .booked-schedule-header {
@@ -306,6 +521,66 @@ textarea {
   background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
   text-decoration: none;
   font-weight: 700;
+}
+
+.sports-proof-section,
+.sports-process-section {
+  margin-top: 1.6rem;
+}
+
+.sports-proof-header {
+  max-width: 58rem;
+  margin-bottom: 1rem;
+}
+
+.sports-proof-header h2,
+.sports-process-copy h2 {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  margin: 0.2rem 0 0;
+  color: #f8fbfd;
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sports-feature-strip article {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sports-feature-strip h3 {
+  color: #f8fbfd;
+}
+
+.sports-feature-strip p {
+  color: rgba(239, 245, 248, 0.72);
+}
+
+.sports-process-card {
+  padding: 1.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 32px;
+  background:
+    linear-gradient(135deg, rgba(232, 93, 58, 0.08), transparent 35%),
+    rgba(255, 255, 255, 0.05);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+}
+
+.sports-process-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.sports-process-steps span {
+  display: inline-flex;
+  margin-bottom: 0.55rem;
+  color: var(--sport-gold);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
 }
 
 .public-page-shell {
@@ -916,6 +1191,12 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .sports-highlight-bar,
+  .sports-strip-grid,
+  .sports-process-steps {
+    grid-template-columns: 1fr;
+  }
+
   .hero-copy h1 {
     max-width: 12ch;
   }
@@ -975,6 +1256,10 @@ textarea {
 
   .hero-copy h1 {
     font-size: clamp(2.5rem, 13vw, 4rem);
+  }
+
+  .sports-hero-title {
+    font-size: clamp(3.8rem, 18vw, 5rem);
   }
 
   .admin-login-shell,
