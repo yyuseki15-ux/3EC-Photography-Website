@@ -565,6 +565,18 @@ textarea {
   box-shadow: 0 0 0 4px rgba(198, 93, 46, 0.08);
 }
 
+.admin-tab-link.active {
+  color: #fff7f0;
+  background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
+  border-color: transparent;
+}
+
+.admin-dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 .admin-filters-form {
   display: grid;
   grid-template-columns: minmax(0, 2fr) repeat(2, minmax(180px, 1fr)) auto;
@@ -921,6 +933,10 @@ textarea {
 
   .admin-tabs-card {
     flex-direction: column;
+  }
+
+  .admin-dashboard-stats {
+    grid-template-columns: 1fr;
   }
 
   .admin-unavailable-form {

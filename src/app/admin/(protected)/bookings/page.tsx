@@ -16,6 +16,7 @@ type AdminBookingsPageProps = {
     sport?: string;
     eventDate?: string;
     status?: string;
+    tab?: string;
   }>;
 };
 
@@ -88,6 +89,10 @@ function filterBookings(
   });
 }
 
+function isValidAdminTab(value: string) {
+  return value === "dashboard" || value === "availability" || value === "requests";
+}
+
 export default async function AdminBookingsPage({
   searchParams
 }: AdminBookingsPageProps) {
@@ -102,6 +107,9 @@ export default async function AdminBookingsPage({
   const selectedSport = resolvedSearchParams?.sport?.trim() ?? "";
   const selectedEventDate = resolvedSearchParams?.eventDate?.trim() ?? "";
   const selectedStatus = resolvedSearchParams?.status?.trim() ?? "";
+  const selectedTab = isValidAdminTab(resolvedSearchParams?.tab?.trim() ?? "")
+    ? (resolvedSearchParams?.tab?.trim() as "dashboard" | "availability" | "requests")
+    : "";
 
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase
@@ -139,21 +147,16 @@ export default async function AdminBookingsPage({
 
   return (
     <main className="admin-shell">
-      <section className="admin-header-card" id="dashboard-overview">
+      <section className="admin-header-card">
         <div>
           <p className="admin-eyebrow">3EC Sports Photography</p>
-          <h1>Bookings Dashboard</h1>
+          <h1>Admin Panel</h1>
           <p className="admin-subtitle">
-            View all booking requests in one place, ordered by upcoming event date.
+            Choose a tab to open bookings, availability, or dashboard details.
           </p>
         </div>
 
         <div className="admin-header-actions">
-          <div className="admin-stat-card">
-            <strong>{filteredBookings.length}</strong>
-            <span>{hasActiveFilters ? `Filtered of ${bookings.length}` : "Total bookings"}</span>
-          </div>
-
           <form action={logout}>
             <button className="secondary-button" type="submit">
               Log out
@@ -163,19 +166,59 @@ export default async function AdminBookingsPage({
       </section>
 
       <nav className="admin-tabs-card" aria-label="Admin sections">
-        <a className="admin-tab-link" href="#dashboard-overview">
+        <a className={`admin-tab-link ${selectedTab === "dashboard" ? "active" : ""}`} href="/admin/bookings?tab=dashboard">
           Bookings Dashboard
         </a>
-        <a className="admin-tab-link" href="#availability-control">
+        <a className={`admin-tab-link ${selectedTab === "availability" ? "active" : ""}`} href="/admin/bookings?tab=availability">
           Availability Control
         </a>
-        <a className="admin-tab-link" href="#booking-requests">
+        <a className={`admin-tab-link ${selectedTab === "requests" ? "active" : ""}`} href="/admin/bookings?tab=requests">
           Booking Requests
         </a>
       </nav>
 
+      {!selectedTab ? (
+        <section className="admin-filters-card">
+          <div className="admin-empty-state">
+            <h2>Select a section</h2>
+            <p>Choose `Bookings Dashboard`, `Availability Control`, or `Booking Requests` to open that part of the admin page.</p>
+          </div>
+        </section>
+      ) : null}
+
+      {selectedTab === "dashboard" ? (
+        <section className="admin-filters-card" id="dashboard-overview">
+          <div className="admin-card-heading">
+            <div>
+              <p className="admin-eyebrow">Bookings Dashboard</p>
+              <h2>Overview</h2>
+              <p className="admin-subtitle">
+                Quick totals for your current bookings and filters.
+              </p>
+            </div>
+          </div>
+
+          <div className="admin-dashboard-stats">
+            <div className="admin-stat-card">
+              <strong>{bookings.length}</strong>
+              <span>Total bookings</span>
+            </div>
+            <div className="admin-stat-card">
+              <strong>{filteredBookings.length}</strong>
+              <span>{hasActiveFilters ? "Filtered results" : "Visible bookings"}</span>
+            </div>
+            <div className="admin-stat-card">
+              <strong>{unavailableDates.length}</strong>
+              <span>Unavailable date blocks</span>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {selectedTab === "requests" ? (
       <section className="admin-filters-card" id="booking-requests">
         <form className="admin-filters-form admin-filters-form-wide" action="/admin/bookings" method="get">
+          <input name="tab" type="hidden" value="requests" />
           <label className="admin-filter-field admin-filter-search">
             Search bookings
             <input
@@ -218,14 +261,16 @@ export default async function AdminBookingsPage({
           <div className="admin-filter-actions">
             <button type="submit">Apply filters</button>
             {hasActiveFilters ? (
-              <a className="secondary-button admin-clear-button" href="/admin/bookings">
+              <a className="secondary-button admin-clear-button" href="/admin/bookings?tab=requests">
                 Clear
               </a>
             ) : null}
           </div>
         </form>
       </section>
+      ) : null}
 
+      {selectedTab === "availability" ? (
       <section className="admin-filters-card" id="availability-control">
         <div className="admin-card-heading">
           <div>
@@ -348,12 +393,14 @@ export default async function AdminBookingsPage({
           <p className="admin-empty-inline">No unavailable dates are blocked yet.</p>
         )}
       </section>
+      ) : null}
 
+      {selectedTab === "requests" ? (
       <section className="admin-table-card" id="booking-records">
         <div className="admin-card-heading">
           <div>
             <p className="admin-eyebrow">Booking Requests</p>
-            <h2>Customer, Sport, Event Date, Time, Players, Status, Notes, Submitted, Actions</h2>
+            <h2>Booking Requests</h2>
             <p className="admin-subtitle">
               Review every booking request and manage updates from one table.
             </p>
@@ -422,6 +469,7 @@ export default async function AdminBookingsPage({
           </div>
         )}
       </section>
+      ) : null}
     </main>
   );
 }
