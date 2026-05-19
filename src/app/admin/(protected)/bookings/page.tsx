@@ -15,6 +15,14 @@ type BookingRecord = {
   created_at: string;
 };
 
+type AdminBookingsPageProps = {
+  searchParams?: Promise<{
+    q?: string;
+    sport?: string;
+    eventDate?: string;
+  }>;
+};
+
 async function logout() {
   "use server";
 
@@ -40,12 +48,57 @@ function formatDateTime(value: string) {
   }).format(new Date(value));
 }
 
-export default async function AdminBookingsPage() {
+function filterBookings(
+  bookings: BookingRecord[],
+  {
+    query,
+    sport,
+    eventDate
+  }: {
+    query: string;
+    sport: string;
+    eventDate: string;
+  }
+) {
+  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedSport = sport.trim().toLowerCase();
+  const normalizedEventDate = eventDate.trim();
+
+  return bookings.filter((booking) => {
+    const matchesQuery =
+      normalizedQuery.length === 0 ||
+      [
+        booking.full_name,
+        booking.email,
+        booking.phone,
+        booking.notes ?? "",
+        booking.sport,
+        booking.time_slot
+      ].some((value) => value.toLowerCase().includes(normalizedQuery));
+
+    const matchesSport =
+      normalizedSport.length === 0 || booking.sport.toLowerCase() === normalizedSport;
+
+    const matchesEventDate =
+      normalizedEventDate.length === 0 || booking.event_date === normalizedEventDate;
+
+    return matchesQuery && matchesSport && matchesEventDate;
+  });
+}
+
+export default async function AdminBookingsPage({
+  searchParams
+}: AdminBookingsPageProps) {
   const isAuthenticated = await hasValidAdminSession();
 
   if (!isAuthenticated) {
     redirect("/admin/login");
   }
+
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams?.q?.trim() ?? "";
+  const selectedSport = resolvedSearchParams?.sport?.trim() ?? "";
+  const selectedEventDate = resolvedSearchParams?.eventDate?.trim() ?? "";
 
   const supabase = createSupabaseAdminClient();
   const { data, error } = await supabase
@@ -59,6 +112,16 @@ export default async function AdminBookingsPage() {
   }
 
   const bookings = (data ?? []) as BookingRecord[];
+  const filteredBookings = filterBookings(bookings, {
+    query,
+    sport: selectedSport,
+    eventDate: selectedEventDate
+  });
+  const sports = Array.from(new Set(bookings.map((booking) => booking.sport))).sort((left, right) =>
+    left.localeCompare(right)
+  );
+  const hasActiveFilters =
+    query.length > 0 || selectedSport.length > 0 || selectedEventDate.length > 0;
 
   return (
     <main className="admin-shell">
@@ -73,8 +136,8 @@ export default async function AdminBookingsPage() {
 
         <div className="admin-header-actions">
           <div className="admin-stat-card">
-            <strong>{bookings.length}</strong>
-            <span>Total bookings</span>
+            <strong>{filteredBookings.length}</strong>
+            <span>{hasActiveFilters ? `Filtered of ${bookings.length}` : "Total bookings"}</span>
           </div>
 
           <form action={logout}>
@@ -85,11 +148,56 @@ export default async function AdminBookingsPage() {
         </div>
       </section>
 
+      <section className="admin-filters-card">
+        <form className="admin-filters-form" action="/admin/bookings" method="get">
+          <label className="admin-filter-field admin-filter-search">
+            Search bookings
+            <input
+              defaultValue={query}
+              name="q"
+              placeholder="Search name, email, phone, notes, or time"
+              type="search"
+            />
+          </label>
+
+          <label className="admin-filter-field">
+            Sport
+            <select defaultValue={selectedSport} name="sport">
+              <option value="">All sports</option>
+              {sports.map((sport) => (
+                <option key={sport} value={sport}>
+                  {sport}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="admin-filter-field">
+            Event date
+            <input defaultValue={selectedEventDate} name="eventDate" type="date" />
+          </label>
+
+          <div className="admin-filter-actions">
+            <button type="submit">Apply filters</button>
+            {hasActiveFilters ? (
+              <a className="secondary-button admin-clear-button" href="/admin/bookings">
+                Clear
+              </a>
+            ) : null}
+          </div>
+        </form>
+      </section>
+
       <section className="admin-table-card">
         {bookings.length === 0 ? (
           <div className="admin-empty-state">
             <h2>No bookings yet</h2>
             <p>New booking requests will appear here as soon as customers submit the form.</p>
+          </div>
+        ) : filteredBookings.length === 0 ? (
+          <div className="admin-empty-state">
+            <h2>No bookings match these filters</h2>
+            <p>Try clearing one or more filters to see more booking requests.</p>
           </div>
         ) : (
           <div className="admin-table-wrap">
@@ -106,7 +214,7 @@ export default async function AdminBookingsPage() {
                 </tr>
               </thead>
               <tbody>
-                {bookings.map((booking) => (
+                {filteredBookings.map((booking) => (
                   <tr key={booking.id}>
                     <td>
                       <div className="customer-cell">
