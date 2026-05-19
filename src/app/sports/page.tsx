@@ -102,7 +102,6 @@ export default function SportsLandingPage() {
           </div>
           <div className="sports-nav-links">
             <Link href="/">Book Now</Link>
-            <a href="#motion-carousel">In Motion</a>
           </div>
         </nav>
       </header>
@@ -124,7 +123,7 @@ export default function SportsLandingPage() {
               const offset = index - activeIndex;
               const isActive = offset === 0;
               const distance = Math.abs(offset);
-              const translateX = offset * 290;
+              const translateX = offset * 210;
               const rotateY = offset * -18;
               const scale = Math.max(0.64, 1 - distance * 0.12);
               const opacity = Math.max(0.2, 1 - distance * 0.16);

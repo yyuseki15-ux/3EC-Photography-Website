@@ -1207,6 +1207,8 @@ textarea {
 
 .sports-motion-carousel-section {
   margin-top: 0;
+  max-width: 780px;
+  margin-inline: auto;
   padding: 1.2rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 32px;
@@ -1218,7 +1220,7 @@ textarea {
 
 .sports-motion-carousel {
   position: relative;
-  min-height: 560px;
+  min-height: 760px;
   margin-top: 1.25rem;
   perspective: 1800px;
   transform-style: preserve-3d;
@@ -1226,7 +1228,7 @@ textarea {
 }
 
 .sports-motion-card {
-  --card-width: min(420px, 34vw);
+  --card-width: min(360px, 52vw);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1253,7 +1255,7 @@ textarea {
 
 .sports-motion-card-image-wrap {
   position: relative;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 3 / 4;
 }
 
 .sports-motion-card-image {
