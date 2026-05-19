@@ -103,7 +103,6 @@ export default function SportsLandingPage() {
           <div className="sports-nav-links">
             <Link href="/">Book Now</Link>
             <a href="#motion-carousel">In Motion</a>
-            <a href="#sports-closing">Contact</a>
           </div>
         </nav>
       </header>
