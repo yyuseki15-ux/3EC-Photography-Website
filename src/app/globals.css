@@ -49,6 +49,120 @@ body {
   font-family: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
+.customer-logo-watermark {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+  opacity: 0.075;
+  transform: scale(1.35);
+}
+
+.customer-logo-watermark-mark {
+  width: min(540px, 74vw);
+}
+
+.customer-logo-watermark-mark svg {
+  width: 100%;
+  height: auto;
+}
+
+.customer-logo-watermark-mark svg path,
+.customer-logo-watermark-mark svg circle {
+  fill: none;
+  stroke: #f7fbff;
+  stroke-width: 5.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.customer-logo-watermark-mark .brand-camera-dot {
+  fill: #f7fbff;
+  stroke: none;
+}
+
+.customer-logo-watermark-script {
+  margin-top: -1rem;
+  color: #f7fbff;
+  font-family: "Segoe Script", "Brush Script MT", cursive;
+  font-size: clamp(7rem, 16vw, 12rem);
+  line-height: 0.86;
+}
+
+.customer-logo-watermark-subtitle {
+  color: #f7fbff;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-weight: 300;
+  letter-spacing: 0.24em;
+}
+
+.customer-brand-shell {
+  position: relative;
+  z-index: 1;
+  width: min(780px, calc(100% - 2rem));
+  margin: 1.25rem auto 0;
+}
+
+.customer-brand-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  padding: 1.2rem 1rem 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.2);
+}
+
+.customer-brand-mark {
+  width: min(260px, 78%);
+}
+
+.customer-brand-mark svg {
+  width: 100%;
+  height: auto;
+}
+
+.customer-brand-mark svg path,
+.customer-brand-mark svg circle {
+  fill: none;
+  stroke: #0c1116;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.customer-brand-mark .brand-camera-dot {
+  fill: #0c1116;
+  stroke: none;
+}
+
+.customer-brand-text {
+  display: grid;
+  justify-items: center;
+}
+
+.customer-brand-script {
+  margin-top: -0.4rem;
+  color: #10161d;
+  font-family: "Segoe Script", "Brush Script MT", cursive;
+  font-size: clamp(4rem, 10vw, 6rem);
+  line-height: 0.9;
+}
+
+.customer-brand-subtitle {
+  margin-top: 0.25rem;
+  color: #25313d;
+  font-size: clamp(1.2rem, 3vw, 1.9rem);
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  text-transform: none;
+}
+
 .sports-nav-shell {
   position: sticky;
   top: 0;
@@ -144,6 +258,7 @@ textarea {
 
 .customer-hero-shell {
   position: relative;
+  z-index: 1;
   margin-top: 1rem;
 }
 
@@ -838,7 +953,11 @@ textarea {
 
 .sports-booking-card button[type="submit"] {
   color: #fffaf4;
-  background: linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 42%),
+    linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .sports-proof-section,
@@ -1375,16 +1494,20 @@ textarea {
   border-radius: 999px;
   padding: 1rem 1.25rem;
   color: #fff7f0;
-  background: linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 42%),
+    linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   cursor: pointer;
   font-weight: 700;
-  box-shadow: 0 12px 28px var(--button-shadow);
+  box-shadow: 0 8px 18px rgba(15, 118, 110, 0.18);
   transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
 }
 
 .booking-card button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 32px var(--button-shadow);
+  box-shadow: 0 10px 22px rgba(15, 118, 110, 0.2);
 }
 
 .booking-card button:disabled {

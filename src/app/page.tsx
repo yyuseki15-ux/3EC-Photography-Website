@@ -218,6 +218,44 @@ export default function Home() {
   return (
     <main className="customer-page">
       <div className="customer-backdrop" aria-hidden="true" />
+      <div className="customer-logo-watermark" aria-hidden="true">
+        <div className="customer-logo-watermark-mark">
+          <svg viewBox="0 0 220 140" role="img">
+            <path d="M43 40h17l8-16h56l9 16h24c10 0 18 8 18 18v38c0 10-8 18-18 18H43c-10 0-18-8-18-18V58c0-10 8-18 18-18Z" />
+            <path d="M63 40h18" />
+            <circle cx="101" cy="77" r="28" />
+            <circle cx="101" cy="77" r="15" />
+            <circle cx="151" cy="58" r="4" className="brand-camera-dot" />
+            <path d="M26 67h39" />
+            <path d="M26 82h39" />
+            <path d="M121 76h38" />
+            <path d="M126 92h33" />
+          </svg>
+        </div>
+        <span className="customer-logo-watermark-script">3EC</span>
+        <span className="customer-logo-watermark-subtitle">Sports Photography</span>
+      </div>
+      <section className="customer-brand-shell" aria-label="3EC Sports Photography logo">
+        <div className="customer-brand-card">
+          <div className="customer-brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 220 140" role="img">
+              <path d="M43 40h17l8-16h56l9 16h24c10 0 18 8 18 18v38c0 10-8 18-18 18H43c-10 0-18-8-18-18V58c0-10 8-18 18-18Z" />
+              <path d="M63 40h18" />
+              <circle cx="101" cy="77" r="28" />
+              <circle cx="101" cy="77" r="15" />
+              <circle cx="151" cy="58" r="4" className="brand-camera-dot" />
+              <path d="M26 67h39" />
+              <path d="M26 82h39" />
+              <path d="M121 76h38" />
+              <path d="M126 92h33" />
+            </svg>
+          </div>
+          <div className="customer-brand-text">
+            <span className="customer-brand-script">3EC</span>
+            <span className="customer-brand-subtitle">Sports Photography</span>
+          </div>
+        </div>
+      </section>
       <section className="customer-hero-shell">
         <div className="hero-card sports-hero-card">
           <form className="booking-card sports-booking-card" id="booking-form" onSubmit={handleSubmit}>
