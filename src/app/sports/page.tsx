@@ -108,22 +108,12 @@ export default function SportsLandingPage() {
 
       <div className="page-shell sports-landing-shell">
         <section className="sports-motion-carousel-section" id="motion-carousel">
-          <div className="sports-selector-head">
-            <div>
-              <span className="sports-strip-label">Auto-moving showcase</span>
-              <strong>3D sports in motion</strong>
-            </div>
-            <span className="sports-selector-note">
-              {movingForward ? "Moving left to right" : "Moving right to left"}
-            </span>
-          </div>
-
           <div className="sports-motion-carousel">
             {motionSlides.map((slide, index) => {
               const offset = index - activeIndex;
               const isActive = offset === 0;
               const distance = Math.abs(offset);
-              const translateX = offset * 210;
+              const translateX = offset * 165;
               const rotateY = offset * -18;
               const scale = Math.max(0.64, 1 - distance * 0.12);
               const opacity = Math.max(0.2, 1 - distance * 0.16);
