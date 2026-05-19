@@ -238,8 +238,8 @@ export default function Home() {
       <section className="customer-hero-shell">
         <div className="hero-card sports-hero-card">
           <form className="booking-card sports-booking-card" id="booking-form" onSubmit={handleSubmit}>
-            <div className="booking-brand-lockup" aria-label="3EC Sports Photography logo">
-              <div className="booking-brand-mark" aria-hidden="true">
+            <div className="booking-card-logo" aria-hidden="true">
+              <div className="booking-card-logo-mark">
                 <svg viewBox="0 0 220 140" role="img">
                   <path d="M43 40h17l8-16h56l9 16h24c10 0 18 8 18 18v38c0 10-8 18-18 18H43c-10 0-18-8-18-18V58c0-10 8-18 18-18Z" />
                   <path d="M63 40h18" />
@@ -252,10 +252,8 @@ export default function Home() {
                   <path d="M126 92h33" />
                 </svg>
               </div>
-              <div className="booking-brand-text">
-                <span className="booking-brand-script">3EC</span>
-                <span className="booking-brand-subtitle">Sports Photography</span>
-              </div>
+              <span className="booking-card-logo-script">3EC</span>
+              <span className="booking-card-logo-subtitle">Sports Photography</span>
             </div>
             <div className="form-heading sports-form-heading">
               <span className="sports-form-tag">Reserve coverage</span>

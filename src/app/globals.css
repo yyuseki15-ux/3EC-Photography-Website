@@ -634,6 +634,7 @@ textarea {
 }
 
 .sports-booking-card {
+  position: relative;
   align-self: stretch;
   border: 1px solid rgba(241, 177, 79, 0.28);
   background:
@@ -643,57 +644,59 @@ textarea {
   animation: sportsFloatIn 600ms ease-out;
 }
 
-.booking-brand-lockup {
+.booking-card-logo {
+  position: absolute;
+  inset: 1rem 1rem auto 1rem;
   display: grid;
   justify-items: center;
   gap: 0.1rem;
-  padding: 0.2rem 0 0.35rem;
-  border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.03));
+  pointer-events: none;
+  opacity: 0.11;
+  z-index: 0;
 }
 
-.booking-brand-mark {
-  width: min(130px, 42%);
+.booking-card-logo-mark {
+  width: min(130px, 34%);
 }
 
-.booking-brand-mark svg {
+.booking-card-logo-mark svg {
   width: 100%;
   height: auto;
 }
 
-.booking-brand-mark svg path,
-.booking-brand-mark svg circle {
+.booking-card-logo-mark svg path,
+.booking-card-logo-mark svg circle {
   fill: none;
-  stroke: rgba(12, 17, 22, 0.92);
+  stroke: rgba(12, 17, 22, 0.84);
   stroke-width: 7;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.booking-brand-mark .brand-camera-dot {
-  fill: rgba(12, 17, 22, 0.92);
+.booking-card-logo-mark .brand-camera-dot {
+  fill: rgba(12, 17, 22, 0.84);
   stroke: none;
 }
 
-.booking-brand-text {
-  display: grid;
-  justify-items: center;
-}
-
-.booking-brand-script {
+.booking-card-logo-script {
   margin-top: -0.2rem;
-  color: rgba(16, 22, 29, 0.94);
+  color: rgba(16, 22, 29, 0.84);
   font-family: "Segoe Script", "Brush Script MT", cursive;
-  font-size: clamp(2.6rem, 7vw, 4rem);
+  font-size: clamp(2.3rem, 5vw, 3.4rem);
   line-height: 0.9;
 }
 
-.booking-brand-subtitle {
-  margin-top: 0.05rem;
-  color: rgba(37, 49, 61, 0.88);
-  font-size: clamp(0.82rem, 2.1vw, 1.15rem);
-  font-weight: 300;
+.booking-card-logo-subtitle {
+  margin-top: 0;
+  color: rgba(37, 49, 61, 0.76);
+  font-size: clamp(0.78rem, 1.7vw, 0.96rem);
+  font-weight: 400;
   letter-spacing: 0.14em;
+}
+
+.sports-booking-card > *:not(.booking-card-logo) {
+  position: relative;
+  z-index: 1;
 }
 
 .form-heading h2,
