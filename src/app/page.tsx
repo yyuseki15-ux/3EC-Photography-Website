@@ -236,7 +236,6 @@ export default function Home() {
             <span className="sports-nav-name">Sports Photography</span>
           </div>
           <div className="sports-nav-links">
-            <Link href="/sports">Showcase</Link>
             <a href="#sports-selector">Sports</a>
             <a href="#booking-form">Book</a>
             <a href="#why-3ec">Why 3EC</a>
