@@ -53,11 +53,12 @@ Then open `http://localhost:3000`.
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 SUPABASE_SECRET_KEY=your-secret-key
+ADMIN_PASSWORD=your-admin-password
+ADMIN_SESSION_SECRET=your-long-random-session-secret
 ```
 
 ## Recommended next upgrades
 
-- add admin dashboard for viewing bookings
 - block unavailable dates automatically
 - add online payments
 - send email confirmation after booking

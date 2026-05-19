@@ -13,6 +13,8 @@ type BookingPayload = {
   notes?: string;
 };
 
+const timePattern = /^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i;
+
 export async function POST(request: Request) {
   const payload = (await request.json()) as BookingPayload;
 
@@ -54,7 +56,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const timeSlot = `${payload.startTime} - ${payload.endTime}`;
+  if (!timePattern.test(payload.startTime) || !timePattern.test(payload.endTime)) {
+    return NextResponse.json(
+      {
+        message: "Please enter start and end times like 08:00 AM or 01:30 PM."
+      },
+      { status: 400 }
+    );
+  }
+
+  const normalizedStartTime = payload.startTime.toUpperCase().replace(/\s+/g, " ").trim();
+  const normalizedEndTime = payload.endTime.toUpperCase().replace(/\s+/g, " ").trim();
+  const timeSlot = `${normalizedStartTime} - ${normalizedEndTime}`;
 
   try {
     const supabase = createSupabaseAdminClient();
@@ -92,6 +105,6 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    message: `Thanks ${payload.fullName}, your ${payload.sport} booking request for ${payload.eventDate} from ${payload.startTime} to ${payload.endTime} has been saved.`
+    message: `Thanks ${payload.fullName}, your ${payload.sport} booking request for ${payload.eventDate} from ${normalizedStartTime} to ${normalizedEndTime} has been saved.`
   });
 }

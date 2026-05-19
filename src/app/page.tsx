@@ -101,7 +101,7 @@ export default function Home() {
           </p>
           <div className="hero-stats">
             <div>
-              <strong>5 Sports</strong>
+              <strong>6 Sports</strong>
               <span>Ready to book</span>
             </div>
             <div>
