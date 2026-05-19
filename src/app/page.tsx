@@ -20,6 +20,57 @@ type BookingState = {
   notes: string;
 };
 
+const sportShowcase = [
+  {
+    name: "Football",
+    short: "FB",
+    accent: "Neon Rush",
+    headline: "Friday-night lights energy",
+    copy: "Dynamic coverage for tackles, breakaway runs, team entrances, and sideline reactions.",
+    toneClass: "football"
+  },
+  {
+    name: "Basketball",
+    short: "BB",
+    accent: "Court Vision",
+    headline: "Fast cuts and clutch moments",
+    copy: "Perfect for buzzer-beaters, huddles, player spotlights, and full-court storytelling.",
+    toneClass: "basketball"
+  },
+  {
+    name: "Pickleball",
+    short: "PB",
+    accent: "Quick Hands",
+    headline: "Sharp action in a compact space",
+    copy: "Highlight quick volleys, community play, and modern court-side brand content.",
+    toneClass: "pickleball"
+  },
+  {
+    name: "Tennis",
+    short: "TN",
+    accent: "Baseline Focus",
+    headline: "Clean lines, intense rallies",
+    copy: "Capture serves, match tension, and elegant athlete portraits with a premium editorial feel.",
+    toneClass: "tennis"
+  },
+  {
+    name: "Badminton",
+    short: "BD",
+    accent: "Speed & Lift",
+    headline: "Light feet, explosive motion",
+    copy: "Ideal for fast exchanges, indoor court drama, and sleek training-session visuals.",
+    toneClass: "badminton"
+  },
+  {
+    name: "Volleyball",
+    short: "VB",
+    accent: "Rise & Spike",
+    headline: "Momentum above the net",
+    copy: "Showcase jumps, celebrations, and the rhythm of team coordination in every set.",
+    toneClass: "volleyball"
+  }
+] as const;
+
 const initialState: BookingState = {
   fullName: "",
   email: "",
@@ -56,6 +107,7 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
   const [scheduleIndex, setScheduleIndex] = useState(0);
+  const [activeSportIndex, setActiveSportIndex] = useState(0);
   const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
   const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
@@ -114,6 +166,7 @@ export default function Home() {
     () => upcomingUnavailableSchedules[safeScheduleIndex] ?? null,
     [safeScheduleIndex, upcomingUnavailableSchedules]
   );
+  const activeSport = sportShowcase[activeSportIndex];
   const hasBookedTimeConflict = useMemo(() => {
     if (formData.startTime.trim().length === 0 || formData.endTime.trim().length === 0) {
       return false;
@@ -161,6 +214,14 @@ export default function Home() {
     return () => {
       isMounted = false;
     };
+  }, []);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setActiveSportIndex((current) => (current + 1) % sportShowcase.length);
+    }, 4000);
+
+    return () => window.clearInterval(interval);
   }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -225,6 +286,7 @@ export default function Home() {
             <span className="sports-nav-name">Sports Photography</span>
           </div>
           <div className="sports-nav-links">
+            <a href="#sports-selector">Sports</a>
             <a href="#booking-form">Book</a>
             <a href="#why-3ec">Why 3EC</a>
             <a href="#booking-flow">Flow</a>
@@ -310,6 +372,44 @@ export default function Home() {
                 <p>Minimal chrome, stronger imagery language, and faster booking focus.</p>
               </article>
             </div>
+
+            <section className="sports-selector-section" id="sports-selector">
+              <div className="sports-selector-head">
+                <div>
+                  <span className="sports-strip-label">Sport selector</span>
+                  <strong>Choose a sport or let it auto-play</strong>
+                </div>
+                <span className="sports-selector-note">Rotates every few seconds</span>
+              </div>
+
+              <div className="sports-logo-grid" role="tablist" aria-label="Sports showcase">
+                {sportShowcase.map((sport, index) => (
+                  <button
+                    key={sport.name}
+                    className={`sports-logo-button ${activeSportIndex === index ? "active" : ""}`}
+                    type="button"
+                    onClick={() => {
+                      setActiveSportIndex(index);
+                      setFormData((current) => ({ ...current, sport: sport.name }));
+                    }}
+                  >
+                    <span className="sports-logo-mark">{sport.short}</span>
+                    <span className="sports-logo-name">{sport.name}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className={`sports-spotlight-card ${activeSport.toneClass}`}>
+                <div className="sports-spotlight-copy">
+                  <span className="sports-strip-label">{activeSport.accent}</span>
+                  <h3>{activeSport.headline}</h3>
+                  <p>{activeSport.copy}</p>
+                </div>
+                <div className="sports-spotlight-badge">
+                  <span>{activeSport.short}</span>
+                </div>
+              </div>
+            </section>
           </div>
 
           <form className="booking-card sports-booking-card" id="booking-form" onSubmit={handleSubmit}>

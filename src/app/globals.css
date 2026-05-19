@@ -375,6 +375,167 @@ textarea {
   line-height: 1.55;
 }
 
+.sports-selector-section {
+  margin-top: 1.35rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sports-selector-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+}
+
+.sports-selector-head strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: #f8fbfd;
+  font-size: 1.3rem;
+}
+
+.sports-selector-note {
+  color: rgba(239, 245, 248, 0.62);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sports-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.sports-logo-button {
+  display: grid;
+  gap: 0.55rem;
+  align-items: center;
+  justify-items: center;
+  padding: 0.9rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f8fbfd;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.sports-logo-button:hover,
+.sports-logo-button.active {
+  transform: translateY(-2px);
+  border-color: rgba(241, 177, 79, 0.28);
+  background: rgba(241, 177, 79, 0.08);
+}
+
+.sports-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(232, 93, 58, 0.9), rgba(47, 125, 87, 0.9));
+  color: #fff8f1;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sports-logo-name {
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.sports-spotlight-card {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+  align-items: stretch;
+  margin-top: 1rem;
+  padding: 1.15rem;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 54%);
+}
+
+.sports-spotlight-card.football {
+  background:
+    linear-gradient(135deg, rgba(172, 220, 68, 0.14), transparent 52%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.sports-spotlight-card.basketball {
+  background:
+    linear-gradient(135deg, rgba(232, 93, 58, 0.16), transparent 52%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.sports-spotlight-card.pickleball {
+  background:
+    linear-gradient(135deg, rgba(241, 177, 79, 0.16), transparent 52%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.sports-spotlight-card.tennis {
+  background:
+    linear-gradient(135deg, rgba(146, 219, 92, 0.16), transparent 52%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.sports-spotlight-card.badminton {
+  background:
+    linear-gradient(135deg, rgba(92, 198, 219, 0.16), transparent 52%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.sports-spotlight-card.volleyball {
+  background:
+    linear-gradient(135deg, rgba(162, 122, 255, 0.16), transparent 52%),
+    rgba(255, 255, 255, 0.05);
+}
+
+.sports-spotlight-copy h3 {
+  margin: 0.45rem 0 0;
+  color: #f8fbfd;
+  font-size: 1.9rem;
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+.sports-spotlight-copy p {
+  margin: 0.65rem 0 0;
+  color: rgba(239, 245, 248, 0.74);
+  line-height: 1.6;
+}
+
+.sports-spotlight-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
+    rgba(10, 15, 21, 0.48);
+}
+
+.sports-spotlight-badge span {
+  color: #f8fbfd;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(4rem, 8vw, 6rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .sports-strip-label {
   display: inline-block;
   color: var(--sport-gold);
@@ -1371,6 +1532,11 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .sports-logo-grid,
+  .sports-spotlight-card {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .hero-copy h1 {
     max-width: 12ch;
   }
@@ -1439,6 +1605,16 @@ textarea {
   .grid-two,
   .hero-stats {
     grid-template-columns: 1fr;
+  }
+
+  .sports-logo-grid,
+  .sports-spotlight-card {
+    grid-template-columns: 1fr;
+  }
+
+  .sports-selector-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .hero-copy h1 {
