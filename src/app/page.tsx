@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
 import { hasTimeSlotConflict, normalizeBookingTimes } from "@/lib/booking-time";
@@ -96,7 +97,7 @@ export default function Home() {
             entry.booked_time_slots.length > 0 ||
             entry.blocked_time_slots.length > 0
         )
-        .slice(0, 8),
+        .slice(0, 5),
     [unavailableDates]
   );
   const selectedDateBlockedTimes = useMemo(
@@ -410,7 +411,7 @@ export default function Home() {
                     <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm13 8H4v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8ZM5 6a1 1 0 0 0-1 1v1h16V7a1 1 0 0 0-1-1H5Z" />
                   </svg>
                 </span>
-                <div>
+                <div className="booked-schedule-header-text">
                   <strong>Future Unavailable Schedule</strong>
                   <span className="field-hint">
                     Check the future dates and hours below, then choose any open time that does not overlap.
@@ -429,6 +430,10 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+
+              <Link className="booked-schedule-link" href="/unavailable-dates">
+                View all unavailable dates
+              </Link>
             </div>
           ) : null}
 

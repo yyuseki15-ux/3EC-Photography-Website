@@ -196,6 +196,15 @@ textarea {
   align-items: flex-start;
 }
 
+.booked-schedule-header-text {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.booked-schedule-header-text strong {
+  display: block;
+}
+
 .calendar-icon {
   display: inline-flex;
   flex: 0 0 auto;
@@ -218,6 +227,10 @@ textarea {
   display: grid;
   gap: 0.75rem;
   margin-top: 1rem;
+}
+
+.booked-schedule-list-full {
+  margin-top: 1.5rem;
 }
 
 .booked-schedule-item {
@@ -243,6 +256,52 @@ textarea {
 .booked-schedule-reason {
   font-size: 0.82rem;
   font-style: italic;
+}
+
+.booked-schedule-link,
+.public-page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-top: 1rem;
+  border-radius: 999px;
+  padding: 0.9rem 1.2rem;
+  color: #fff7f0;
+  background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.public-page-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.public-page-card {
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+}
+
+.public-page-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.public-page-header h1 {
+  margin: 0;
+}
+
+.public-page-text {
+  max-width: 42rem;
+  margin-bottom: 0;
 }
 
 .booking-card button {
@@ -747,7 +806,8 @@ textarea {
   }
 
   .admin-header-card,
-  .admin-header-actions {
+  .admin-header-actions,
+  .public-page-header {
     flex-direction: column;
     align-items: stretch;
   }
@@ -791,7 +851,8 @@ textarea {
   }
 
   .admin-login-shell,
-  .admin-shell {
+  .admin-shell,
+  .public-page-shell {
     width: min(100% - 1rem, 100%);
     padding-top: 0.5rem;
   }
@@ -799,7 +860,8 @@ textarea {
   .admin-login-card,
   .admin-header-card,
   .admin-filters-card,
-  .admin-table-card {
+  .admin-table-card,
+  .public-page-card {
     padding: 1.25rem;
     border-radius: 24px;
   }
