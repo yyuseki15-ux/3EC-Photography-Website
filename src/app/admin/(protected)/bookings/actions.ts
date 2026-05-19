@@ -2,9 +2,12 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { sendBookingStatusChangedNotification } from "@/lib/booking-notifications";
 import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
+import { type BookingStatus } from "@/lib/booking-status";
 import { normalizeBookingTimes } from "@/lib/booking-time";
 import { isBookingStatus } from "@/lib/booking-status";
+import { type BookingRecord } from "@/lib/bookings";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -70,7 +73,19 @@ export async function updateBooking(
   }
 
   const supabase = createSupabaseAdminClient();
-  const { error } = await supabase
+  const bookingIdNumber = Number.parseInt(bookingId, 10);
+  const { data: existingBooking, error: existingBookingError } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("id", bookingIdNumber)
+    .single();
+
+  if (existingBookingError) {
+    return { error: existingBookingError.message };
+  }
+
+  const previousStatus = (existingBooking as BookingRecord).status;
+  const { data: updatedBooking, error } = await supabase
     .from("bookings")
     .update({
       full_name: fullName,
@@ -83,10 +98,23 @@ export async function updateBooking(
       notes: notes || null,
       status
     })
-    .eq("id", Number.parseInt(bookingId, 10));
+    .eq("id", bookingIdNumber)
+    .select("*")
+    .single();
 
   if (error) {
     return { error: error.message };
+  }
+
+  if (previousStatus !== status) {
+    try {
+      await sendBookingStatusChangedNotification(
+        updatedBooking as BookingRecord,
+        previousStatus as BookingStatus
+      );
+    } catch (notificationError) {
+      console.error("Booking status notification failed:", notificationError);
+    }
   }
 
   revalidatePath("/admin/bookings");

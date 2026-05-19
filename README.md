@@ -55,7 +55,23 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 SUPABASE_SECRET_KEY=your-secret-key
 ADMIN_PASSWORD=your-admin-password
 ADMIN_SESSION_SECRET=your-long-random-session-secret
+RESEND_API_KEY=your-resend-api-key
+RESEND_FROM_EMAIL=bookings@yourdomain.com
+ADMIN_NOTIFICATION_EMAIL=your-admin-email@example.com
 ```
+
+## Email notifications
+
+This project can send email notifications with `Resend` for:
+
+- new booking requests to the admin email
+- booking status changes to the customer email
+
+To enable this:
+
+1. Create a Resend account and API key.
+2. Verify your sending domain in Resend.
+3. Add `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and `ADMIN_NOTIFICATION_EMAIL` to `.env.local` and Vercel.
 
 ## Recommended next upgrades
 

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { sendNewBookingNotification } from "@/lib/booking-notifications";
 import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
+import { type BookingRecord } from "@/lib/bookings";
 import { normalizeBookingTimes } from "@/lib/booking-time";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -77,20 +79,30 @@ export async function POST(request: Request) {
   try {
     const supabase = createSupabaseAdminClient();
 
-    const { error } = await supabase.from("bookings").insert({
-      full_name: payload.fullName,
-      email: payload.email,
-      phone: payload.phone,
-      sport: payload.sport,
-      event_date: payload.eventDate,
-      time_slot: timeSlot,
-      players: playerCount,
-      notes: payload.notes?.trim() || null,
-      status: "new"
-    });
+    const { data, error } = await supabase
+      .from("bookings")
+      .insert({
+        full_name: payload.fullName,
+        email: payload.email,
+        phone: payload.phone,
+        sport: payload.sport,
+        event_date: payload.eventDate,
+        time_slot: timeSlot,
+        players: playerCount,
+        notes: payload.notes?.trim() || null,
+        status: "new"
+      })
+      .select("*")
+      .single();
 
     if (error) {
       throw error;
+    }
+
+    try {
+      await sendNewBookingNotification(data as BookingRecord);
+    } catch (notificationError) {
+      console.error("New booking notification failed:", notificationError);
     }
   } catch (error) {
     const errorMessage =
