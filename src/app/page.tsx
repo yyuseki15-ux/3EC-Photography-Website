@@ -32,6 +32,55 @@ const initialState: BookingState = {
   notes: ""
 };
 
+const calendarWeekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function formatDateInputValue(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function parseDateInputValue(value: string) {
+  const [year, month, day] = value.split("-").map((part) => Number.parseInt(part, 10));
+
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+}
+
+function formatCalendarHeading(date: Date) {
+  return new Intl.DateTimeFormat("en-SG", {
+    month: "long",
+    year: "numeric"
+  }).format(date);
+}
+
+function buildCalendarDays(monthDate: Date) {
+  const year = monthDate.getFullYear();
+  const month = monthDate.getMonth();
+  const firstDayOfMonth = new Date(year, month, 1);
+  const startWeekday = firstDayOfMonth.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells: Array<Date | null> = [];
+
+  for (let index = 0; index < startWeekday; index += 1) {
+    cells.push(null);
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    cells.push(new Date(year, month, day));
+  }
+
+  while (cells.length % 7 !== 0) {
+    cells.push(null);
+  }
+
+  return cells;
+}
+
 function getUnavailableScheduleSummary(entry: PublicUnavailableDate) {
   if (entry.fully_blocked) {
     return "Full day unavailable";
@@ -56,6 +105,10 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
   const [scheduleIndex, setScheduleIndex] = useState(0);
+  const [visibleMonth, setVisibleMonth] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  });
   const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
   const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
@@ -130,6 +183,15 @@ export default function Home() {
       return false;
     }
   }, [formData.endTime, formData.startTime, selectedDateUnavailableTimes]);
+  const blockedFullDayDates = useMemo(
+    () => new Set(unavailableDates.filter((entry) => entry.fully_blocked).map((entry) => entry.blocked_date)),
+    [unavailableDates]
+  );
+  const calendarDays = useMemo(() => buildCalendarDays(visibleMonth), [visibleMonth]);
+  const selectedCalendarDate = useMemo(
+    () => (formData.eventDate ? parseDateInputValue(formData.eventDate) : null),
+    [formData.eventDate]
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -180,7 +242,9 @@ export default function Home() {
 
     setFormData((current) => ({
       ...current,
-      eventDate: nextDate
+      eventDate: nextDate,
+      startTime: "",
+      endTime: ""
     }));
 
     if (status === "error" && message === "That date is unavailable. Please choose another date.") {
@@ -370,15 +434,73 @@ export default function Home() {
             </div>
 
             <div className="grid-two">
-              <label>
-                Event date
-                <input
-                  required
-                  min={minDate}
-                  type="date"
-                  value={formData.eventDate}
-                  onChange={(event) => handleEventDateChange(event.target.value)}
-                />
+              <div className="calendar-field">
+                <span className="calendar-field-label">Event date</span>
+                <input name="eventDate" required type="hidden" value={formData.eventDate} />
+                <div className="booking-calendar" role="group" aria-label="Booking calendar">
+                  <div className="booking-calendar-toolbar">
+                    <button
+                      className="booking-calendar-arrow"
+                      type="button"
+                      onClick={() =>
+                        setVisibleMonth(
+                          (current) => new Date(current.getFullYear(), current.getMonth() - 1, 1)
+                        )
+                      }
+                    >
+                      &larr;
+                    </button>
+                    <strong>{formatCalendarHeading(visibleMonth)}</strong>
+                    <button
+                      className="booking-calendar-arrow"
+                      type="button"
+                      onClick={() =>
+                        setVisibleMonth(
+                          (current) => new Date(current.getFullYear(), current.getMonth() + 1, 1)
+                        )
+                      }
+                    >
+                      &rarr;
+                    </button>
+                  </div>
+                  <div className="booking-calendar-weekdays" aria-hidden="true">
+                    {calendarWeekdays.map((day) => (
+                      <span key={day}>{day}</span>
+                    ))}
+                  </div>
+                  <div className="booking-calendar-grid">
+                    {calendarDays.map((day, index) => {
+                      if (!day) {
+                        return <span className="booking-calendar-empty" key={`empty-${index}`} />;
+                      }
+
+                      const formattedDay = formatDateInputValue(day);
+                      const isPastDay = formattedDay < minDate;
+                      const isBlockedDay = blockedFullDayDates.has(formattedDay);
+                      const isSelectedDay = formData.eventDate === formattedDay;
+
+                      return (
+                        <button
+                          key={formattedDay}
+                          className={`booking-calendar-day ${
+                            isSelectedDay ? "selected" : ""
+                          } ${isBlockedDay || isPastDay ? "disabled" : ""}`}
+                          type="button"
+                          disabled={isBlockedDay || isPastDay}
+                          aria-pressed={isSelectedDay}
+                          onClick={() => handleEventDateChange(formattedDay)}
+                        >
+                          {day.getDate()}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <span className="calendar-selected-value">
+                  {selectedCalendarDate
+                    ? `Selected date: ${formatUnavailableDate(formData.eventDate)}`
+                    : "Choose a date from the calendar."}
+                </span>
                 <span
                   className={`field-hint ${
                     isUnavailableDate || upcomingUnavailableDates.length > 0 ? "field-hint-error" : ""
@@ -390,7 +512,7 @@ export default function Home() {
                       ? `Blocked dates: ${upcomingUnavailableDates.join(", ")}`
                       : "No manually blocked dates right now."}
                 </span>
-              </label>
+              </div>
 
               <label>
                 Start time
