@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
 import { BOOKING_GAP_MINUTES } from "@/lib/booking-time";
@@ -46,6 +46,7 @@ export default function Home() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
+  const eventDateInputRef = useRef<HTMLInputElement | null>(null);
   const notesWordCount = useMemo(() => countWords(formData.notes), [formData.notes]);
   const hasTooManyNoteWords = notesWordCount > BOOKING_NOTES_WORD_LIMIT;
 
@@ -112,6 +113,17 @@ export default function Home() {
       isMounted = false;
     };
   }, []);
+
+  function handleBookedScheduleClick(date: string) {
+    setFormData((current) => ({
+      ...current,
+      eventDate: date
+    }));
+    setStatus("idle");
+    setMessage("");
+    eventDateInputRef.current?.focus();
+    eventDateInputRef.current?.showPicker?.();
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -277,6 +289,7 @@ export default function Home() {
           <label>
             Event date
             <input
+              ref={eventDateInputRef}
               required
               min={minDate}
               type="date"
@@ -365,10 +378,15 @@ export default function Home() {
 
               <div className="booked-schedule-list">
                 {upcomingBookedSchedules.map((entry) => (
-                  <div className="booked-schedule-item" key={entry.blocked_date}>
+                  <button
+                    className={`booked-schedule-item ${formData.eventDate === entry.blocked_date ? "selected" : ""}`}
+                    key={entry.blocked_date}
+                    type="button"
+                    onClick={() => handleBookedScheduleClick(entry.blocked_date)}
+                  >
                     <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
                     <span>{entry.time_slots.join(", ")}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>

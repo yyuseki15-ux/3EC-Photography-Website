@@ -223,9 +223,30 @@ textarea {
 .booked-schedule-item {
   display: grid;
   gap: 0.2rem;
+  width: 100%;
+  border: 1px solid rgba(31, 42, 31, 0.08);
   padding: 0.75rem 0.9rem;
   border-radius: 16px;
   background: rgba(255, 250, 242, 0.85);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.booked-schedule-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(198, 93, 46, 0.28);
+}
+
+.booked-schedule-item:focus-visible {
+  outline: none;
+  border-color: rgba(198, 93, 46, 0.7);
+  box-shadow: 0 0 0 4px rgba(198, 93, 46, 0.12);
+}
+
+.booked-schedule-item.selected {
+  border-color: rgba(198, 93, 46, 0.5);
+  box-shadow: 0 10px 24px rgba(198, 93, 46, 0.12);
 }
 
 .booked-schedule-item span {
