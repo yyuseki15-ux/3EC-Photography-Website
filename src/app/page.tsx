@@ -163,6 +163,32 @@ export default function Home() {
     };
   }, []);
 
+  function handleEventDateChange(nextDate: string) {
+    const matchingDate = unavailableDates.find((entry) => entry.blocked_date === nextDate) ?? null;
+
+    if (matchingDate?.fully_blocked) {
+      setFormData((current) => ({
+        ...current,
+        eventDate: "",
+        startTime: "",
+        endTime: ""
+      }));
+      setStatus("error");
+      setMessage("That date is unavailable. Please choose another date.");
+      return;
+    }
+
+    setFormData((current) => ({
+      ...current,
+      eventDate: nextDate
+    }));
+
+    if (status === "error" && message === "That date is unavailable. Please choose another date.") {
+      setStatus("idle");
+      setMessage("");
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -351,12 +377,7 @@ export default function Home() {
                   min={minDate}
                   type="date"
                   value={formData.eventDate}
-                  onChange={(event) =>
-                    setFormData((current) => ({
-                      ...current,
-                      eventDate: event.target.value
-                    }))
-                  }
+                  onChange={(event) => handleEventDateChange(event.target.value)}
                 />
                 <span className={`field-hint ${isUnavailableDate ? "field-hint-error" : ""}`}>
                   {isUnavailableDate
