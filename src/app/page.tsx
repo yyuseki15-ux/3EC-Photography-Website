@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import { sports } from "@/lib/sports";
+import { sportShowcase } from "@/lib/sport-showcase";
 import { hasTimeSlotConflict, normalizeBookingTimes } from "@/lib/booking-time";
 import { suggestedTimes } from "@/lib/time-options";
 import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
@@ -19,57 +20,6 @@ type BookingState = {
   players: string;
   notes: string;
 };
-
-const sportShowcase = [
-  {
-    name: "Football",
-    short: "FB",
-    accent: "Neon Rush",
-    headline: "Friday-night lights energy",
-    copy: "Dynamic coverage for tackles, breakaway runs, team entrances, and sideline reactions.",
-    toneClass: "football"
-  },
-  {
-    name: "Basketball",
-    short: "BB",
-    accent: "Court Vision",
-    headline: "Fast cuts and clutch moments",
-    copy: "Perfect for buzzer-beaters, huddles, player spotlights, and full-court storytelling.",
-    toneClass: "basketball"
-  },
-  {
-    name: "Pickleball",
-    short: "PB",
-    accent: "Quick Hands",
-    headline: "Sharp action in a compact space",
-    copy: "Highlight quick volleys, community play, and modern court-side brand content.",
-    toneClass: "pickleball"
-  },
-  {
-    name: "Tennis",
-    short: "TN",
-    accent: "Baseline Focus",
-    headline: "Clean lines, intense rallies",
-    copy: "Capture serves, match tension, and elegant athlete portraits with a premium editorial feel.",
-    toneClass: "tennis"
-  },
-  {
-    name: "Badminton",
-    short: "BD",
-    accent: "Speed & Lift",
-    headline: "Light feet, explosive motion",
-    copy: "Ideal for fast exchanges, indoor court drama, and sleek training-session visuals.",
-    toneClass: "badminton"
-  },
-  {
-    name: "Volleyball",
-    short: "VB",
-    accent: "Rise & Spike",
-    headline: "Momentum above the net",
-    copy: "Showcase jumps, celebrations, and the rhythm of team coordination in every set.",
-    toneClass: "volleyball"
-  }
-] as const;
 
 const initialState: BookingState = {
   fullName: "",
@@ -286,6 +236,7 @@ export default function Home() {
             <span className="sports-nav-name">Sports Photography</span>
           </div>
           <div className="sports-nav-links">
+            <Link href="/sports">Showcase</Link>
             <a href="#sports-selector">Sports</a>
             <a href="#booking-form">Book</a>
             <a href="#why-3ec">Why 3EC</a>
@@ -379,7 +330,12 @@ export default function Home() {
                   <span className="sports-strip-label">Sport selector</span>
                   <strong>Choose a sport or let it auto-play</strong>
                 </div>
-                <span className="sports-selector-note">Rotates every few seconds</span>
+                <div className="sports-selector-actions">
+                  <span className="sports-selector-note">Rotates every few seconds</span>
+                  <Link href="/sports" className="sports-selector-link">
+                    Open 6-sport landing page
+                  </Link>
+                </div>
               </div>
 
               <div className="sports-logo-grid" role="tablist" aria-label="Sports showcase">
