@@ -14,6 +14,9 @@
   --sport-gold: #f1b14f;
   --sport-red: #e85d3a;
   --sport-ice: #eff5f8;
+  --button-start: #2563eb;
+  --button-end: #0f766e;
+  --button-shadow: rgba(15, 118, 110, 0.28);
 }
 
 * {
@@ -761,11 +764,12 @@ textarea {
   height: 2.75rem;
   border: 1px solid rgba(31, 42, 31, 0.08);
   border-radius: 999px;
-  background: linear-gradient(135deg, #ba6235 0%, #3c7f5c 100%);
+  background: linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
   color: #fff8f1;
   cursor: pointer;
   font-size: 1.15rem;
   font-weight: 700;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.2);
 }
 
 .booked-schedule-nav:disabled {
@@ -826,14 +830,15 @@ textarea {
   border-radius: 999px;
   padding: 0.9rem 1.2rem;
   color: #fff7f0;
-  background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
+  background: linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
   text-decoration: none;
   font-weight: 700;
+  box-shadow: 0 12px 28px var(--button-shadow);
 }
 
 .sports-booking-card button[type="submit"] {
   color: #fffaf4;
-  background: linear-gradient(135deg, #bc6233 0%, #2f7d57 100%);
+  background: linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
 }
 
 .sports-proof-section,
@@ -927,7 +932,8 @@ textarea {
 
 .sports-landing-primary {
   color: #fffaf2;
-  background: linear-gradient(135deg, #c86131 0%, #2f7d57 100%);
+  background: linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
+  box-shadow: 0 12px 28px var(--button-shadow);
 }
 
 .sports-landing-secondary {
@@ -1369,14 +1375,16 @@ textarea {
   border-radius: 999px;
   padding: 1rem 1.25rem;
   color: #fff7f0;
-  background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
+  background: linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
   cursor: pointer;
   font-weight: 700;
-  transition: transform 160ms ease, opacity 160ms ease;
+  box-shadow: 0 12px 28px var(--button-shadow);
+  transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
 }
 
 .booking-card button:hover {
   transform: translateY(-1px);
+  box-shadow: 0 16px 32px var(--button-shadow);
 }
 
 .booking-card button:disabled {
@@ -1470,7 +1478,7 @@ textarea {
 
 .admin-login-card button {
   color: #fff7f0;
-  background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
+  background: linear-gradient(135deg, var(--button-start) 0%, var(--button-end) 100%);
 }
 
 .admin-login-card button:disabled,
