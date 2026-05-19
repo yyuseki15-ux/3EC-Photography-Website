@@ -391,6 +391,7 @@ export default function Home() {
                 {upcomingBookedSchedules.map((entry) => (
                   <div className="booked-schedule-item static" key={entry.blocked_date}>
                     <strong>{formatUnavailableDate(entry.blocked_date)}</strong>
+                    <span>{entry.time_slots.join(", ")}</span>
                   </div>
                 ))}
               </div>
