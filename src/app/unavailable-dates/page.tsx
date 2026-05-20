@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteCopyright } from "@/components/site-copyright";
 import { getPublicUnavailableDates } from "@/lib/public-unavailable-dates";
 import { formatUnavailableDate, type PublicUnavailableDate } from "@/lib/unavailable-dates";
 
@@ -67,6 +68,7 @@ export default async function UnavailableDatesPage() {
           </div>
         )}
       </section>
+      <SiteCopyright />
     </main>
   );
 }

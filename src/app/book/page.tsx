@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
+import { SiteCopyright } from "@/components/site-copyright";
 import {
   BOOKING_DEPOSIT_PERCENTAGE,
   BOOKING_RATE_PER_HOUR_PHP,
@@ -921,6 +922,7 @@ export default function BookingPage() {
           </form>
         </div>
       </section>
+      <SiteCopyright />
     </main>
   );
 }

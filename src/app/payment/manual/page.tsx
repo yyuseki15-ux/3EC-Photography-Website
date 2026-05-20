@@ -4,6 +4,7 @@ import { BOOKING_DEPOSIT_PERCENTAGE } from "@/lib/booking-payment";
 import { formatBookingReference } from "@/lib/booking-reference";
 import { getManualPaymentConfig } from "@/lib/manual-payment";
 import { formatPaymentStatus } from "@/lib/payment-status";
+import { SiteCopyright } from "@/components/site-copyright";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { PaymentProofForm } from "./payment-proof-form";
 
@@ -175,6 +176,7 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
           hasUploadedProof={Boolean(booking.proof_of_payment_path)}
         />
       </section>
+      <SiteCopyright />
     </main>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteCopyright } from "@/components/site-copyright";
 import { AutoClosePaymentPage } from "./auto-close-payment-page";
 
 type PaymentCompletePageProps = {
@@ -34,6 +35,7 @@ export default async function PaymentCompletePage({ searchParams }: PaymentCompl
           </Link>
         </div>
       </section>
+      <SiteCopyright />
     </main>
   );
 }

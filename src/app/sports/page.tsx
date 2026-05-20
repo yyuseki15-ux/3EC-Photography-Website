@@ -3,6 +3,7 @@
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { CSSProperties, TouchEvent, useEffect, useRef, useState } from "react";
+import { SiteCopyright } from "@/components/site-copyright";
 import basketballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (1).png";
 import badmintonImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (2).png";
 import pickleballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (3).png";
@@ -275,6 +276,7 @@ export default function SportsLandingPage() {
             ))}
           </div>
         </section>
+        <SiteCopyright />
       </div>
     </main>
   );
