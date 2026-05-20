@@ -1890,6 +1890,19 @@ textarea {
     linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 248, 239, 0.96));
 }
 
+.booking-policy-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.booking-policy-summary::-webkit-details-marker {
+  display: none;
+}
+
 .booking-policy-heading {
   display: grid;
   gap: 0.25rem;
@@ -1898,6 +1911,30 @@ textarea {
 .booking-policy-heading strong {
   color: #27322a;
   font-size: 1.05rem;
+}
+
+.booking-policy-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 253, 249, 0.88);
+  color: #27322a;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.booking-policy-card[open] .booking-policy-toggle::after {
+  content: " ↑";
+}
+
+.booking-policy-card:not([open]) .booking-policy-toggle::after {
+  content: " ↓";
 }
 
 .booking-policy-grid {
@@ -3236,6 +3273,15 @@ textarea {
 
   .booking-policy-grid {
     grid-template-columns: 1fr;
+  }
+
+  .booking-policy-summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .booking-policy-toggle {
+    width: 100%;
   }
 
   .admin-login-shell,

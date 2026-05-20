@@ -699,13 +699,18 @@ export default function BookingPage() {
               </div>
             ) : null}
 
-            <section className="booking-policy-card" aria-label="Booking terms and policy">
-              <div className="booking-policy-heading">
-                <strong>Booking terms</strong>
-                <span className="field-hint">
-                  A quick guide for payment, rescheduling, cancellations, and confirmation timing.
+            <details className="booking-policy-card" open>
+              <summary className="booking-policy-summary">
+                <div className="booking-policy-heading">
+                  <strong>Booking terms</strong>
+                  <span className="field-hint">
+                    A quick guide for payment, rescheduling, cancellations, and confirmation timing.
+                  </span>
+                </div>
+                <span className="booking-policy-toggle" aria-hidden="true">
+                  View details
                 </span>
-              </div>
+              </summary>
 
               <div className="booking-policy-grid">
                 <article>
@@ -737,7 +742,7 @@ export default function BookingPage() {
                   </p>
                 </article>
               </div>
-            </section>
+            </details>
 
             <label>
               Extra notes
