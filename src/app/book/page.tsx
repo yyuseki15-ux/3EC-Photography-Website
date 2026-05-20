@@ -486,8 +486,20 @@ export default function BookingPage() {
             </div>
 
             <div className="grid-two">
-              <div className="calendar-field">
-                <span className="calendar-field-label">Event date</span>
+              <details className="calendar-field calendar-field-card" open>
+                <summary className="calendar-field-summary">
+                  <div className="calendar-field-heading">
+                    <span className="calendar-field-label">Event date</span>
+                    <span className="field-hint">
+                      {selectedCalendarDate
+                        ? `Selected date: ${formatUnavailableDate(formData.eventDate)}`
+                        : "Choose a date from the calendar."}
+                    </span>
+                  </div>
+                  <span className="calendar-field-toggle" aria-hidden="true">
+                    View calendar
+                  </span>
+                </summary>
                 <input name="eventDate" required type="hidden" value={formData.eventDate} />
                 <div className="booking-calendar" role="group" aria-label="Booking calendar">
                   <div className="booking-calendar-toolbar">
@@ -548,11 +560,6 @@ export default function BookingPage() {
                     })}
                   </div>
                 </div>
-                <span className="calendar-selected-value">
-                  {selectedCalendarDate
-                    ? `Selected date: ${formatUnavailableDate(formData.eventDate)}`
-                    : "Choose a date from the calendar."}
-                </span>
                 <span
                   className={`field-hint ${
                     isUnavailableDate || upcomingUnavailableDates.length > 0 ? "field-hint-error" : ""
@@ -564,7 +571,7 @@ export default function BookingPage() {
                       ? `Blocked dates: ${upcomingUnavailableDates.join(", ")}`
                       : "No manually blocked dates right now."}
                 </span>
-              </div>
+              </details>
 
               <label>
                 Start time

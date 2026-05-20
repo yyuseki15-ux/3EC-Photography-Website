@@ -779,10 +779,60 @@ textarea {
   grid-column: 1 / -1;
 }
 
+.calendar-field-card {
+  padding: 1rem;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 248, 239, 0.96));
+}
+
+.calendar-field-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.calendar-field-summary::-webkit-details-marker {
+  display: none;
+}
+
+.calendar-field-heading {
+  display: grid;
+  gap: 0.25rem;
+}
+
 .calendar-field-label {
   color: #1d241c;
   font-size: 0.96rem;
   font-weight: 700;
+}
+
+.calendar-field-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 253, 249, 0.88);
+  color: #27322a;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.calendar-field-card[open] .calendar-field-toggle::after {
+  content: " ↑";
+}
+
+.calendar-field-card:not([open]) .calendar-field-toggle::after {
+  content: " ↓";
 }
 
 .booking-calendar {
@@ -3280,7 +3330,16 @@ textarea {
     align-items: stretch;
   }
 
+  .calendar-field-summary {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .booking-policy-toggle {
+    width: 100%;
+  }
+
+  .calendar-field-toggle {
     width: 100%;
   }
 
