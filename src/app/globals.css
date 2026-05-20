@@ -1401,10 +1401,10 @@ textarea {
   left: 50%;
   width: var(--card-width);
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(226, 205, 165, 0.4);
   border-radius: 30px;
-  background: rgba(10, 15, 21, 0.48);
-  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.34);
+  background: linear-gradient(180deg, rgba(249, 244, 235, 0.98), rgba(236, 226, 210, 0.96));
+  box-shadow: 0 24px 58px rgba(0, 0, 0, 0.26);
   cursor: pointer;
   overflow: hidden;
   transform-style: preserve-3d;
@@ -1416,43 +1416,76 @@ textarea {
 }
 
 .sports-motion-card.active {
-  border-color: rgba(241, 177, 79, 0.34);
-  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.42);
+  border-color: rgba(201, 152, 73, 0.55);
+  box-shadow: 0 30px 76px rgba(0, 0, 0, 0.34);
 }
 
 .sports-motion-card-image-wrap {
   position: relative;
-  aspect-ratio: 9 / 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 3 / 4;
+  padding: 1rem;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.88), transparent 34%),
+    linear-gradient(160deg, rgba(255, 249, 241, 1), rgba(235, 225, 210, 0.98));
+}
+
+.sports-motion-card-image-wrap::before,
+.sports-motion-card-image-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 1rem;
+  border-radius: 28px;
+  background: rgba(255, 250, 242, 0.92);
+  border: 1px solid rgba(212, 190, 149, 0.34);
+  box-shadow: 0 10px 18px rgba(68, 45, 11, 0.08);
+}
+
+.sports-motion-card-image-wrap::before {
+  transform: rotate(-2.2deg) translate(-0.25rem, 0.2rem);
+}
+
+.sports-motion-card-image-wrap::after {
+  transform: rotate(1.6deg) translate(0.28rem, -0.18rem);
 }
 
 .sports-motion-card-image {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center center;
+  filter: drop-shadow(0 18px 24px rgba(13, 13, 13, 0.18));
 }
 
 .sports-motion-card-overlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background:
-    linear-gradient(180deg, rgba(6, 10, 14, 0.02), rgba(6, 10, 14, 0.42)),
-    linear-gradient(135deg, rgba(18, 28, 40, 0.18), transparent 48%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 24%, rgba(122, 96, 46, 0.08) 100%),
+    linear-gradient(135deg, rgba(214, 194, 162, 0.18), transparent 48%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .sports-motion-card-copy {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
+  position: relative;
+  z-index: 2;
   padding: 1.05rem 1rem 1.1rem;
   text-align: left;
+  background:
+    linear-gradient(180deg, rgba(249, 244, 235, 0.98), rgba(237, 229, 216, 0.98));
 }
 
 .sports-motion-card-copy strong {
   display: block;
   margin-top: 0.35rem;
-  color: #f8fbfd;
+  color: #201a14;
   font-size: 1.75rem;
   line-height: 1;
   text-transform: uppercase;
@@ -1460,8 +1493,12 @@ textarea {
 
 .sports-motion-card-copy p {
   margin: 0.55rem 0 0;
-  color: rgba(239, 245, 248, 0.74);
+  color: #5f5548;
   line-height: 1.5;
+}
+
+.sports-motion-card-copy .sports-strip-label {
+  color: #b26821;
 }
 
 .sports-motion-dots {
@@ -2370,6 +2407,404 @@ textarea {
 .customer-cell {
   display: grid;
   gap: 0.2rem;
+}
+
+.photo-home {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  padding: 24px;
+  color: #f5efe6;
+  background:
+    radial-gradient(circle at top, rgba(163, 127, 92, 0.18), transparent 28%),
+    radial-gradient(circle at 85% 20%, rgba(121, 91, 64, 0.16), transparent 22%),
+    linear-gradient(180deg, #080808 0%, #101010 42%, #161311 100%);
+  font-family: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.photo-home__glow {
+  position: absolute;
+  width: 34rem;
+  height: 34rem;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.photo-home__glow--left {
+  top: -10rem;
+  left: -8rem;
+  background: rgba(146, 104, 68, 0.34);
+}
+
+.photo-home__glow--right {
+  right: -9rem;
+  bottom: 8rem;
+  background: rgba(201, 171, 132, 0.16);
+}
+
+.photo-nav,
+.photo-hero,
+.photo-editorial,
+.photo-services,
+.photo-cta {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.photo-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 10px 0 26px;
+}
+
+.photo-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.photo-brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid rgba(245, 239, 230, 0.15);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.26em;
+}
+
+.photo-brand__text,
+.photo-nav__links a,
+.photo-kicker,
+.photo-section-heading span,
+.photo-note__eyebrow,
+.photo-panel__label,
+.photo-cta__copy span {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.photo-brand__text {
+  color: rgba(245, 239, 230, 0.86);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.photo-nav__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.photo-nav__links a {
+  color: rgba(245, 239, 230, 0.72);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.photo-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 2rem;
+  align-items: center;
+  padding: 24px 0 42px;
+}
+
+.photo-kicker,
+.photo-section-heading span,
+.photo-note__eyebrow,
+.photo-cta__copy span {
+  color: #c4a57f;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.photo-hero h1,
+.photo-section-heading h2,
+.photo-panel h3,
+.photo-cta h2 {
+  font-family: "Baskerville Old Face", "Times New Roman", Georgia, serif;
+  font-weight: 600;
+}
+
+.photo-hero h1 {
+  margin: 0.75rem 0 0;
+  max-width: 10ch;
+  font-size: clamp(4.2rem, 8vw, 7rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+.photo-hero p,
+.photo-panel p,
+.photo-services__grid p,
+.photo-note strong {
+  color: rgba(245, 239, 230, 0.72);
+  line-height: 1.75;
+}
+
+.photo-hero p {
+  max-width: 54ch;
+  margin: 1.25rem 0 0;
+  font-size: 1.02rem;
+}
+
+.photo-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.photo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.4rem;
+  padding: 0.95rem 1.4rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.photo-button:hover {
+  transform: translateY(-2px);
+}
+
+.photo-button--solid {
+  color: #130f0d;
+  background: linear-gradient(135deg, #f0d4b3 0%, #b88a5d 100%);
+}
+
+.photo-button--ghost {
+  border: 1px solid rgba(245, 239, 230, 0.16);
+  color: #f5efe6;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.photo-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2.2rem;
+}
+
+.photo-metrics article,
+.photo-panel,
+.photo-services__grid article,
+.photo-note,
+.photo-cta {
+  border: 1px solid rgba(245, 239, 230, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(14px);
+}
+
+.photo-metrics article {
+  padding: 1.1rem;
+  border-radius: 24px;
+}
+
+.photo-metrics strong,
+.photo-services__grid strong {
+  display: block;
+  color: #fff8f0;
+  margin-bottom: 0.35rem;
+}
+
+.photo-metrics span {
+  color: rgba(245, 239, 230, 0.66);
+  line-height: 1.6;
+}
+
+.photo-hero__media {
+  display: grid;
+  gap: 1rem;
+}
+
+.photo-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+}
+
+.photo-frame--hero {
+  min-height: 700px;
+  border: 1px solid rgba(245, 239, 230, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.9rem;
+}
+
+.photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.photo-note {
+  padding: 1.2rem 1.25rem;
+  border-radius: 24px;
+}
+
+.photo-note strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: #efe2d1;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.photo-editorial,
+.photo-services {
+  padding-top: 36px;
+}
+
+.photo-section-heading {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.photo-section-heading h2,
+.photo-cta h2 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  line-height: 0.95;
+}
+
+.photo-editorial__grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.photo-panel {
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.photo-panel--copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 280px;
+  padding: 1.5rem;
+}
+
+.photo-panel--image {
+  min-height: 280px;
+}
+
+.photo-panel--tall {
+  grid-row: span 2;
+  min-height: 576px;
+}
+
+.photo-panel--accent {
+  background:
+    linear-gradient(180deg, rgba(184, 138, 93, 0.16), transparent 70%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.photo-panel h3 {
+  margin: 0.6rem 0 0;
+  color: #fff8f0;
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.photo-panel p {
+  margin: 0.75rem 0 0;
+}
+
+.photo-services__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.photo-services__grid article {
+  padding: 1.35rem;
+  border-radius: 24px;
+}
+
+.photo-cta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-top: 36px;
+  margin-bottom: 40px;
+  padding: 1.5rem;
+  border-radius: 32px;
+}
+
+@media (max-width: 980px) {
+  .photo-hero,
+  .photo-editorial__grid,
+  .photo-services__grid,
+  .photo-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .photo-cta {
+    display: grid;
+    align-items: start;
+  }
+
+  .photo-frame--hero,
+  .photo-panel--tall {
+    min-height: 480px;
+  }
+}
+
+@media (max-width: 640px) {
+  .photo-home {
+    padding: 16px;
+  }
+
+  .photo-nav {
+    padding-bottom: 18px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .photo-nav__links {
+    gap: 0.8rem;
+  }
+
+  .photo-hero h1 {
+    font-size: clamp(3rem, 16vw, 4.8rem);
+  }
+
+  .photo-section-heading h2,
+  .photo-cta h2 {
+    font-size: clamp(2.3rem, 12vw, 3.4rem);
+  }
+
+  .photo-frame--hero,
+  .photo-panel--tall {
+    min-height: 360px;
+  }
 }
 
 
