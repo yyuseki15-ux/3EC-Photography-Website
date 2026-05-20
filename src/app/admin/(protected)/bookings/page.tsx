@@ -455,7 +455,13 @@ export default async function AdminBookingsPage({
                     <td>{booking.address || "No address"}</td>
                     <td>{formatDate(booking.event_date)}</td>
                     <td>{booking.time_slot}</td>
-                    <td>PHP {booking.payment_amount_php}</td>
+                    <td>
+                      <div className="customer-cell">
+                        <strong>PHP {booking.payment_amount_php}</strong>
+                        <span>50% deposit</span>
+                        <span>Full total: PHP {booking.payment_amount_php * 2}</span>
+                      </div>
+                    </td>
                     <td>
                       <StatusForm bookingId={booking.id} status={booking.status} />
                     </td>

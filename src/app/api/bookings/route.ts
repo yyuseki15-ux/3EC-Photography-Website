@@ -165,7 +165,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       bookingId: data.id,
       redirectUrl: `/payment/manual?booking_id=${data.id}`,
-      message: `Thanks ${payload.fullName}. Your ${payload.sport} booking for ${payload.eventDate} from ${normalizedStartTime} to ${normalizedEndTime} was saved. Please complete the GCash payment instructions next.`
+      message: `Thanks ${payload.fullName}. Your ${payload.sport} booking for ${payload.eventDate} from ${normalizedStartTime} to ${normalizedEndTime} was saved. Please send the 50% GCash deposit next to hold your slot.`
     });
   } catch (error) {
     const errorMessage =

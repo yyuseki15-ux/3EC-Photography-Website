@@ -1,6 +1,7 @@
 import { normalizeBookingTimes } from "@/lib/booking-time";
 
 export const BOOKING_RATE_PER_HOUR_PHP = 600;
+export const BOOKING_DEPOSIT_PERCENTAGE = 0.5;
 
 function parseTimeToMinutes(value: string) {
   const normalizedValue = value.toUpperCase().replace(/\s+/g, " ").trim();
@@ -33,9 +34,14 @@ export function calculateWholeHourBookingAmountPhp(startTime: string, endTime: s
   }
 
   const durationHours = durationMinutes / 60;
+  const fullAmountPhp = durationHours * BOOKING_RATE_PER_HOUR_PHP;
+  const paymentAmountPhp = Math.round(fullAmountPhp * BOOKING_DEPOSIT_PERCENTAGE);
+  const remainingBalancePhp = fullAmountPhp - paymentAmountPhp;
 
   return {
     durationHours,
-    paymentAmountPhp: durationHours * BOOKING_RATE_PER_HOUR_PHP
+    fullAmountPhp,
+    paymentAmountPhp,
+    remainingBalancePhp
   };
 }

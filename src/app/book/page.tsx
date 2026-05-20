@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { BOOKING_NOTES_WORD_LIMIT, countWords } from "@/lib/booking-notes";
 import {
+  BOOKING_DEPOSIT_PERCENTAGE,
   BOOKING_RATE_PER_HOUR_PHP,
   calculateWholeHourBookingAmountPhp
 } from "@/lib/booking-payment";
@@ -313,7 +314,7 @@ export default function BookingPage() {
     }
 
     setStatus("submitting");
-    setMessage("Creating your secure GCash checkout...");
+    setMessage("Preparing your GCash deposit instructions...");
 
     try {
       const response = await fetch("/api/bookings", {
@@ -335,7 +336,7 @@ export default function BookingPage() {
 
       if (payload.redirectUrl) {
         setStatus("success");
-        setMessage(payload.message ?? "Opening your GCash payment instructions...");
+        setMessage(payload.message ?? "Opening your GCash deposit instructions...");
         window.location.assign(payload.redirectUrl);
         return;
       }
@@ -398,7 +399,7 @@ export default function BookingPage() {
               <h2>Lock your event slot</h2>
               <p>
                 Choose your sport, venue, date, and time, then continue to the
-                GCash payment instructions.
+                GCash deposit instructions.
               </p>
             </div>
 
@@ -710,8 +711,8 @@ export default function BookingPage() {
                 <article>
                   <strong>Payment</strong>
                   <p>
-                    GCash payment is required to hold your slot. Bookings stay pending until your
-                    proof of payment is uploaded and verified.
+                    A 50% GCash deposit is required to hold your slot. Bookings stay pending until
+                    your proof of payment is uploaded and verified.
                   </p>
                 </article>
                 <article>
@@ -766,15 +767,15 @@ export default function BookingPage() {
                 hasInvalidDuration
               }
             >
-              {status === "submitting" ? "Loading payment steps..." : "Book and pay with GCash"}
+              {status === "submitting" ? "Loading deposit steps..." : "Book and pay deposit with GCash"}
             </button>
 
             <p className="field-hint">
               {paymentConfig
                 ? bookingAmount
-                  ? `Rate: PHP ${BOOKING_RATE_PER_HOUR_PHP} per hour. Current total: PHP ${bookingAmount.paymentAmountPhp} for ${bookingAmount.durationHours} hour${bookingAmount.durationHours > 1 ? "s" : ""}. Send payment to ${paymentConfig.gcashAccountName}.`
-                  : `Rate: PHP ${BOOKING_RATE_PER_HOUR_PHP} per hour. Choose whole-hour start and end times to see the total.`
-                : "Your booking is confirmed after successful GCash payment verification."}
+                  ? `Rate: PHP ${BOOKING_RATE_PER_HOUR_PHP} per hour. Full session total: PHP ${bookingAmount.fullAmountPhp} for ${bookingAmount.durationHours} hour${bookingAmount.durationHours > 1 ? "s" : ""}. Deposit due now: PHP ${bookingAmount.paymentAmountPhp} (${Math.round(BOOKING_DEPOSIT_PERCENTAGE * 100)}%). Remaining balance: PHP ${bookingAmount.remainingBalancePhp}. Send the deposit to ${paymentConfig.gcashAccountName}.`
+                  : `Rate: PHP ${BOOKING_RATE_PER_HOUR_PHP} per hour. Choose whole-hour start and end times to see the full total and 50% deposit.`
+                : "Your booking is confirmed after successful GCash deposit verification."}
             </p>
 
             {message ? <p className={`status-message ${status}`}>{message}</p> : null}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { type BookingRecord } from "@/lib/bookings";
+import { BOOKING_DEPOSIT_PERCENTAGE } from "@/lib/booking-payment";
 import { getManualPaymentConfig } from "@/lib/manual-payment";
 import { formatPaymentStatus } from "@/lib/payment-status";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -55,6 +56,8 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
 
   const booking = data as BookingRecord;
   const payment = getManualPaymentConfig();
+  const fullAmountPhp = booking.payment_amount_php * 2;
+  const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
 
   return (
     <main className="public-page-shell">
@@ -64,7 +67,7 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
             <p className="eyebrow">3EC Sports Photography</p>
             <h1>Complete your GCash payment</h1>
             <p className="hero-text public-page-text">
-              Your booking is saved as awaiting payment. Send the GCash payment below and wait for manual verification.
+              Your booking is saved as awaiting payment. Send the {Math.round(BOOKING_DEPOSIT_PERCENTAGE * 100)}% GCash deposit below and wait for manual verification.
             </p>
           </div>
 
@@ -83,8 +86,10 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
             <span>{payment.gcashAccountName}</span>
           </div>
           <div className="booked-schedule-item static">
-            <strong>Amount to send</strong>
+            <strong>Deposit to send now</strong>
             <span>PHP {booking.payment_amount_php}</span>
+            <span>Full session total: PHP {fullAmountPhp}</span>
+            <span>Remaining balance later: PHP {remainingBalancePhp}</span>
             <span>Rate: PHP 600 per whole hour</span>
           </div>
           <div className="booked-schedule-item static">

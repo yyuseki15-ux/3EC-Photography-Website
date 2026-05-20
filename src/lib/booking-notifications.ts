@@ -3,6 +3,7 @@ import { type BookingRecord } from "@/lib/bookings";
 import { getManualPaymentConfig } from "@/lib/manual-payment";
 import { formatPaymentStatus } from "@/lib/payment-status";
 import { getResendConfig } from "@/lib/resend";
+import { BOOKING_DEPOSIT_PERCENTAGE } from "@/lib/booking-payment";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-SG", {
@@ -13,6 +14,8 @@ function formatDate(value: string) {
 }
 
 function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "payment_amount_php" | "notes" | "status" | "payment_status">) {
+  const fullAmountPhp = booking.payment_amount_php * 2;
+  const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
   return `
     <ul>
       <li><strong>Name:</strong> ${booking.full_name}</li>
@@ -22,7 +25,9 @@ function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" |
       <li><strong>Address:</strong> ${booking.address || "No address"}</li>
       <li><strong>Date:</strong> ${formatDate(booking.event_date)}</li>
       <li><strong>Time:</strong> ${booking.time_slot}</li>
-      <li><strong>Amount:</strong> PHP ${booking.payment_amount_php}</li>
+      <li><strong>Deposit:</strong> PHP ${booking.payment_amount_php}</li>
+      <li><strong>Full session total:</strong> PHP ${fullAmountPhp}</li>
+      <li><strong>Remaining balance:</strong> PHP ${remainingBalancePhp}</li>
       <li><strong>Status:</strong> ${formatBookingStatus(booking.status)}</li>
       <li><strong>Payment:</strong> ${formatPaymentStatus(booking.payment_status)}</li>
       <li><strong>Notes:</strong> ${booking.notes || "No notes"}</li>
@@ -31,6 +36,8 @@ function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" |
 }
 
 function bookingSummaryText(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "payment_amount_php" | "notes" | "status" | "payment_status">) {
+  const fullAmountPhp = booking.payment_amount_php * 2;
+  const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
   return [
     `Name: ${booking.full_name}`,
     `Email: ${booking.email}`,
@@ -39,7 +46,9 @@ function bookingSummaryText(booking: Pick<BookingRecord, "full_name" | "email" |
     `Address: ${booking.address || "No address"}`,
     `Date: ${formatDate(booking.event_date)}`,
     `Time: ${booking.time_slot}`,
-    `Amount: PHP ${booking.payment_amount_php}`,
+    `Deposit: PHP ${booking.payment_amount_php}`,
+    `Full session total: PHP ${fullAmountPhp}`,
+    `Remaining balance: PHP ${remainingBalancePhp}`,
     `Status: ${formatBookingStatus(booking.status)}`,
     `Payment: ${formatPaymentStatus(booking.payment_status)}`,
     `Notes: ${booking.notes || "No notes"}`
@@ -84,7 +93,9 @@ export async function sendManualPaymentInstructionsNotification(booking: Booking
 
   const payment = getManualPaymentConfig();
   const { resend, fromEmail } = config;
-  const subject = `Complete your ${booking.sport} booking payment via GCash`;
+  const subject = `Complete your ${booking.sport} booking deposit via GCash`;
+  const fullAmountPhp = booking.payment_amount_php * 2;
+  const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
 
   const contactLine = payment.paymentContact
     ? `<p>After sending the payment, share your proof through: <strong>${payment.paymentContact}</strong>.</p>`
@@ -101,16 +112,18 @@ export async function sendManualPaymentInstructionsNotification(booking: Booking
     html: `
       <h1>Complete your GCash payment</h1>
       <p>Hello ${booking.full_name},</p>
-      <p>We received your booking details. To confirm your slot, please send your GCash payment using the details below.</p>
+      <p>We received your booking details. To confirm your slot, please send the ${Math.round(BOOKING_DEPOSIT_PERCENTAGE * 100)}% GCash deposit using the details below.</p>
       <ul>
         <li><strong>GCash number:</strong> ${payment.gcashNumber}</li>
         <li><strong>Account name:</strong> ${payment.gcashAccountName}</li>
-        <li><strong>Amount:</strong> PHP ${booking.payment_amount_php}</li>
+        <li><strong>Deposit due now:</strong> PHP ${booking.payment_amount_php}</li>
+        <li><strong>Full session total:</strong> PHP ${fullAmountPhp}</li>
+        <li><strong>Remaining balance later:</strong> PHP ${remainingBalancePhp}</li>
       </ul>
       ${contactLine}
       ${bookingSummaryHtml(booking)}
     `,
-    text: `Complete your GCash payment\n\nHello ${booking.full_name},\n\nWe received your booking details. To confirm your slot, please send your GCash payment using the details below.\n\nGCash number: ${payment.gcashNumber}\nAccount name: ${payment.gcashAccountName}\nAmount: PHP ${booking.payment_amount_php}\n\n${contactText}\n\n${bookingSummaryText(booking)}`
+    text: `Complete your GCash deposit\n\nHello ${booking.full_name},\n\nWe received your booking details. To confirm your slot, please send the ${Math.round(BOOKING_DEPOSIT_PERCENTAGE * 100)}% GCash deposit using the details below.\n\nGCash number: ${payment.gcashNumber}\nAccount name: ${payment.gcashAccountName}\nDeposit due now: PHP ${booking.payment_amount_php}\nFull session total: PHP ${fullAmountPhp}\nRemaining balance later: PHP ${remainingBalancePhp}\n\n${contactText}\n\n${bookingSummaryText(booking)}`
   });
 
   if (error) {
