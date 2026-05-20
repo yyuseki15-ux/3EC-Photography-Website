@@ -66,6 +66,8 @@ const motionSlides: SportsMotionSlide[] = [
 export default function SportsLandingPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [movingForward, setMovingForward] = useState(true);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const pauseAutoplayUntil = useRef<number>(0);
@@ -112,16 +114,26 @@ export default function SportsLandingPage() {
 
   function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
     pauseAutoplay();
+    setIsDragging(true);
+    setDragOffset(0);
     touchStartX.current = event.changedTouches[0]?.clientX ?? null;
     touchEndX.current = null;
   }
 
   function handleTouchMove(event: TouchEvent<HTMLDivElement>) {
-    touchEndX.current = event.changedTouches[0]?.clientX ?? null;
+    const currentX = event.changedTouches[0]?.clientX ?? null;
+    touchEndX.current = currentX;
+
+    if (touchStartX.current !== null && currentX !== null) {
+      setDragOffset(currentX - touchStartX.current);
+    }
   }
 
   function handleTouchEnd() {
+    setIsDragging(false);
+
     if (touchStartX.current === null || touchEndX.current === null) {
+      setDragOffset(0);
       return;
     }
 
@@ -136,6 +148,7 @@ export default function SportsLandingPage() {
 
     touchStartX.current = null;
     touchEndX.current = null;
+    setDragOffset(0);
   }
 
   return (
@@ -154,16 +167,17 @@ export default function SportsLandingPage() {
           </div>
 
           <div
-            className="sports-motion-carousel"
+            className={`sports-motion-carousel ${isDragging ? "dragging" : ""}`}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
           >
             {motionSlides.map((slide, index) => {
               const offset = index - activeIndex;
               const isActive = offset === 0;
               const distance = Math.abs(offset);
-              const translateX = offset * 165;
+              const translateX = offset * 165 + dragOffset;
               const rotateY = offset * -18;
               const scale = Math.max(0.64, 1 - distance * 0.12);
               const opacity = Math.max(0.2, 1 - distance * 0.16);
@@ -178,7 +192,8 @@ export default function SportsLandingPage() {
                     {
                       transform: `translate(-50%, -50%) translateX(${translateX}px) rotateY(${rotateY}deg) scale(${scale})`,
                       opacity,
-                      zIndex
+                      zIndex,
+                      transition: isDragging ? "none" : undefined
                     } as CSSProperties
                   }
                   onClick={() => setActiveIndex(index)}

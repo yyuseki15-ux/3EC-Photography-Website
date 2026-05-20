@@ -1396,6 +1396,10 @@ textarea {
   user-select: none;
 }
 
+.sports-motion-carousel.dragging .sports-motion-card {
+  transition: none !important;
+}
+
 .sports-motion-card {
   --card-width: min(390px, 86vw);
   position: absolute;
