@@ -3,6 +3,7 @@ import { type BookingRecord } from "@/lib/bookings";
 import { getManualPaymentConfig } from "@/lib/manual-payment";
 import { formatPaymentStatus } from "@/lib/payment-status";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { DonePaymentButton } from "./done-payment-button";
 
 type ManualPaymentPageProps = {
   searchParams?: Promise<{
@@ -102,6 +103,8 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
             </span>
           </div>
         </div>
+
+        <DonePaymentButton />
       </section>
     </main>
   );
