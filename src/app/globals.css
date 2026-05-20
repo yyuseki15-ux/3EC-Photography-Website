@@ -1410,11 +1410,12 @@ textarea {
   cursor: pointer;
   overflow: hidden;
   transform-style: preserve-3d;
+  will-change: transform, opacity;
   transition:
-    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 700ms ease,
-    box-shadow 700ms ease,
-    border-color 700ms ease;
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 320ms ease,
+    box-shadow 320ms ease,
+    border-color 320ms ease;
 }
 
 .sports-motion-card.active {
@@ -2951,6 +2952,14 @@ textarea {
   .sports-motion-topbar .sports-nav-links {
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .sports-motion-card {
+    transition:
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
   }
 
   .admin-login-shell,

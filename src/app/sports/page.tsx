@@ -68,6 +68,11 @@ export default function SportsLandingPage() {
   const [movingForward, setMovingForward] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const pauseAutoplayUntil = useRef<number>(0);
+
+  function pauseAutoplay(durationMs = 5000) {
+    pauseAutoplayUntil.current = Date.now() + durationMs;
+  }
 
   function goToNextSlide() {
     setActiveIndex((current) => (current >= motionSlides.length - 1 ? 0 : current + 1));
@@ -79,6 +84,10 @@ export default function SportsLandingPage() {
 
   useEffect(() => {
     const interval = window.setInterval(() => {
+      if (Date.now() < pauseAutoplayUntil.current) {
+        return;
+      }
+
       setActiveIndex((current) => {
         if (movingForward) {
           if (current >= motionSlides.length - 1) {
@@ -102,6 +111,7 @@ export default function SportsLandingPage() {
   }, [movingForward]);
 
   function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
+    pauseAutoplay();
     touchStartX.current = event.changedTouches[0]?.clientX ?? null;
     touchEndX.current = null;
   }
@@ -116,7 +126,7 @@ export default function SportsLandingPage() {
     }
 
     const swipeDistance = touchStartX.current - touchEndX.current;
-    const minimumSwipeDistance = 40;
+    const minimumSwipeDistance = 24;
 
     if (swipeDistance > minimumSwipeDistance) {
       goToNextSlide();
