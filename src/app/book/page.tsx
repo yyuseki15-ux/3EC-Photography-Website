@@ -718,8 +718,8 @@ export default function BookingPage() {
                 <article>
                   <strong>Rescheduling</strong>
                   <p>
-                    Requests to move a booking should be sent as early as possible and are subject
-                    to date and time availability.
+                    Rescheduling is allowed only within two weeks from the time the booking was
+                    originally made, and all changes remain subject to date and time availability.
                   </p>
                 </article>
                 <article>
