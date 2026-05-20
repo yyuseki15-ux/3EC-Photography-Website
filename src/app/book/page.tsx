@@ -725,8 +725,8 @@ export default function BookingPage() {
                 <article>
                   <strong>Cancellations</strong>
                   <p>
-                    Cancelled bookings should be reported in advance. Payments already sent may be
-                    reviewed case by case depending on the schedule and preparation made.
+                    Cancelled bookings should be reported in advance. Please note that the 50%
+                    deposit is non-refundable once payment has been made.
                   </p>
                 </article>
                 <article>

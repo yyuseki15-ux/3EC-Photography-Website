@@ -106,6 +106,7 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
                 ? `Send your proof of payment to ${payment.paymentContact}.`
                 : "Keep your payment proof ready. We will verify your transfer manually."}
             </span>
+            <span>Important: the 50% booking deposit is non-refundable once paid.</span>
             {booking.proof_uploaded_at ? (
               <span>Latest proof uploaded: {formatDate(booking.proof_uploaded_at)}</span>
             ) : null}
