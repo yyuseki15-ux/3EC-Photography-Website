@@ -68,6 +68,7 @@ export default function SportsLandingPage() {
   const [movingForward, setMovingForward] = useState(true);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isCompactMotion, setIsCompactMotion] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const pauseAutoplayUntil = useRef<number>(0);
@@ -111,6 +112,21 @@ export default function SportsLandingPage() {
 
     return () => window.clearInterval(interval);
   }, [movingForward]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 640px)");
+
+    function updateCompactMotion(event: MediaQueryList | MediaQueryListEvent) {
+      setIsCompactMotion(event.matches);
+    }
+
+    updateCompactMotion(mediaQuery);
+    mediaQuery.addEventListener("change", updateCompactMotion);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateCompactMotion);
+    };
+  }, []);
 
   function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
     pauseAutoplay();
@@ -177,10 +193,14 @@ export default function SportsLandingPage() {
               const offset = index - activeIndex;
               const isActive = offset === 0;
               const distance = Math.abs(offset);
-              const translateX = offset * 165 + dragOffset;
-              const rotateY = offset * -18;
-              const scale = Math.max(0.64, 1 - distance * 0.12);
-              const opacity = Math.max(0.2, 1 - distance * 0.16);
+              const translateX = offset * (isCompactMotion ? 118 : 165) + dragOffset;
+              const rotateY = isCompactMotion ? 0 : offset * -18;
+              const scale = isCompactMotion
+                ? Math.max(0.84, 1 - distance * 0.08)
+                : Math.max(0.64, 1 - distance * 0.12);
+              const opacity = isCompactMotion
+                ? Math.max(0.38, 1 - distance * 0.22)
+                : Math.max(0.2, 1 - distance * 0.16);
               const zIndex = motionSlides.length - distance;
 
               return (
