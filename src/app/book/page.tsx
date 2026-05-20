@@ -549,7 +549,7 @@ export default function BookingPage() {
             </div>
 
             <div className="grid-two">
-              <details className="calendar-field calendar-field-card" open>
+              <details className="calendar-field calendar-field-card">
                 <summary className="calendar-field-summary">
                   <div className="calendar-field-heading">
                     <span className="calendar-field-label">Event date</span>
@@ -832,7 +832,7 @@ export default function BookingPage() {
               </div>
             ) : null}
 
-            <details className="booking-policy-card" open>
+            <details className="booking-policy-card">
               <summary className="booking-policy-summary">
                 <div className="booking-policy-heading">
                   <strong>Booking terms</strong>
