@@ -4,6 +4,7 @@ import { getManualPaymentConfig } from "@/lib/manual-payment";
 import { formatPaymentStatus } from "@/lib/payment-status";
 import { getResendConfig } from "@/lib/resend";
 import { BOOKING_DEPOSIT_PERCENTAGE } from "@/lib/booking-payment";
+import { formatBookingReference } from "@/lib/booking-reference";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-SG", {
@@ -13,11 +14,13 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "payment_amount_php" | "notes" | "status" | "payment_status">) {
+function bookingSummaryHtml(booking: Pick<BookingRecord, "id" | "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "payment_amount_php" | "notes" | "status" | "payment_status">) {
   const fullAmountPhp = booking.payment_amount_php * 2;
   const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
+  const bookingReference = formatBookingReference(booking.id);
   return `
     <ul>
+      <li><strong>Reference:</strong> ${bookingReference}</li>
       <li><strong>Name:</strong> ${booking.full_name}</li>
       <li><strong>Email:</strong> ${booking.email}</li>
       <li><strong>Phone:</strong> ${booking.phone}</li>
@@ -35,10 +38,12 @@ function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" |
   `;
 }
 
-function bookingSummaryText(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "payment_amount_php" | "notes" | "status" | "payment_status">) {
+function bookingSummaryText(booking: Pick<BookingRecord, "id" | "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "payment_amount_php" | "notes" | "status" | "payment_status">) {
   const fullAmountPhp = booking.payment_amount_php * 2;
   const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
+  const bookingReference = formatBookingReference(booking.id);
   return [
+    `Reference: ${bookingReference}`,
     `Name: ${booking.full_name}`,
     `Email: ${booking.email}`,
     `Phone: ${booking.phone}`,
@@ -98,11 +103,11 @@ export async function sendManualPaymentInstructionsNotification(booking: Booking
   const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
 
   const contactLine = payment.paymentContact
-    ? `<p>After sending the payment, share your proof through: <strong>${payment.paymentContact}</strong>.</p>`
+    ? `<p>After sending the payment, share your proof through: <strong>${payment.paymentContact}</strong> and mention reference <strong>${formatBookingReference(booking.id)}</strong>.</p>`
     : "<p>After sending the payment, keep your proof of payment ready so we can verify it.</p>";
 
   const contactText = payment.paymentContact
-    ? `After sending the payment, share your proof through: ${payment.paymentContact}.`
+    ? `After sending the payment, share your proof through: ${payment.paymentContact} and mention reference ${formatBookingReference(booking.id)}.`
     : "After sending the payment, keep your proof of payment ready so we can verify it.";
 
   const { error } = await resend.emails.send({

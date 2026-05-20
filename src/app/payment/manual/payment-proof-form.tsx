@@ -5,10 +5,15 @@ import { useState } from "react";
 
 type PaymentProofFormProps = {
   bookingId: number;
+  bookingReference: string;
   hasUploadedProof: boolean;
 };
 
-export function PaymentProofForm({ bookingId, hasUploadedProof }: PaymentProofFormProps) {
+export function PaymentProofForm({
+  bookingId,
+  bookingReference,
+  hasUploadedProof
+}: PaymentProofFormProps) {
   const router = useRouter();
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,7 +77,8 @@ export function PaymentProofForm({ bookingId, hasUploadedProof }: PaymentProofFo
       </label>
 
       <p className="manual-payment-proof-hint">
-        Upload a screenshot, receipt image, or PDF proof before finishing this booking.
+        Upload a screenshot, receipt image, or PDF proof before finishing this booking. Your
+        reference is <strong>{bookingReference}</strong>.
       </p>
 
       {hasUploadedProof ? (

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { type BookingRecord } from "@/lib/bookings";
 import { BOOKING_DEPOSIT_PERCENTAGE } from "@/lib/booking-payment";
+import { formatBookingReference } from "@/lib/booking-reference";
 import { getManualPaymentConfig } from "@/lib/manual-payment";
 import { formatPaymentStatus } from "@/lib/payment-status";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -55,6 +56,7 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
   }
 
   const booking = data as BookingRecord;
+  const bookingReference = formatBookingReference(booking.id);
   const payment = getManualPaymentConfig();
   const fullAmountPhp = booking.payment_amount_php * 2;
   const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
@@ -77,6 +79,10 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
         </div>
 
         <div className="booked-schedule-list booked-schedule-list-full">
+          <div className="booked-schedule-item static">
+            <strong>Booking reference</strong>
+            <span>{bookingReference}</span>
+          </div>
           <div className="booked-schedule-item static">
             <strong>GCash number</strong>
             <span>{payment.gcashNumber}</span>
@@ -103,7 +109,7 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
             <strong>After payment</strong>
             <span>
               {payment.paymentContact
-                ? `Send your proof of payment to ${payment.paymentContact}.`
+                ? `Send your proof of payment to ${payment.paymentContact} and mention reference ${bookingReference}.`
                 : "Keep your payment proof ready. We will verify your transfer manually."}
             </span>
             <span>Important: the 50% booking deposit is non-refundable once paid.</span>
@@ -115,6 +121,7 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
 
         <PaymentProofForm
           bookingId={booking.id}
+          bookingReference={bookingReference}
           hasUploadedProof={Boolean(booking.proof_of_payment_path)}
         />
       </section>

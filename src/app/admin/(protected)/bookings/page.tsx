@@ -3,6 +3,7 @@ import { clearAdminSession, hasValidAdminSession } from "@/lib/admin-auth";
 import { bookingStatuses, formatBookingStatus, type BookingStatus } from "@/lib/booking-status";
 import { type BookingRecord } from "@/lib/bookings";
 import { createSignedPaymentProofUrl } from "@/lib/payment-proof";
+import { formatBookingReference } from "@/lib/booking-reference";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { suggestedTimes } from "@/lib/time-options";
@@ -428,6 +429,7 @@ export default async function AdminBookingsPage({
               <thead>
                 <tr>
                   <th>Customer</th>
+                  <th>Reference</th>
                   <th>Sport</th>
                   <th>Address</th>
                   <th>Event date</th>
@@ -450,6 +452,9 @@ export default async function AdminBookingsPage({
                         <span>{booking.email}</span>
                         <span>{booking.phone}</span>
                       </div>
+                    </td>
+                    <td>
+                      <strong>{formatBookingReference(booking.id)}</strong>
                     </td>
                     <td>{booking.sport}</td>
                     <td>{booking.address || "No address"}</td>

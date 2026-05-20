@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { formatBookingReference } from "@/lib/booking-reference";
 import {
   ensurePaymentProofBucket,
   isValidPaymentProofMimeType,
@@ -98,6 +99,8 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    redirectTo: "/payment/complete"
+    redirectTo: `/payment/complete?booking_reference=${encodeURIComponent(
+      formatBookingReference(bookingIdNumber)
+    )}`
   });
 }
