@@ -1962,6 +1962,12 @@ textarea {
   padding: 2rem 0 4rem;
 }
 
+.admin-shell {
+  display: grid;
+  gap: 1.5rem;
+  align-content: start;
+}
+
 .admin-login-shell {
   min-height: 100vh;
   display: grid;
@@ -2029,9 +2035,9 @@ textarea {
 .admin-header-card {
   display: flex;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 2rem;
   align-items: flex-start;
-  padding: 1.75rem;
+  padding: 2rem;
 }
 
 .admin-eyebrow {
@@ -2058,7 +2064,11 @@ textarea {
 }
 
 .admin-card-heading {
-  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.15rem;
 }
 
 .admin-header-actions {
@@ -2092,13 +2102,13 @@ textarea {
 }
 
 .admin-table-card {
-  margin-top: 1.5rem;
-  padding: 1rem;
+  margin-top: 0;
+  padding: 1.5rem;
 }
 
 .admin-filters-card {
-  margin-top: 1.5rem;
-  padding: 1.25rem;
+  margin-top: 0;
+  padding: 1.5rem;
   border: 1px solid var(--line);
   border-radius: 32px;
   background: var(--surface);
@@ -2110,13 +2120,14 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 0.85rem;
-  margin-top: 1.5rem;
+  margin-top: 0;
   padding: 1rem;
   border: 1px solid var(--line);
   border-radius: 24px;
   background: var(--surface);
   backdrop-filter: blur(16px);
   box-shadow: var(--shadow);
+  align-items: center;
 }
 
 .admin-tab-link {
@@ -2145,8 +2156,9 @@ textarea {
 
 .admin-dashboard-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+  margin-top: 1.25rem;
 }
 
 .admin-filters-form {
@@ -2190,6 +2202,7 @@ textarea {
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .admin-filter-actions button,
@@ -2203,17 +2216,18 @@ textarea {
   grid-template-columns: minmax(160px, 200px) repeat(2, minmax(140px, 180px)) minmax(0, 1fr) auto;
   gap: 1rem;
   align-items: end;
+  margin-top: 1.25rem;
 }
 
 .admin-unavailable-list {
   display: grid;
-  gap: 0.85rem;
-  margin-top: 1rem;
+  gap: 1rem;
+  margin-top: 1.25rem;
 }
 
 .admin-unavailable-item {
   display: block;
-  padding: 0.95rem 1rem;
+  padding: 1.15rem 1.15rem 1.25rem;
   border: 1px solid var(--line);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.38);
@@ -2230,12 +2244,12 @@ textarea {
 
 .admin-unavailable-edit-form {
   display: grid;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .admin-unavailable-summary {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.35rem;
 }
 
 .admin-unavailable-edit-grid {
@@ -2291,6 +2305,7 @@ textarea {
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .booking-status-pill {
@@ -2453,17 +2468,21 @@ textarea {
 
 .admin-table-wrap {
   overflow-x: auto;
+  margin-top: 1.25rem;
+  border: 1px solid rgba(31, 42, 31, 0.08);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.38);
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 980px;
+  min-width: 1120px;
 }
 
 .admin-table th,
 .admin-table td {
-  padding: 1rem;
+  padding: 1rem 1.1rem;
   border-bottom: 1px solid rgba(31, 42, 31, 0.08);
   text-align: left;
   vertical-align: top;
@@ -2474,11 +2493,19 @@ textarea {
   font-size: 0.85rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  background: rgba(255, 250, 242, 0.92);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .customer-cell {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.28rem;
 }
 
 .photo-home {
