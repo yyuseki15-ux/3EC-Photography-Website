@@ -1392,6 +1392,8 @@ textarea {
   perspective: 1800px;
   transform-style: preserve-3d;
   overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
 }
 
 .sports-motion-card {

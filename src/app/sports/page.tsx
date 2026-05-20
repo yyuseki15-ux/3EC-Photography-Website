@@ -2,7 +2,7 @@
 
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, TouchEvent, useEffect, useRef, useState } from "react";
 import basketballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (1).png";
 import badmintonImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (2).png";
 import pickleballImage from "../../../ChatGPT Image May 19, 2026, 06_35_17 PM (3).png";
@@ -66,6 +66,16 @@ const motionSlides: SportsMotionSlide[] = [
 export default function SportsLandingPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [movingForward, setMovingForward] = useState(true);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  function goToNextSlide() {
+    setActiveIndex((current) => (current >= motionSlides.length - 1 ? 0 : current + 1));
+  }
+
+  function goToPreviousSlide() {
+    setActiveIndex((current) => (current <= 0 ? motionSlides.length - 1 : current - 1));
+  }
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -91,6 +101,33 @@ export default function SportsLandingPage() {
     return () => window.clearInterval(interval);
   }, [movingForward]);
 
+  function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
+    touchStartX.current = event.changedTouches[0]?.clientX ?? null;
+    touchEndX.current = null;
+  }
+
+  function handleTouchMove(event: TouchEvent<HTMLDivElement>) {
+    touchEndX.current = event.changedTouches[0]?.clientX ?? null;
+  }
+
+  function handleTouchEnd() {
+    if (touchStartX.current === null || touchEndX.current === null) {
+      return;
+    }
+
+    const swipeDistance = touchStartX.current - touchEndX.current;
+    const minimumSwipeDistance = 40;
+
+    if (swipeDistance > minimumSwipeDistance) {
+      goToNextSlide();
+    } else if (swipeDistance < -minimumSwipeDistance) {
+      goToPreviousSlide();
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  }
+
   return (
     <main className="sports-landing-page">
       <div className="customer-backdrop" aria-hidden="true" />
@@ -106,7 +143,12 @@ export default function SportsLandingPage() {
             </div>
           </div>
 
-          <div className="sports-motion-carousel">
+          <div
+            className="sports-motion-carousel"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             {motionSlides.map((slide, index) => {
               const offset = index - activeIndex;
               const isActive = offset === 0;
