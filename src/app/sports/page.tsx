@@ -16,6 +16,7 @@ type SportsMotionSlide = {
   accent: string;
   motion: string;
   description: string;
+  imagePosition: string;
 };
 
 const motionSlides: SportsMotionSlide[] = [
@@ -24,42 +25,48 @@ const motionSlides: SportsMotionSlide[] = [
     image: basketballImage,
     accent: "Arena Lift",
     motion: "Explosive elevation under bright arena lights.",
-    description: "Built for posters, dunks, fast breaks, and athlete-first hero shots."
+    description: "Built for posters, dunks, fast breaks, and athlete-first hero shots.",
+    imagePosition: "42% 26%"
   },
   {
     name: "Badminton",
     image: badmintonImage,
     accent: "Air Control",
     motion: "High jump timing and full-body extension in one frame.",
-    description: "Sharp indoor action with speed, lift, and match-night intensity."
+    description: "Sharp indoor action with speed, lift, and match-night intensity.",
+    imagePosition: "54% 28%"
   },
   {
     name: "Pickleball",
     image: pickleballImage,
     accent: "Quick Reach",
     motion: "Low stance, quick hands, and split-second court reactions.",
-    description: "A clean modern look for fast exchanges and club content."
+    description: "A clean modern look for fast exchanges and club content.",
+    imagePosition: "48% 24%"
   },
   {
     name: "Tennis",
     image: tennisImage,
     accent: "Baseline Pressure",
     motion: "Controlled reach and clean strike mechanics under stadium light.",
-    description: "Premium action frames for rallies, serves, and match portraits."
+    description: "Premium action frames for rallies, serves, and match portraits.",
+    imagePosition: "64% 22%"
   },
   {
     name: "Football",
     image: footballImage,
     accent: "Pitch Impact",
     motion: "Explosive leg drive and match-winning power through contact.",
-    description: "Perfect for game-winning kicks, pace, and stadium atmosphere."
+    description: "Perfect for game-winning kicks, pace, and stadium atmosphere.",
+    imagePosition: "50% 26%"
   },
   {
     name: "Volleyball",
     image: volleyballImage,
     accent: "Net Power",
     motion: "Hang time above the court with full attacking momentum.",
-    description: "Ideal for spikes, blocks, and dramatic mid-air team moments."
+    description: "Ideal for spikes, blocks, and dramatic mid-air team moments.",
+    imagePosition: "55% 24%"
   }
 ];
 
@@ -196,6 +203,7 @@ export default function SportsLandingPage() {
                         src={slide.image}
                         alt={`${slide.name} athlete in motion`}
                         className="sports-motion-card-image"
+                        style={{ objectPosition: slide.imagePosition }}
                         priority={index < 2}
                       />
                       <div className="sports-motion-card-overlay" />
@@ -239,6 +247,7 @@ export default function SportsLandingPage() {
                         src={slide.image}
                         alt={`${slide.name} athlete in motion`}
                         className="sports-motion-card-image"
+                        style={{ objectPosition: slide.imagePosition }}
                         priority={index < 2}
                       />
                       <div className="sports-motion-card-overlay" />
