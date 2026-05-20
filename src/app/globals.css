@@ -960,6 +960,84 @@ textarea {
   color: #a61b1b;
 }
 
+.time-slot-status-card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 248, 239, 0.96));
+}
+
+.time-slot-status-heading {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.time-slot-status-heading strong {
+  color: #1d241c;
+  font-size: 0.98rem;
+}
+
+.time-slot-status-group {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.time-slot-status-label {
+  width: fit-content;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.time-slot-status-label.blocked {
+  color: #8a2222;
+  background: rgba(170, 42, 42, 0.12);
+}
+
+.time-slot-status-label.booked {
+  color: #9a451f;
+  background: rgba(198, 93, 46, 0.14);
+}
+
+.time-slot-status-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.time-slot-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(31, 42, 31, 0.08);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.time-slot-status-pill.blocked {
+  color: #8a2222;
+  border-color: rgba(170, 42, 42, 0.18);
+  background: rgba(170, 42, 42, 0.08);
+}
+
+.time-slot-status-pill.booked {
+  color: #9a451f;
+  border-color: rgba(198, 93, 46, 0.18);
+  background: rgba(198, 93, 46, 0.08);
+}
+
+.time-select option:disabled {
+  color: #8a2222;
+}
+
 .booked-schedule-card {
   padding: 1rem;
   border: 1px solid rgba(31, 42, 31, 0.12);

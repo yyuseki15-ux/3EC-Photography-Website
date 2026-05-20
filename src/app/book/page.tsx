@@ -93,6 +93,28 @@ function getUnavailableScheduleSummary(entry: PublicUnavailableDate) {
   return details.join(" | ");
 }
 
+function isBookableWholeHourRange(
+  startTime: string,
+  endTime: string,
+  unavailableTimeSlots: string[]
+) {
+  try {
+    const normalizedTimes = normalizeBookingTimes(startTime, endTime);
+    calculateWholeHourBookingAmountPhp(
+      normalizedTimes.normalizedStartTime,
+      normalizedTimes.normalizedEndTime
+    );
+
+    return !hasTimeSlotConflict(
+      normalizedTimes.normalizedStartTime,
+      normalizedTimes.normalizedEndTime,
+      unavailableTimeSlots
+    );
+  } catch {
+    return false;
+  }
+}
+
 export default function BookingPage() {
   const paymentConfig = useMemo(() => {
     try {
@@ -225,6 +247,41 @@ export default function BookingPage() {
     formData.startTime.trim().length > 0 &&
     formData.endTime.trim().length > 0 &&
     bookingAmount === null;
+  const disabledStartTimes = useMemo(() => {
+    if (selectedDateUnavailableTimes.length === 0) {
+      return new Set<string>();
+    }
+
+    return new Set(
+      suggestedTimes.filter(
+        (startTime) =>
+          !suggestedTimes.some((endTime) =>
+            isBookableWholeHourRange(startTime, endTime, selectedDateUnavailableTimes)
+          )
+      )
+    );
+  }, [selectedDateUnavailableTimes]);
+  const disabledEndTimes = useMemo(() => {
+    if (formData.startTime.trim().length === 0) {
+      return new Set<string>();
+    }
+
+    return new Set(
+      suggestedTimes.filter(
+        (endTime) =>
+          !isBookableWholeHourRange(formData.startTime, endTime, selectedDateUnavailableTimes)
+      )
+    );
+  }, [formData.startTime, selectedDateUnavailableTimes]);
+  const hasAvailableEndTimeOptions = useMemo(
+    () =>
+      suggestedTimes.some(
+        (endTime) =>
+          !disabledEndTimes.has(endTime) &&
+          isBookableWholeHourRange(formData.startTime, endTime, selectedDateUnavailableTimes)
+      ),
+    [disabledEndTimes, formData.startTime, selectedDateUnavailableTimes]
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -580,16 +637,32 @@ export default function BookingPage() {
                   className="time-select"
                   value={formData.startTime}
                   onChange={(event) =>
-                    setFormData((current) => ({
-                      ...current,
-                      startTime: event.target.value
-                    }))
+                    setFormData((current) => {
+                      const nextStartTime = event.target.value;
+                      const shouldResetEndTime =
+                        current.endTime.trim().length > 0 &&
+                        !isBookableWholeHourRange(
+                          nextStartTime,
+                          current.endTime,
+                          selectedDateUnavailableTimes
+                        );
+
+                      return {
+                        ...current,
+                        startTime: nextStartTime,
+                        endTime: shouldResetEndTime ? "" : current.endTime
+                      };
+                    })
                   }
                 >
                   <option value="">Select start time</option>
                   {suggestedTimes.map((time) => (
-                    <option key={`start-${time}`} value={time}>
-                      {time}
+                    <option
+                      key={`start-${time}`}
+                      value={time}
+                      disabled={disabledStartTimes.has(time)}
+                    >
+                      {disabledStartTimes.has(time) ? `${time} unavailable` : time}
                     </option>
                   ))}
                 </select>
@@ -599,7 +672,7 @@ export default function BookingPage() {
                   }`}
                 >
                   {selectedDateUnavailableTimes.length > 0
-                    ? `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
+                    ? `Unavailable slots are disabled below: ${selectedDateUnavailableTimes.join(", ")}`
                     : "Choose a start time from the dropdown."}
                 </span>
               </label>
@@ -619,8 +692,8 @@ export default function BookingPage() {
                 >
                   <option value="">Select end time</option>
                   {suggestedTimes.map((time) => (
-                    <option key={`end-${time}`} value={time}>
-                      {time}
+                    <option key={`end-${time}`} value={time} disabled={disabledEndTimes.has(time)}>
+                      {disabledEndTimes.has(time) ? `${time} unavailable` : time}
                     </option>
                   ))}
                 </select>
@@ -633,14 +706,53 @@ export default function BookingPage() {
                 >
                   {hasInvalidDuration
                     ? "Bookings must use whole-hour time ranges."
+                    : formData.startTime.trim().length > 0 && !hasAvailableEndTimeOptions
+                    ? "No open whole-hour end times remain for that start time."
                     : selectedDateUnavailableTimes.length > 0
                     ? hasBookedTimeConflict
                       ? "That time is unavailable on this date."
-                      : `Unavailable times on this date: ${selectedDateUnavailableTimes.join(", ")}`
+                      : "Unavailable times are disabled in the dropdown."
                     : "Choose an end time from the dropdown."}
                 </span>
               </label>
             </div>
+
+            {selectedDateBlockedTimes.length > 0 || selectedDateBookedTimes.length > 0 ? (
+              <div className="time-slot-status-card" aria-live="polite">
+                <div className="time-slot-status-heading">
+                  <strong>Time availability for this date</strong>
+                  <span className="field-hint">
+                    Taken and blocked hours are shown here and disabled in the dropdowns.
+                  </span>
+                </div>
+
+                {selectedDateBlockedTimes.length > 0 ? (
+                  <div className="time-slot-status-group">
+                    <span className="time-slot-status-label blocked">Blocked</span>
+                    <div className="time-slot-status-list">
+                      {selectedDateBlockedTimes.map((timeSlot) => (
+                        <span className="time-slot-status-pill blocked" key={`blocked-${timeSlot}`}>
+                          {timeSlot}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {selectedDateBookedTimes.length > 0 ? (
+                  <div className="time-slot-status-group">
+                    <span className="time-slot-status-label booked">Booked</span>
+                    <div className="time-slot-status-list">
+                      {selectedDateBookedTimes.map((timeSlot) => (
+                        <span className="time-slot-status-pill booked" key={`booked-${timeSlot}`}>
+                          {timeSlot}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
 
             {upcomingUnavailableSchedules.length > 0 ? (
               <div className="booked-schedule-card sports-schedule-card">
