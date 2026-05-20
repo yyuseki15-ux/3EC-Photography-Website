@@ -1,17 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function DonePaymentButton() {
-  const [isDone, setIsDone] = useState(false);
+  const router = useRouter();
 
   function handleDonePayment() {
-    setIsDone(true);
-
-    window.setTimeout(() => {
-      window.open("", "_self");
-      window.close();
-    }, 0);
+    router.push("/payment/complete");
   }
 
   return (
@@ -20,16 +15,9 @@ export function DonePaymentButton() {
         className="booked-schedule-link manual-payment-done-button"
         type="button"
         onClick={handleDonePayment}
-        disabled={isDone}
       >
-        {isDone ? "Closing..." : "Done payment"}
+        Done payment
       </button>
-
-      {isDone ? (
-        <p className="status-message success manual-payment-done-message">
-          Thank you for booking. You will receive an email confirmation.
-        </p>
-      ) : null}
     </div>
   );
 }

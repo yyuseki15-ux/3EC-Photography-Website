@@ -1810,6 +1810,14 @@ textarea {
   margin-bottom: 0;
 }
 
+.payment-complete-card {
+  text-align: center;
+}
+
+.payment-complete-text {
+  margin-inline: auto;
+}
+
 .booking-card button {
   border: 0;
   border-radius: 999px;
@@ -1888,10 +1896,6 @@ textarea {
 .manual-payment-done-button:disabled {
   opacity: 0.78;
   cursor: wait;
-}
-
-.manual-payment-done-message {
-  margin: 0;
 }
 
 .status-message {
