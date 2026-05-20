@@ -1880,6 +1880,51 @@ textarea {
   text-decoration: line-through;
 }
 
+.booking-policy-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 248, 239, 0.96));
+}
+
+.booking-policy-heading {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.booking-policy-heading strong {
+  color: #27322a;
+  font-size: 1.05rem;
+}
+
+.booking-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.booking-policy-grid article {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem 0.95rem;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 253, 249, 0.88);
+}
+
+.booking-policy-grid article strong {
+  color: #1d241c;
+}
+
+.booking-policy-grid article p {
+  margin: 0;
+  color: #56655c;
+  line-height: 1.55;
+}
+
 .manual-payment-done {
   display: grid;
   gap: 0.85rem;
@@ -3187,6 +3232,10 @@ textarea {
   .sports-motion-dot {
     width: 0.95rem;
     height: 0.95rem;
+  }
+
+  .booking-policy-grid {
+    grid-template-columns: 1fr;
   }
 
   .admin-login-shell,

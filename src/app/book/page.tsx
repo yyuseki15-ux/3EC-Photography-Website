@@ -698,6 +698,46 @@ export default function BookingPage() {
               </div>
             ) : null}
 
+            <section className="booking-policy-card" aria-label="Booking terms and policy">
+              <div className="booking-policy-heading">
+                <strong>Booking terms</strong>
+                <span className="field-hint">
+                  A quick guide for payment, rescheduling, cancellations, and confirmation timing.
+                </span>
+              </div>
+
+              <div className="booking-policy-grid">
+                <article>
+                  <strong>Payment</strong>
+                  <p>
+                    GCash payment is required to hold your slot. Bookings stay pending until your
+                    proof of payment is uploaded and verified.
+                  </p>
+                </article>
+                <article>
+                  <strong>Rescheduling</strong>
+                  <p>
+                    Requests to move a booking should be sent as early as possible and are subject
+                    to date and time availability.
+                  </p>
+                </article>
+                <article>
+                  <strong>Cancellations</strong>
+                  <p>
+                    Cancelled bookings should be reported in advance. Payments already sent may be
+                    reviewed case by case depending on the schedule and preparation made.
+                  </p>
+                </article>
+                <article>
+                  <strong>Confirmation timing</strong>
+                  <p>
+                    You will receive your confirmation email after payment verification. Manual
+                    review may take a little time during busy hours.
+                  </p>
+                </article>
+              </div>
+            </section>
+
             <label>
               Extra notes
               <textarea
