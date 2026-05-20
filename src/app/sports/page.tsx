@@ -161,7 +161,7 @@ export default function SportsLandingPage() {
               <span className="sports-nav-name">Sports Photography</span>
             </div>
             <div className="sports-nav-links">
-              <Link href="/">Book Now</Link>
+              <Link href="/book">Book Now</Link>
             </div>
           </div>
 
