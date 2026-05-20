@@ -2995,6 +2995,12 @@ textarea {
     padding-top: 0.5rem;
   }
 
+  .sports-landing-shell {
+    width: min(100% - 1rem, 100%);
+    padding-top: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
   .hero-card,
   .booking-card {
     padding: 1.25rem;
@@ -3007,6 +3013,34 @@ textarea {
 
   .sports-nav {
     width: min(100% - 1rem, 100%);
+  }
+
+  .sports-motion-carousel-section {
+    max-width: min(100%, 430px);
+    padding: 0.7rem;
+    border-radius: 26px;
+  }
+
+  .sports-motion-topbar {
+    gap: 0.65rem;
+    margin-bottom: 0.75rem;
+    padding-inline: 0.15rem;
+    align-items: stretch;
+  }
+
+  .sports-motion-topbar .sports-nav-brand {
+    justify-content: center;
+    gap: 0.55rem;
+  }
+
+  .sports-motion-topbar .sports-nav-mark {
+    font-size: 0.95rem;
+  }
+
+  .sports-motion-topbar .sports-nav-name {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-align: center;
   }
 
   .grid-two,
@@ -3056,6 +3090,18 @@ textarea {
     justify-content: center;
   }
 
+  .sports-motion-topbar .sports-nav-links {
+    width: 100%;
+  }
+
+  .sports-motion-topbar .sports-nav-links a {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+
   .sports-motion-carousel {
     min-height: auto;
     perspective: none;
@@ -3064,6 +3110,7 @@ textarea {
 
   .sports-motion-track {
     align-items: stretch;
+    gap: 0;
   }
 
   .sports-motion-card {
@@ -3073,6 +3120,7 @@ textarea {
       box-shadow 120ms ease-out,
       border-color 120ms ease-out;
     box-shadow: 0 14px 26px rgba(0, 0, 0, 0.2);
+    border-radius: 24px;
   }
 
   .sports-motion-card.active {
@@ -3080,22 +3128,40 @@ textarea {
   }
 
   .sports-motion-card-image-wrap {
-      aspect-ratio: 4 / 5.9;
-      padding: 0.45rem;
-    }
-  
+    aspect-ratio: 4 / 5.75;
+    padding: 0.45rem;
+    border-radius: 24px 24px 0 0;
+  }
+
   .sports-motion-card-image-wrap::before,
   .sports-motion-card-image-wrap::after {
-      inset: 0.45rem;
-      box-shadow: none;
-    }
+    inset: 0.45rem;
+    box-shadow: none;
+  }
 
   .sports-motion-card-image {
     filter: none;
   }
 
   .sports-motion-card-copy {
-    padding: 0.85rem 0.85rem 0.95rem;
+    padding: 0.9rem 0.85rem 1rem;
+  }
+
+  .sports-motion-card-copy strong {
+    margin-top: 0.28rem;
+    font-size: 1.45rem;
+    line-height: 0.96;
+  }
+
+  .sports-motion-card-copy p {
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .sports-motion-card-copy .sports-strip-label {
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
   }
 
   .sports-motion-card-mobile {
@@ -3110,6 +3176,17 @@ textarea {
     opacity: 1 !important;
     z-index: auto !important;
     border-radius: 28px;
+  }
+
+  .sports-motion-dots {
+    gap: 0.65rem;
+    margin-top: 0.9rem;
+    padding-bottom: 0.15rem;
+  }
+
+  .sports-motion-dot {
+    width: 0.95rem;
+    height: 0.95rem;
   }
 
   .admin-login-shell,
