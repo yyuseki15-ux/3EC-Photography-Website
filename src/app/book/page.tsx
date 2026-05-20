@@ -654,7 +654,7 @@ export default function BookingPage() {
                 </span>
               </details>
 
-              <label>
+              <label className="time-field">
                 Start time
                 <select
                   required
@@ -704,7 +704,7 @@ export default function BookingPage() {
                 </span>
               </label>
 
-              <label>
+              <label className="time-field">
                 End time
                 <select
                   required

@@ -938,6 +938,15 @@ textarea {
   font-variant-numeric: tabular-nums;
 }
 
+.time-field {
+  align-self: start;
+}
+
+.time-field .field-hint {
+  min-height: 2.8em;
+  display: block;
+}
+
 .time-input {
   min-width: 0;
   letter-spacing: 0.01em;
