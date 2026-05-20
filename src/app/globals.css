@@ -1043,16 +1043,6 @@ textarea {
   background: rgba(198, 93, 46, 0.08);
 }
 
-.time-slot-status-pill.neutral {
-  color: #3a4b40;
-  border-color: rgba(31, 42, 31, 0.1);
-  background: rgba(255, 255, 255, 0.58);
-}
-
-.time-slot-status-card-legend {
-  margin-top: -0.15rem;
-}
-
 .time-select option:disabled {
   color: #8a2222;
 }

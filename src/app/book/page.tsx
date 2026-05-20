@@ -548,22 +548,6 @@ export default function BookingPage() {
               </label>
             </div>
 
-            <div className="time-slot-status-card time-slot-status-card-legend">
-              <div className="time-slot-status-heading">
-                <strong>Availability legend</strong>
-                <span className="field-hint">
-                  {isAvailabilityReady
-                    ? "Fully blocked dates are disabled in the calendar. Booked and blocked hours are marked before you submit."
-                    : "Loading blocked dates and booked hours before you choose a time..."}
-                </span>
-              </div>
-              <div className="time-slot-status-list">
-                <span className="time-slot-status-pill blocked">Blocked by admin</span>
-                <span className="time-slot-status-pill booked">Already booked</span>
-                <span className="time-slot-status-pill neutral">Whole-day blocks are disabled in the calendar</span>
-              </div>
-            </div>
-
             <div className="grid-two">
               <details className="calendar-field calendar-field-card" open>
                 <summary className="calendar-field-summary">
