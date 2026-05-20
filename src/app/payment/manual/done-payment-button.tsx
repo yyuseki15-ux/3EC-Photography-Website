@@ -11,7 +11,7 @@ export function DonePaymentButton() {
     window.setTimeout(() => {
       window.open("", "_self");
       window.close();
-    }, 1800);
+    }, 0);
   }
 
   return (
