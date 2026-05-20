@@ -8,6 +8,7 @@ import { suggestedTimes } from "@/lib/time-options";
 import { formatTimeRange, formatUnavailableDate, type UnavailableDateRecord } from "@/lib/unavailable-dates";
 import { addUnavailableDate, deleteBooking, removeUnavailableDate, updateUnavailableDate } from "./actions";
 import { DeleteButton } from "./delete-button";
+import { PaymentStatusForm } from "./payment-status-form";
 import { StatusForm } from "./status-form";
 
 type AdminBookingsPageProps = {
@@ -202,6 +203,10 @@ export default async function AdminBookingsPage({
             <div className="admin-stat-card">
               <strong>{unavailableDates.length}</strong>
               <span>Unavailable date blocks</span>
+            </div>
+            <div className="admin-stat-card">
+              <strong>{bookings.filter((booking) => booking.payment_status === "paid").length}</strong>
+              <span>Paid bookings</span>
             </div>
           </div>
         </section>
@@ -418,7 +423,9 @@ export default async function AdminBookingsPage({
                   <th>Address</th>
                   <th>Event date</th>
                   <th>Time</th>
+                  <th>Amount</th>
                   <th>Status</th>
+                  <th>Payment</th>
                   <th>Notes</th>
                   <th>Submitted</th>
                   <th>Actions</th>
@@ -438,8 +445,12 @@ export default async function AdminBookingsPage({
                     <td>{booking.address || "No address"}</td>
                     <td>{formatDate(booking.event_date)}</td>
                     <td>{booking.time_slot}</td>
+                    <td>PHP {booking.payment_amount_php}</td>
                     <td>
                       <StatusForm bookingId={booking.id} status={booking.status} />
+                    </td>
+                    <td>
+                      <PaymentStatusForm bookingId={booking.id} paymentStatus={booking.payment_status} />
                     </td>
                     <td>{booking.notes || "No notes"}</td>
                     <td>{formatDateTime(booking.created_at)}</td>

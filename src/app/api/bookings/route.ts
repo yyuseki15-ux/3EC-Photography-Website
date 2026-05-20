@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import {
-  sendBookingConfirmationNotification,
+  sendManualPaymentInstructionsNotification,
   sendNewBookingNotification
 } from "@/lib/booking-notifications";
 import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
-import { type BookingRecord } from "@/lib/bookings";
+import { calculateWholeHourBookingAmountPhp } from "@/lib/booking-payment";
 import { hasTimeSlotConflict, normalizeBookingTimes } from "@/lib/booking-time";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -53,12 +53,14 @@ export async function POST(request: Request) {
   let normalizedStartTime = "";
   let normalizedEndTime = "";
   let timeSlot = "";
+  let paymentAmountPhp = 0;
 
   try {
     const normalizedTimes = normalizeBookingTimes(payload.startTime, payload.endTime);
     normalizedStartTime = normalizedTimes.normalizedStartTime;
     normalizedEndTime = normalizedTimes.normalizedEndTime;
     timeSlot = normalizedTimes.timeSlot;
+    paymentAmountPhp = calculateWholeHourBookingAmountPhp(payload.startTime, payload.endTime).paymentAmountPhp;
   } catch (error) {
     return NextResponse.json(
       {
@@ -136,8 +138,10 @@ export async function POST(request: Request) {
         address: payload.address.trim(),
         event_date: payload.eventDate,
         time_slot: timeSlot,
+        payment_amount_php: paymentAmountPhp,
         notes: payload.notes?.trim() || null,
-        status: "new"
+        status: "new",
+        payment_status: "awaiting_payment"
       })
       .select("*")
       .single();
@@ -147,16 +151,22 @@ export async function POST(request: Request) {
     }
 
     try {
-      await sendNewBookingNotification(data as BookingRecord);
+      await sendNewBookingNotification(data);
     } catch (notificationError) {
       console.error("New booking notification failed:", notificationError);
     }
 
     try {
-      await sendBookingConfirmationNotification(data as BookingRecord);
+      await sendManualPaymentInstructionsNotification(data);
     } catch (notificationError) {
-      console.error("Booking confirmation notification failed:", notificationError);
+      console.error("Manual payment instructions notification failed:", notificationError);
     }
+
+    return NextResponse.json({
+      bookingId: data.id,
+      redirectUrl: `/payment/manual?booking_id=${data.id}`,
+      message: `Thanks ${payload.fullName}. Your ${payload.sport} booking for ${payload.eventDate} from ${normalizedStartTime} to ${normalizedEndTime} was saved. Please complete the GCash payment instructions next.`
+    });
   } catch (error) {
     const errorMessage =
       error instanceof Error

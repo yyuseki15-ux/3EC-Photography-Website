@@ -2,12 +2,17 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { sendBookingStatusChangedNotification } from "@/lib/booking-notifications";
+import {
+  sendBookingConfirmationNotification,
+  sendBookingStatusChangedNotification
+} from "@/lib/booking-notifications";
 import { hasExceededBookingNotesLimit, BOOKING_NOTES_WORD_LIMIT } from "@/lib/booking-notes";
+import { calculateWholeHourBookingAmountPhp } from "@/lib/booking-payment";
 import { type BookingStatus } from "@/lib/booking-status";
 import { normalizeBookingTimes } from "@/lib/booking-time";
 import { isBookingStatus } from "@/lib/booking-status";
 import { type BookingRecord } from "@/lib/bookings";
+import { isPaymentStatus } from "@/lib/payment-status";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -70,9 +75,11 @@ export async function updateBooking(
   }
 
   let timeSlot = "";
+  let paymentAmountPhp = 0;
 
   try {
     timeSlot = normalizeBookingTimes(startTime, endTime).timeSlot;
+    paymentAmountPhp = calculateWholeHourBookingAmountPhp(startTime, endTime).paymentAmountPhp;
   } catch (error) {
     return {
       error: error instanceof Error ? error.message : "Please enter valid booking times."
@@ -100,6 +107,7 @@ export async function updateBooking(
       phone,
       sport,
       address,
+      payment_amount_php: paymentAmountPhp,
       event_date: eventDate,
       time_slot: timeSlot,
       notes: notes || null,
@@ -163,6 +171,58 @@ export async function updateBookingStatus(formData: FormData) {
     updatedBooking as BookingRecord,
     previousStatus as BookingStatus
   );
+
+  revalidatePath("/admin/bookings");
+  redirect("/admin/bookings");
+}
+
+export async function updateBookingPaymentStatus(formData: FormData) {
+  const bookingId = getTrimmedString(formData, "bookingId");
+  const paymentStatus = getTrimmedString(formData, "paymentStatus");
+
+  if (!bookingId || !isPaymentStatus(paymentStatus)) {
+    throw new Error("Invalid booking payment status update.");
+  }
+
+  const supabase = createSupabaseAdminClient();
+  const bookingIdNumber = Number.parseInt(bookingId, 10);
+  const { data: existingBooking, error: existingBookingError } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("id", bookingIdNumber)
+    .single();
+
+  if (existingBookingError) {
+    throw new Error(existingBookingError.message);
+  }
+
+  const previousPaymentStatus = (existingBooking as BookingRecord).payment_status;
+
+  if (previousPaymentStatus === paymentStatus) {
+    redirect("/admin/bookings");
+  }
+
+  const { data: updatedBooking, error } = await supabase
+    .from("bookings")
+    .update({
+      payment_status: paymentStatus,
+      paid_at: paymentStatus === "paid" ? new Date().toISOString() : null
+    })
+    .eq("id", bookingIdNumber)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (previousPaymentStatus !== "paid" && paymentStatus === "paid") {
+    try {
+      await sendBookingConfirmationNotification(updatedBooking as BookingRecord);
+    } catch (notificationError) {
+      console.error("Booking payment confirmation notification failed:", notificationError);
+    }
+  }
 
   revalidatePath("/admin/bookings");
   redirect("/admin/bookings");

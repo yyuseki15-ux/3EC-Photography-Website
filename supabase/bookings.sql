@@ -39,6 +39,46 @@ alter column address set not null;
 alter table public.bookings
 drop column if exists players;
 
+alter table public.bookings
+add column if not exists payment_status text;
+
+alter table public.bookings
+add column if not exists payment_amount_php integer;
+
+update public.bookings
+set payment_amount_php = 600
+where payment_amount_php is null;
+
+alter table public.bookings
+alter column payment_amount_php set not null;
+
+alter table public.bookings
+drop constraint if exists bookings_payment_amount_php_check;
+
+alter table public.bookings
+add constraint bookings_payment_amount_php_check
+check (payment_amount_php >= 600);
+
+update public.bookings
+set payment_status = 'paid'
+where payment_status is null;
+
+alter table public.bookings
+alter column payment_status set not null;
+
+alter table public.bookings
+alter column payment_status set default 'awaiting_payment';
+
+alter table public.bookings
+drop constraint if exists bookings_payment_status_check;
+
+alter table public.bookings
+add constraint bookings_payment_status_check
+check (payment_status in ('awaiting_payment', 'paid', 'cancelled', 'failed', 'expired'));
+
+alter table public.bookings
+add column if not exists paid_at timestamptz;
+
 alter table public.bookings enable row level security;
 
 revoke all on public.bookings from anon, authenticated;

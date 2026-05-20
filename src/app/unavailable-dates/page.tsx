@@ -43,7 +43,7 @@ export default async function UnavailableDatesPage() {
             </p>
           </div>
 
-          <Link className="public-page-link" href="/">
+          <Link className="public-page-link" href="/book">
             Back to booking form
           </Link>
         </div>

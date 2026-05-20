@@ -1,5 +1,7 @@
 import { formatBookingStatus, type BookingStatus } from "@/lib/booking-status";
 import { type BookingRecord } from "@/lib/bookings";
+import { getManualPaymentConfig } from "@/lib/manual-payment";
+import { formatPaymentStatus } from "@/lib/payment-status";
 import { getResendConfig } from "@/lib/resend";
 
 function formatDate(value: string) {
@@ -10,7 +12,7 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "notes" | "status">) {
+function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "payment_amount_php" | "notes" | "status" | "payment_status">) {
   return `
     <ul>
       <li><strong>Name:</strong> ${booking.full_name}</li>
@@ -20,13 +22,15 @@ function bookingSummaryHtml(booking: Pick<BookingRecord, "full_name" | "email" |
       <li><strong>Address:</strong> ${booking.address || "No address"}</li>
       <li><strong>Date:</strong> ${formatDate(booking.event_date)}</li>
       <li><strong>Time:</strong> ${booking.time_slot}</li>
+      <li><strong>Amount:</strong> PHP ${booking.payment_amount_php}</li>
       <li><strong>Status:</strong> ${formatBookingStatus(booking.status)}</li>
+      <li><strong>Payment:</strong> ${formatPaymentStatus(booking.payment_status)}</li>
       <li><strong>Notes:</strong> ${booking.notes || "No notes"}</li>
     </ul>
   `;
 }
 
-function bookingSummaryText(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "notes" | "status">) {
+function bookingSummaryText(booking: Pick<BookingRecord, "full_name" | "email" | "phone" | "sport" | "address" | "event_date" | "time_slot" | "payment_amount_php" | "notes" | "status" | "payment_status">) {
   return [
     `Name: ${booking.full_name}`,
     `Email: ${booking.email}`,
@@ -35,7 +39,9 @@ function bookingSummaryText(booking: Pick<BookingRecord, "full_name" | "email" |
     `Address: ${booking.address || "No address"}`,
     `Date: ${formatDate(booking.event_date)}`,
     `Time: ${booking.time_slot}`,
+    `Amount: PHP ${booking.payment_amount_php}`,
     `Status: ${formatBookingStatus(booking.status)}`,
+    `Payment: ${formatPaymentStatus(booking.payment_status)}`,
     `Notes: ${booking.notes || "No notes"}`
   ].join("\n");
 }
@@ -68,6 +74,50 @@ export async function sendNewBookingNotification(booking: BookingRecord) {
   }
 }
 
+export async function sendManualPaymentInstructionsNotification(booking: BookingRecord) {
+  const config = getResendConfig();
+
+  if (!config) {
+    console.warn("Skipping manual payment email because Resend is not fully configured.");
+    return;
+  }
+
+  const payment = getManualPaymentConfig();
+  const { resend, fromEmail } = config;
+  const subject = `Complete your ${booking.sport} booking payment via GCash`;
+
+  const contactLine = payment.paymentContact
+    ? `<p>After sending the payment, share your proof through: <strong>${payment.paymentContact}</strong>.</p>`
+    : "<p>After sending the payment, keep your proof of payment ready so we can verify it.</p>";
+
+  const contactText = payment.paymentContact
+    ? `After sending the payment, share your proof through: ${payment.paymentContact}.`
+    : "After sending the payment, keep your proof of payment ready so we can verify it.";
+
+  const { error } = await resend.emails.send({
+    from: fromEmail,
+    to: [booking.email],
+    subject,
+    html: `
+      <h1>Complete your GCash payment</h1>
+      <p>Hello ${booking.full_name},</p>
+      <p>We received your booking details. To confirm your slot, please send your GCash payment using the details below.</p>
+      <ul>
+        <li><strong>GCash number:</strong> ${payment.gcashNumber}</li>
+        <li><strong>Account name:</strong> ${payment.gcashAccountName}</li>
+        <li><strong>Amount:</strong> PHP ${booking.payment_amount_php}</li>
+      </ul>
+      ${contactLine}
+      ${bookingSummaryHtml(booking)}
+    `,
+    text: `Complete your GCash payment\n\nHello ${booking.full_name},\n\nWe received your booking details. To confirm your slot, please send your GCash payment using the details below.\n\nGCash number: ${payment.gcashNumber}\nAccount name: ${payment.gcashAccountName}\nAmount: PHP ${booking.payment_amount_php}\n\n${contactText}\n\n${bookingSummaryText(booking)}`
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
 export async function sendBookingConfirmationNotification(booking: BookingRecord) {
   const config = getResendConfig();
 
@@ -77,20 +127,20 @@ export async function sendBookingConfirmationNotification(booking: BookingRecord
   }
 
   const { resend, fromEmail } = config;
-  const subject = `We received your ${booking.sport} booking request`;
+  const subject = `Your ${booking.sport} booking payment was received`;
 
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: [booking.email],
     subject,
     html: `
-      <h1>Booking Request Received</h1>
+      <h1>Payment Received</h1>
       <p>Hello ${booking.full_name},</p>
-      <p>Thanks for booking with 3EC Sports Photography. We have received your request and marked it as <strong>${formatBookingStatus(booking.status)}</strong>.</p>
+      <p>Thanks for booking with 3EC Sports Photography. Your GCash payment has been received and your booking is now marked as <strong>${formatBookingStatus(booking.status)}</strong>.</p>
       <p>We will review the details and follow up if anything else is needed.</p>
       ${bookingSummaryHtml(booking)}
     `,
-    text: `Booking Request Received\n\nHello ${booking.full_name},\n\nThanks for booking with 3EC Sports Photography. We have received your request and marked it as ${formatBookingStatus(booking.status)}.\n\nWe will review the details and follow up if anything else is needed.\n\n${bookingSummaryText(booking)}`
+    text: `Payment Received\n\nHello ${booking.full_name},\n\nThanks for booking with 3EC Sports Photography. Your GCash payment has been received and your booking is now marked as ${formatBookingStatus(booking.status)}.\n\nWe will review the details and follow up if anything else is needed.\n\n${bookingSummaryText(booking)}`
   });
 
   if (error) {
