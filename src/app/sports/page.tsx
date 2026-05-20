@@ -65,7 +65,6 @@ const motionSlides: SportsMotionSlide[] = [
 
 export default function SportsLandingPage() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [movingForward, setMovingForward] = useState(true);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isCompactMotion, setIsCompactMotion] = useState(false);
@@ -91,27 +90,11 @@ export default function SportsLandingPage() {
         return;
       }
 
-      setActiveIndex((current) => {
-        if (movingForward) {
-          if (current >= motionSlides.length - 1) {
-            setMovingForward(false);
-            return current - 1;
-          }
-
-          return current + 1;
-        }
-
-        if (current <= 0) {
-          setMovingForward(true);
-          return current + 1;
-        }
-
-        return current - 1;
-      });
+      goToNextSlide();
     }, 2600);
 
     return () => window.clearInterval(interval);
-  }, [movingForward]);
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 640px)");
