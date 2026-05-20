@@ -79,6 +79,12 @@ check (payment_status in ('awaiting_payment', 'paid', 'cancelled', 'failed', 'ex
 alter table public.bookings
 add column if not exists paid_at timestamptz;
 
+alter table public.bookings
+add column if not exists proof_of_payment_path text;
+
+alter table public.bookings
+add column if not exists proof_uploaded_at timestamptz;
+
 alter table public.bookings enable row level security;
 
 revoke all on public.bookings from anon, authenticated;

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { clearAdminSession, hasValidAdminSession } from "@/lib/admin-auth";
 import { bookingStatuses, formatBookingStatus, type BookingStatus } from "@/lib/booking-status";
 import { type BookingRecord } from "@/lib/bookings";
+import { createSignedPaymentProofUrl } from "@/lib/payment-proof";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { suggestedTimes } from "@/lib/time-options";
@@ -46,8 +47,8 @@ function formatDateTime(value: string) {
   }).format(new Date(value));
 }
 
-function filterBookings(
-  bookings: BookingRecord[],
+function filterBookings<T extends BookingRecord>(
+  bookings: T[],
   {
     query,
     sport,
@@ -134,8 +135,16 @@ export default async function AdminBookingsPage({
   }
 
   const bookings = (data ?? []) as BookingRecord[];
+  const bookingsWithProofUrls = await Promise.all(
+    bookings.map(async (booking) => ({
+      ...booking,
+      proofUrl: booking.proof_of_payment_path
+        ? await createSignedPaymentProofUrl(booking.proof_of_payment_path)
+        : null
+    }))
+  );
   const unavailableDates = (unavailableDatesData ?? []) as UnavailableDateRecord[];
-  const filteredBookings = filterBookings(bookings, {
+  const filteredBookings = filterBookings(bookingsWithProofUrls, {
     query,
     sport: selectedSport,
     eventDate: selectedEventDate,
@@ -426,6 +435,7 @@ export default async function AdminBookingsPage({
                   <th>Amount</th>
                   <th>Status</th>
                   <th>Payment</th>
+                  <th>Proof</th>
                   <th>Notes</th>
                   <th>Submitted</th>
                   <th>Actions</th>
@@ -451,6 +461,20 @@ export default async function AdminBookingsPage({
                     </td>
                     <td>
                       <PaymentStatusForm bookingId={booking.id} paymentStatus={booking.payment_status} />
+                    </td>
+                    <td>
+                      {booking.proofUrl ? (
+                        <a
+                          className="secondary-button admin-action-link"
+                          href={booking.proofUrl}
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          View proof
+                        </a>
+                      ) : (
+                        <span className="admin-empty-inline">No proof yet</span>
+                      )}
                     </td>
                     <td>{booking.notes || "No notes"}</td>
                     <td>{formatDateTime(booking.created_at)}</td>

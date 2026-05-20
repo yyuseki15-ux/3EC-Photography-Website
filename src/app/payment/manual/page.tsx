@@ -3,7 +3,7 @@ import { type BookingRecord } from "@/lib/bookings";
 import { getManualPaymentConfig } from "@/lib/manual-payment";
 import { formatPaymentStatus } from "@/lib/payment-status";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { DonePaymentButton } from "./done-payment-button";
+import { PaymentProofForm } from "./payment-proof-form";
 
 type ManualPaymentPageProps = {
   searchParams?: Promise<{
@@ -101,10 +101,16 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
                 ? `Send your proof of payment to ${payment.paymentContact}.`
                 : "Keep your payment proof ready. We will verify your transfer manually."}
             </span>
+            {booking.proof_uploaded_at ? (
+              <span>Latest proof uploaded: {formatDate(booking.proof_uploaded_at)}</span>
+            ) : null}
           </div>
         </div>
 
-        <DonePaymentButton />
+        <PaymentProofForm
+          bookingId={booking.id}
+          hasUploadedProof={Boolean(booking.proof_of_payment_path)}
+        />
       </section>
     </main>
   );

@@ -11,6 +11,8 @@ export type BookingRecord = {
   event_date: string;
   time_slot: string;
   payment_amount_php: number;
+  proof_of_payment_path: string | null;
+  proof_uploaded_at: string | null;
   notes: string | null;
   status: BookingStatus;
   payment_status: PaymentStatus;

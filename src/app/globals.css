@@ -1888,14 +1888,47 @@ textarea {
   justify-items: start;
 }
 
+.manual-payment-proof-form {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.manual-payment-proof-field {
+  display: grid;
+  gap: 0.6rem;
+  font-weight: 700;
+}
+
+.manual-payment-proof-field input[type="file"] {
+  width: 100%;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 18px;
+  background: rgba(255, 253, 249, 0.94);
+  color: var(--text);
+  padding: 0.9rem 1rem;
+  font: inherit;
+}
+
+.manual-payment-proof-hint {
+  margin: 0;
+  color: var(--muted);
+}
+
 .manual-payment-done-button {
   border: 0;
   cursor: pointer;
+  width: fit-content;
 }
 
 .manual-payment-done-button:disabled {
   opacity: 0.78;
   cursor: wait;
+}
+
+.manual-payment-proof-success,
+.manual-payment-proof-error {
+  width: fit-content;
 }
 
 .status-message {
