@@ -1396,6 +1396,13 @@ textarea {
   user-select: none;
 }
 
+.sports-motion-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
 .sports-motion-carousel.dragging .sports-motion-card {
   transition: none !important;
 }
@@ -2958,6 +2965,16 @@ textarea {
     justify-content: center;
   }
 
+  .sports-motion-carousel {
+    min-height: auto;
+    perspective: none;
+    transform-style: flat;
+  }
+
+  .sports-motion-track {
+    align-items: stretch;
+  }
+
   .sports-motion-card {
     transition:
       transform 120ms ease-out,
@@ -2987,6 +3004,20 @@ textarea {
 
   .sports-motion-card-copy {
     padding: 0.85rem 0.85rem 0.95rem;
+  }
+
+  .sports-motion-card-mobile {
+    --card-width: 100%;
+    position: relative;
+    top: auto;
+    left: auto;
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    transform: none !important;
+    opacity: 1 !important;
+    z-index: auto !important;
+    border-radius: 28px;
   }
 
   .admin-login-shell,

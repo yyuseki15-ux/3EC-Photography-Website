@@ -172,52 +172,86 @@ export default function SportsLandingPage() {
             onTouchEnd={handleTouchEnd}
             onTouchCancel={handleTouchEnd}
           >
-            {motionSlides.map((slide, index) => {
-              const offset = index - activeIndex;
-              const isActive = offset === 0;
-              const distance = Math.abs(offset);
-              const translateX = offset * (isCompactMotion ? 118 : 165) + dragOffset;
-              const rotateY = isCompactMotion ? 0 : offset * -18;
-              const scale = isCompactMotion
-                ? Math.max(0.84, 1 - distance * 0.08)
-                : Math.max(0.64, 1 - distance * 0.12);
-              const opacity = isCompactMotion
-                ? Math.max(0.38, 1 - distance * 0.22)
-                : Math.max(0.2, 1 - distance * 0.16);
-              const zIndex = motionSlides.length - distance;
+            {isCompactMotion ? (
+              <div
+                className="sports-motion-track"
+                style={
+                  {
+                    transform: `translateX(calc(${-activeIndex * 100}% + ${dragOffset}px))`,
+                    transition: isDragging ? "none" : undefined
+                  } as CSSProperties
+                }
+              >
+                {motionSlides.map((slide, index) => (
+                  <button
+                    key={slide.name}
+                    type="button"
+                    className={`sports-motion-card sports-motion-card-mobile ${
+                      activeIndex === index ? "active" : ""
+                    }`}
+                    onClick={() => setActiveIndex(index)}
+                  >
+                    <div className="sports-motion-card-image-wrap">
+                      <Image
+                        src={slide.image}
+                        alt={`${slide.name} athlete in motion`}
+                        className="sports-motion-card-image"
+                        priority={index < 2}
+                      />
+                      <div className="sports-motion-card-overlay" />
+                    </div>
+                    <div className="sports-motion-card-copy">
+                      <span className="sports-strip-label">{slide.accent}</span>
+                      <strong>{slide.name}</strong>
+                      <p>{slide.motion}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              motionSlides.map((slide, index) => {
+                const offset = index - activeIndex;
+                const isActive = offset === 0;
+                const distance = Math.abs(offset);
+                const translateX = offset * 165 + dragOffset;
+                const rotateY = offset * -18;
+                const scale = Math.max(0.64, 1 - distance * 0.12);
+                const opacity = Math.max(0.2, 1 - distance * 0.16);
+                const zIndex = motionSlides.length - distance;
 
-              return (
-                <button
-                  key={slide.name}
-                  type="button"
-                  className={`sports-motion-card ${isActive ? "active" : ""}`}
-                  style={
-                    {
-                      transform: `translate(-50%, -50%) translateX(${translateX}px) rotateY(${rotateY}deg) scale(${scale})`,
-                      opacity,
-                      zIndex,
-                      transition: isDragging ? "none" : undefined
-                    } as CSSProperties
-                  }
-                  onClick={() => setActiveIndex(index)}
-                >
-                  <div className="sports-motion-card-image-wrap">
-                    <Image
-                      src={slide.image}
-                      alt={`${slide.name} athlete in motion`}
-                      className="sports-motion-card-image"
-                      priority={index < 2}
-                    />
-                    <div className="sports-motion-card-overlay" />
-                  </div>
-                  <div className="sports-motion-card-copy">
-                    <span className="sports-strip-label">{slide.accent}</span>
-                    <strong>{slide.name}</strong>
-                    <p>{slide.motion}</p>
-                  </div>
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={slide.name}
+                    type="button"
+                    className={`sports-motion-card ${isActive ? "active" : ""}`}
+                    style={
+                      {
+                        transform: `translate(-50%, -50%) translateX(${translateX}px) rotateY(${rotateY}deg) scale(${scale})`,
+                        opacity,
+                        zIndex,
+                        transition: isDragging ? "none" : undefined
+                      } as CSSProperties
+                    }
+                    onClick={() => setActiveIndex(index)}
+                  >
+                    <div className="sports-motion-card-image-wrap">
+                      <Image
+                        src={slide.image}
+                        alt={`${slide.name} athlete in motion`}
+                        className="sports-motion-card-image"
+                        priority={index < 2}
+                      />
+                      <div className="sports-motion-card-overlay" />
+                    </div>
+                    <div className="sports-motion-card-copy">
+                      <span className="sports-strip-label">{slide.accent}</span>
+                      <strong>{slide.name}</strong>
+                      <p>{slide.motion}</p>
+                    </div>
+                  </button>
+                );
+              })
+            )}
           </div>
 
           <div className="sports-motion-dots" aria-label="Sports image positions">
