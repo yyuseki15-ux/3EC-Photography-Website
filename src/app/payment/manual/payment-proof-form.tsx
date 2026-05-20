@@ -81,6 +81,12 @@ export function PaymentProofForm({
         reference is <strong>{bookingReference}</strong>.
       </p>
 
+      <ul className="manual-payment-proof-list" aria-label="Accepted proof of payment formats">
+        <li>Accepted files: JPG, PNG, WEBP, or PDF</li>
+        <li>Maximum file size: 10 MB</li>
+        <li>Make sure the GCash amount, sender name, and reference are visible</li>
+      </ul>
+
       {hasUploadedProof ? (
         <p className="status-message success manual-payment-proof-success">
           A proof file is already attached to this booking. Uploading a new one will replace it.

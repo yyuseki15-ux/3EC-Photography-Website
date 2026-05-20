@@ -60,6 +60,33 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
   const payment = getManualPaymentConfig();
   const fullAmountPhp = booking.payment_amount_php * 2;
   const remainingBalancePhp = fullAmountPhp - booking.payment_amount_php;
+  const progressSteps = [
+    {
+      label: "Booking saved",
+      detail: "Your slot request has been created.",
+      complete: true
+    },
+    {
+      label: "Proof uploaded",
+      detail: booking.proof_of_payment_path
+        ? "A payment proof is already attached."
+        : "Upload your GCash receipt or screenshot below.",
+      complete: Boolean(booking.proof_of_payment_path)
+    },
+    {
+      label: "Deposit verified",
+      detail: booking.payment_status === "paid" ? "Your deposit has been verified." : "Waiting for admin verification.",
+      complete: booking.payment_status === "paid"
+    },
+    {
+      label: "Confirmed",
+      detail:
+        booking.status === "confirmed" || booking.status === "completed"
+          ? "Your booking is confirmed."
+          : "You will receive a confirmation email after verification.",
+      complete: booking.status === "confirmed" || booking.status === "completed"
+    }
+  ];
 
   return (
     <main className="public-page-shell">
@@ -116,6 +143,29 @@ export default async function ManualPaymentPage({ searchParams }: ManualPaymentP
             {booking.proof_uploaded_at ? (
               <span>Latest proof uploaded: {formatDate(booking.proof_uploaded_at)}</span>
             ) : null}
+          </div>
+        </div>
+
+        <div className="payment-progress-card">
+          <div className="payment-progress-heading">
+            <strong>Booking progress</strong>
+            <span className="field-hint">
+              Follow these steps so your booking can move from deposit to confirmation.
+            </span>
+          </div>
+          <div className="payment-progress-list">
+            {progressSteps.map((step) => (
+              <div
+                className={`payment-progress-step ${step.complete ? "complete" : "pending"}`}
+                key={step.label}
+              >
+                <span className="payment-progress-dot" aria-hidden="true" />
+                <div>
+                  <strong>{step.label}</strong>
+                  <span>{step.detail}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

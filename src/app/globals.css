@@ -1034,6 +1034,16 @@ textarea {
   background: rgba(198, 93, 46, 0.08);
 }
 
+.time-slot-status-pill.neutral {
+  color: #3a4b40;
+  border-color: rgba(31, 42, 31, 0.1);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.time-slot-status-card-legend {
+  margin-top: -0.15rem;
+}
+
 .time-select option:disabled {
   color: #8a2222;
 }
@@ -1945,6 +1955,20 @@ textarea {
   margin-inline: auto;
 }
 
+.payment-complete-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.payment-complete-secondary {
+  color: var(--text);
+  background: #fffaf2;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+}
+
 .booking-card button {
   border: 0;
   border-radius: 999px;
@@ -2124,6 +2148,14 @@ textarea {
   color: var(--muted);
 }
 
+.manual-payment-proof-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--muted);
+  display: grid;
+  gap: 0.35rem;
+}
+
 .manual-payment-done-button {
   border: 0;
   cursor: pointer;
@@ -2138,6 +2170,65 @@ textarea {
 .manual-payment-proof-success,
 .manual-payment-proof-error {
   width: fit-content;
+}
+
+.payment-progress-card {
+  display: grid;
+  gap: 0.95rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid rgba(31, 42, 31, 0.12);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 248, 239, 0.96));
+}
+
+.payment-progress-heading {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.payment-progress-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.payment-progress-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.85rem 0.9rem;
+  border-radius: 18px;
+  border: 1px solid rgba(31, 42, 31, 0.08);
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.payment-progress-step strong,
+.payment-progress-step span {
+  display: block;
+}
+
+.payment-progress-step span {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.payment-progress-dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-top: 0.2rem;
+  border-radius: 999px;
+  background: rgba(31, 42, 31, 0.18);
+}
+
+.payment-progress-step.complete .payment-progress-dot {
+  background: linear-gradient(135deg, var(--accent) 0%, #1c6f57 100%);
+}
+
+.payment-progress-step.complete {
+  border-color: rgba(28, 111, 87, 0.18);
 }
 
 .status-message {
@@ -2606,6 +2697,14 @@ textarea {
   cursor: wait;
 }
 
+.admin-inline-caption {
+  display: inline-block;
+  margin-top: 0.45rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 .admin-action-link {
   white-space: nowrap;
 }
@@ -2717,6 +2816,65 @@ textarea {
 .customer-cell {
   display: grid;
   gap: 0.28rem;
+}
+
+.admin-booking-cards {
+  display: none;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.admin-booking-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem;
+  border: 1px solid rgba(31, 42, 31, 0.08);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.admin-booking-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.admin-booking-card-header h3 {
+  margin: 0.2rem 0 0;
+}
+
+.admin-mobile-progress {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(198, 93, 46, 0.12);
+  color: #9a451f;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.admin-booking-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1rem;
+}
+
+.admin-booking-card-grid div,
+.admin-booking-card-section {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.admin-booking-card-grid strong,
+.admin-booking-card-section strong {
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
 }
 
 .admin-filters-form-wide .admin-filter-actions {
@@ -3448,7 +3606,33 @@ textarea {
     align-items: stretch;
   }
 
+  .payment-complete-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payment-complete-actions a {
+    width: 100%;
+  }
+
   .booked-schedule-header-text {
     max-width: 18rem;
+  }
+
+  .admin-table-wrap {
+    display: none;
+  }
+
+  .admin-booking-cards {
+    display: grid;
+  }
+
+  .admin-booking-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-booking-card-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

@@ -3,6 +3,7 @@ import { clearAdminSession, hasValidAdminSession } from "@/lib/admin-auth";
 import { bookingStatuses, formatBookingStatus, type BookingStatus } from "@/lib/booking-status";
 import { type BookingRecord } from "@/lib/bookings";
 import { createSignedPaymentProofUrl } from "@/lib/payment-proof";
+import { formatPaymentStatus, paymentStatuses } from "@/lib/payment-status";
 import { formatBookingReference } from "@/lib/booking-reference";
 import { sports } from "@/lib/sports";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -19,6 +20,7 @@ type AdminBookingsPageProps = {
     sport?: string;
     eventDate?: string;
     status?: string;
+    payment?: string;
     tab?: string;
   }>;
 };
@@ -54,18 +56,21 @@ function filterBookings<T extends BookingRecord>(
     query,
     sport,
     eventDate,
-    status
+    status,
+    payment
   }: {
     query: string;
     sport: string;
     eventDate: string;
     status: string;
+    payment: string;
   }
 ) {
   const normalizedQuery = query.trim().toLowerCase();
   const normalizedSport = sport.trim().toLowerCase();
   const normalizedEventDate = eventDate.trim();
   const normalizedStatus = status.trim().toLowerCase();
+  const normalizedPayment = payment.trim().toLowerCase();
 
   return bookings.filter((booking) => {
     const matchesQuery =
@@ -88,13 +93,39 @@ function filterBookings<T extends BookingRecord>(
 
     const matchesStatus =
       normalizedStatus.length === 0 || booking.status.toLowerCase() === normalizedStatus;
+    const matchesPayment =
+      normalizedPayment.length === 0
+        ? true
+        : normalizedPayment === "proof_uploaded"
+          ? Boolean(booking.proof_of_payment_path) && booking.payment_status !== "paid"
+          : booking.payment_status.toLowerCase() === normalizedPayment;
 
-    return matchesQuery && matchesSport && matchesEventDate && matchesStatus;
+    return matchesQuery && matchesSport && matchesEventDate && matchesStatus && matchesPayment;
   });
 }
 
 function isValidAdminTab(value: string) {
   return value === "dashboard" || value === "availability" || value === "requests";
+}
+
+function getBookingWorkflowSummary(booking: BookingRecord) {
+  if (booking.status === "completed") {
+    return "Completed";
+  }
+
+  if (booking.status === "confirmed") {
+    return "Confirmed";
+  }
+
+  if (booking.payment_status === "paid") {
+    return "Deposit verified";
+  }
+
+  if (booking.proof_of_payment_path) {
+    return "Proof uploaded";
+  }
+
+  return "Awaiting payment";
 }
 
 export default async function AdminBookingsPage({
@@ -111,6 +142,7 @@ export default async function AdminBookingsPage({
   const selectedSport = resolvedSearchParams?.sport?.trim() ?? "";
   const selectedEventDate = resolvedSearchParams?.eventDate?.trim() ?? "";
   const selectedStatus = resolvedSearchParams?.status?.trim() ?? "";
+  const selectedPayment = resolvedSearchParams?.payment?.trim() ?? "";
   const selectedTab = isValidAdminTab(resolvedSearchParams?.tab?.trim() ?? "")
     ? (resolvedSearchParams?.tab?.trim() as "dashboard" | "availability" | "requests")
     : "dashboard";
@@ -149,13 +181,15 @@ export default async function AdminBookingsPage({
     query,
     sport: selectedSport,
     eventDate: selectedEventDate,
-    status: selectedStatus
+    status: selectedStatus,
+    payment: selectedPayment
   });
   const hasActiveFilters =
     query.length > 0 ||
     selectedSport.length > 0 ||
     selectedEventDate.length > 0 ||
-    selectedStatus.length > 0;
+    selectedStatus.length > 0 ||
+    selectedPayment.length > 0;
 
   return (
     <main className="admin-shell">
@@ -218,6 +252,10 @@ export default async function AdminBookingsPage({
               <strong>{bookings.filter((booking) => booking.payment_status === "paid").length}</strong>
               <span>Paid bookings</span>
             </div>
+            <div className="admin-stat-card">
+              <strong>{bookings.filter((booking) => Boolean(booking.proof_of_payment_path)).length}</strong>
+              <span>Proof uploads received</span>
+            </div>
           </div>
         </section>
       ) : null}
@@ -260,6 +298,19 @@ export default async function AdminBookingsPage({
               {bookingStatuses.map((status) => (
                 <option key={status} value={status}>
                   {formatBookingStatus(status)}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="admin-filter-field">
+            Payment
+            <select defaultValue={selectedPayment} name="payment">
+              <option value="">All payment states</option>
+              <option value="proof_uploaded">Proof uploaded</option>
+              {paymentStatuses.map((paymentStatus) => (
+                <option key={paymentStatus} value={paymentStatus}>
+                  {formatPaymentStatus(paymentStatus)}
                 </option>
               ))}
             </select>
@@ -424,87 +475,180 @@ export default async function AdminBookingsPage({
             <p>Try clearing one or more filters to see more booking requests.</p>
           </div>
         ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Customer</th>
-                  <th>Reference</th>
-                  <th>Sport</th>
-                  <th>Address</th>
-                  <th>Event date</th>
-                  <th>Time</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Payment</th>
-                  <th>Proof</th>
-                  <th>Notes</th>
-                  <th>Submitted</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredBookings.map((booking) => (
-                  <tr key={booking.id}>
-                    <td>
-                      <div className="customer-cell">
-                        <strong>{booking.full_name}</strong>
-                        <span>{booking.email}</span>
-                        <span>{booking.phone}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <strong>{formatBookingReference(booking.id)}</strong>
-                    </td>
-                    <td>{booking.sport}</td>
-                    <td>{booking.address || "No address"}</td>
-                    <td>{formatDate(booking.event_date)}</td>
-                    <td>{booking.time_slot}</td>
-                    <td>
-                      <div className="customer-cell">
-                        <strong>PHP {booking.payment_amount_php}</strong>
-                        <span>50% deposit</span>
-                        <span>Full total: PHP {booking.payment_amount_php * 2}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <StatusForm bookingId={booking.id} status={booking.status} />
-                    </td>
-                    <td>
-                      <PaymentStatusForm bookingId={booking.id} paymentStatus={booking.payment_status} />
-                    </td>
-                    <td>
-                      {booking.proofUrl ? (
-                        <a
-                          className="secondary-button admin-action-link"
-                          href={booking.proofUrl}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          View proof
-                        </a>
-                      ) : (
-                        <span className="admin-empty-inline">No proof yet</span>
-                      )}
-                    </td>
-                    <td>{booking.notes || "No notes"}</td>
-                    <td>{formatDateTime(booking.created_at)}</td>
-                    <td>
-                      <div className="admin-row-actions">
-                        <a className="secondary-button admin-action-link" href={`/admin/bookings/${booking.id}/edit`}>
-                          Edit
-                        </a>
-                        <form action={deleteBooking}>
-                          <input type="hidden" name="bookingId" value={booking.id} />
-                          <DeleteButton />
-                        </form>
-                      </div>
-                    </td>
+          <>
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Reference</th>
+                    <th>Sport</th>
+                    <th>Address</th>
+                    <th>Event date</th>
+                    <th>Time</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Proof</th>
+                    <th>Notes</th>
+                    <th>Submitted</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredBookings.map((booking) => (
+                    <tr key={booking.id}>
+                      <td>
+                        <div className="customer-cell">
+                          <strong>{booking.full_name}</strong>
+                          <span>{booking.email}</span>
+                          <span>{booking.phone}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <strong>{formatBookingReference(booking.id)}</strong>
+                      </td>
+                      <td>{booking.sport}</td>
+                      <td>{booking.address || "No address"}</td>
+                      <td>{formatDate(booking.event_date)}</td>
+                      <td>{booking.time_slot}</td>
+                      <td>
+                        <div className="customer-cell">
+                          <strong>PHP {booking.payment_amount_php}</strong>
+                          <span>50% deposit</span>
+                          <span>Full total: PHP {booking.payment_amount_php * 2}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <StatusForm bookingId={booking.id} status={booking.status} />
+                      </td>
+                      <td>
+                        <PaymentStatusForm bookingId={booking.id} paymentStatus={booking.payment_status} />
+                        <span className="admin-inline-caption">
+                          {getBookingWorkflowSummary(booking)}
+                        </span>
+                      </td>
+                      <td>
+                        {booking.proofUrl ? (
+                          <a
+                            className="secondary-button admin-action-link"
+                            href={booking.proofUrl}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            View proof
+                          </a>
+                        ) : (
+                          <span className="admin-empty-inline">No proof yet</span>
+                        )}
+                      </td>
+                      <td>{booking.notes || "No notes"}</td>
+                      <td>{formatDateTime(booking.created_at)}</td>
+                      <td>
+                        <div className="admin-row-actions">
+                          <a className="secondary-button admin-action-link" href={`/admin/bookings/${booking.id}/edit`}>
+                            Edit
+                          </a>
+                          <form action={deleteBooking}>
+                            <input type="hidden" name="bookingId" value={booking.id} />
+                            <DeleteButton />
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="admin-booking-cards">
+              {filteredBookings.map((booking) => (
+                <article className="admin-booking-card" key={`card-${booking.id}`}>
+                  <div className="admin-booking-card-header">
+                    <div>
+                      <p className="admin-eyebrow">Booking reference</p>
+                      <h3>{formatBookingReference(booking.id)}</h3>
+                      <p className="admin-subtitle">{booking.full_name}</p>
+                    </div>
+                    <span className="admin-mobile-progress">{getBookingWorkflowSummary(booking)}</span>
+                  </div>
+
+                  <div className="admin-booking-card-grid">
+                    <div>
+                      <strong>Contact</strong>
+                      <span>{booking.email}</span>
+                      <span>{booking.phone}</span>
+                    </div>
+                    <div>
+                      <strong>Sport</strong>
+                      <span>{booking.sport}</span>
+                    </div>
+                    <div>
+                      <strong>Address</strong>
+                      <span>{booking.address || "No address"}</span>
+                    </div>
+                    <div>
+                      <strong>Event date</strong>
+                      <span>{formatDate(booking.event_date)}</span>
+                    </div>
+                    <div>
+                      <strong>Time</strong>
+                      <span>{booking.time_slot}</span>
+                    </div>
+                    <div>
+                      <strong>Amount</strong>
+                      <span>Deposit: PHP {booking.payment_amount_php}</span>
+                      <span>Full total: PHP {booking.payment_amount_php * 2}</span>
+                    </div>
+                    <div>
+                      <strong>Notes</strong>
+                      <span>{booking.notes || "No notes"}</span>
+                    </div>
+                    <div>
+                      <strong>Submitted</strong>
+                      <span>{formatDateTime(booking.created_at)}</span>
+                    </div>
+                  </div>
+
+                  <div className="admin-booking-card-section">
+                    <strong>Booking status</strong>
+                    <StatusForm bookingId={booking.id} status={booking.status} />
+                  </div>
+
+                  <div className="admin-booking-card-section">
+                    <strong>Payment status</strong>
+                    <PaymentStatusForm bookingId={booking.id} paymentStatus={booking.payment_status} />
+                  </div>
+
+                  <div className="admin-booking-card-section">
+                    <strong>Proof of payment</strong>
+                    {booking.proofUrl ? (
+                      <a
+                        className="secondary-button admin-action-link"
+                        href={booking.proofUrl}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        View proof
+                      </a>
+                    ) : (
+                      <span className="admin-empty-inline">No proof yet</span>
+                    )}
+                  </div>
+
+                  <div className="admin-row-actions">
+                    <a className="secondary-button admin-action-link" href={`/admin/bookings/${booking.id}/edit`}>
+                      Edit
+                    </a>
+                    <form action={deleteBooking}>
+                      <input type="hidden" name="bookingId" value={booking.id} />
+                      <DeleteButton />
+                    </form>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </>
         )}
       </section>
       ) : null}

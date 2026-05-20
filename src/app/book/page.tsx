@@ -141,6 +141,7 @@ export default function BookingPage() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [unavailableDates, setUnavailableDates] = useState<PublicUnavailableDate[]>([]);
+  const [isAvailabilityReady, setIsAvailabilityReady] = useState(false);
   const [scheduleIndex, setScheduleIndex] = useState(0);
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const today = new Date();
@@ -305,6 +306,10 @@ export default function BookingPage() {
         }
       } catch (error) {
         console.error("Unavailable dates load failed:", error);
+      } finally {
+        if (isMounted) {
+          setIsAvailabilityReady(true);
+        }
       }
     }
 
@@ -525,6 +530,7 @@ export default function BookingPage() {
               <label>
                 Sport
                 <select
+                  disabled={!isAvailabilityReady}
                   value={formData.sport}
                   onChange={(event) =>
                     setFormData((current) => ({
@@ -540,6 +546,22 @@ export default function BookingPage() {
                   ))}
                 </select>
               </label>
+            </div>
+
+            <div className="time-slot-status-card time-slot-status-card-legend">
+              <div className="time-slot-status-heading">
+                <strong>Availability legend</strong>
+                <span className="field-hint">
+                  {isAvailabilityReady
+                    ? "Fully blocked dates are disabled in the calendar. Booked and blocked hours are marked before you submit."
+                    : "Loading blocked dates and booked hours before you choose a time..."}
+                </span>
+              </div>
+              <div className="time-slot-status-list">
+                <span className="time-slot-status-pill blocked">Blocked by admin</span>
+                <span className="time-slot-status-pill booked">Already booked</span>
+                <span className="time-slot-status-pill neutral">Whole-day blocks are disabled in the calendar</span>
+              </div>
             </div>
 
             <div className="grid-two">
@@ -607,7 +629,7 @@ export default function BookingPage() {
                             isSelectedDay ? "selected" : ""
                           } ${isBlockedDay || isPastDay ? "disabled" : ""}`}
                           type="button"
-                          disabled={isBlockedDay || isPastDay}
+                          disabled={!isAvailabilityReady || isBlockedDay || isPastDay}
                           aria-pressed={isSelectedDay}
                           onClick={() => handleEventDateChange(formattedDay)}
                         >
@@ -624,6 +646,8 @@ export default function BookingPage() {
                 >
                   {isUnavailableDate
                     ? "That date is unavailable. Please choose another one."
+                    : !isAvailabilityReady
+                      ? "Loading blocked dates and booked hours..."
                     : upcomingUnavailableDates.length > 0
                       ? `Blocked dates: ${upcomingUnavailableDates.join(", ")}`
                       : "No manually blocked dates right now."}
@@ -635,6 +659,7 @@ export default function BookingPage() {
                 <select
                   required
                   className="time-select"
+                  disabled={!isAvailabilityReady}
                   value={formData.startTime}
                   onChange={(event) =>
                     setFormData((current) => {
@@ -671,7 +696,9 @@ export default function BookingPage() {
                     selectedDateUnavailableTimes.length > 0 ? "field-hint-error" : ""
                   }`}
                 >
-                  {selectedDateUnavailableTimes.length > 0
+                  {!isAvailabilityReady
+                    ? "Loading unavailable time slots..."
+                    : selectedDateUnavailableTimes.length > 0
                     ? `Unavailable slots are disabled below: ${selectedDateUnavailableTimes.join(", ")}`
                     : "Choose a start time from the dropdown."}
                 </span>
@@ -682,6 +709,7 @@ export default function BookingPage() {
                 <select
                   required
                   className="time-select"
+                  disabled={!isAvailabilityReady || formData.startTime.trim().length === 0}
                   value={formData.endTime}
                   onChange={(event) =>
                     setFormData((current) => ({
@@ -706,6 +734,8 @@ export default function BookingPage() {
                 >
                   {hasInvalidDuration
                     ? "Bookings must use whole-hour time ranges."
+                    : !isAvailabilityReady
+                    ? "Loading unavailable time slots..."
                     : formData.startTime.trim().length > 0 && !hasAvailableEndTimeOptions
                     ? "No open whole-hour end times remain for that start time."
                     : selectedDateUnavailableTimes.length > 0
@@ -884,6 +914,7 @@ export default function BookingPage() {
             <button
               type="submit"
               disabled={
+                !isAvailabilityReady ||
                 status === "submitting" ||
                 hasTooManyNoteWords ||
                 isUnavailableDate ||
