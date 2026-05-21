@@ -99,7 +99,8 @@ Booking flow:
 - admin marks the payment as `paid` after verification
 - customer receives confirmation after the payment is marked `paid`
 
-## Recommended next upgrades
+## Already completed in the live web app
 
 - block unavailable dates automatically
-- add online payments
+- disable blocked and booked time slots before submit
+- manual GCash deposit flow with proof-of-payment upload
