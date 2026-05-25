@@ -51,18 +51,6 @@ Then open `http://localhost:3000`.
 4. Add them to `.env.local` and in Vercel project environment variables:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your-project-url
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
-SUPABASE_SECRET_KEY=your-secret-key
-ADMIN_PASSWORD=your-admin-password
-ADMIN_SESSION_SECRET=your-long-random-session-secret
-RESEND_API_KEY=your-resend-api-key
-RESEND_FROM_EMAIL=bookings@yourdomain.com
-ADMIN_NOTIFICATION_EMAIL=your-admin-email@example.com
-NEXT_PUBLIC_SITE_URL=https://your-production-domain.com
-NEXT_PUBLIC_GCASH_NUMBER=09XXXXXXXXX
-NEXT_PUBLIC_GCASH_ACCOUNT_NAME=Your GCash Name
-NEXT_PUBLIC_PAYMENT_CONTACT=your-email-or-contact-channel
 ```
 
 ## Email notifications
